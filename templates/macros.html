@@ -1,0 +1,99 @@
+{# ===========================================================================
+   QUINE component macros — shared across templates.
+   Tera macros have no access to globals, so anything needed (config, page)
+   is passed in explicitly.
+   ========================================================================= #}
+
+{# ---- social row (footer / home / contact) -------------------------------- #}
+{% macro social_row(config) %}
+<div class="social-row" aria-label="Social links">
+  <a href="{{ config.extra.github }}" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56v-2c-3.34.71-4.04-1.6-4.04-1.6-.55-1.36-1.33-1.72-1.33-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.66 1.65.24 2.87.12 3.17.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"></path></svg></a>
+  <a href="{{ config.extra.linkedin }}" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9z"></path></svg></a>
+  <a href="{{ config.extra.stackoverflow }}" aria-label="Stack Overflow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.36 20.2v-5.38h1.79V22H3v-7.18h1.8v5.38zM6.77 14.32l8.78 1.84.37-1.76-8.78-1.84zm1.16-4.21 8.13 3.79.76-1.62-8.13-3.8zm2.26-3.99 6.9 5.74 1.15-1.38-6.9-5.74zM14.66 1l-1.46 1.08 5.34 7.19 1.46-1.08zM6.59 18.41h8.97v-1.8H6.59z"></path></svg></a>
+  <a href="{{ config.extra.medium }}" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.37 7.5c0-.2-.08-.39-.23-.52L2.6 5.2V5h4.46l3.45 7.57L13.62 5H18v.2l-1.3 1.25c-.11.08-.17.23-.14.37v9.36c-.03.14.03.29.14.37l1.27 1.25V18h-6.4v-.2l1.32-1.28c.13-.13.13-.17.13-.37V8.6l-3.67 9.34h-.5L4.4 8.6v6.26c-.04.27.05.54.24.73l1.72 2.08V18H2v-.2l1.72-2.08c.19-.19.27-.46.22-.73z"></path></svg></a>
+  <a href="mailto:{{ config.extra.email }}" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm.4 2 8.6 5.73L20.6 7zM20 9.07l-7.45 4.96a1 1 0 0 1-1.1 0L4 9.07V17h16z"></path></svg></a>
+  <a href="/musings/rss.xml" aria-label="RSS feed"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9h-2.6A6.4 6.4 0 0 0 4 13.6zm0-5a14 14 0 0 1 14 14h-2.6A11.4 11.4 0 0 0 4 8.6zM6.2 17.8a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0z"></path></svg></a>
+</div>
+{% endmacro social_row %}
+
+{# ---- status badge -------------------------------------------------------- #}
+{% macro status_badge(status, label="") %}
+  {%- if status == "active" -%}<span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>active</span>
+  {%- elif status == "archived" -%}<span class="q-badge q-badge--warning">archived</span>
+  {%- elif status == "version" -%}<span class="q-badge q-badge--symbol">{{ label | default(value="v0.1") }}</span>
+  {%- else -%}<span class="q-badge q-badge--neutral">{{ label | default(value="shipped") }}</span>
+  {%- endif -%}
+{% endmacro status_badge %}
+
+{# ---- project card -------------------------------------------------------- #}
+{% macro proj_card(page) %}
+<article class="q-card{% if page.extra.marked %} q-card--marked{% endif %} proj-card">
+  <div class="proj-card__top">
+    <span class="proj-card__glyph" aria-hidden="true">{{ page.extra.glyph | default(value="∴") }}</span>
+    {{ self::status_badge(status=page.extra.status | default(value="shipped"), label=page.extra.status_label | default(value="")) }}
+  </div>
+  <h3 class="proj-card__title">{{ page.title }}</h3>
+  <p class="proj-card__desc">{{ page.description }}</p>
+  <div class="proj-card__meta"><span class="proj-card__role">{{ page.extra.role | default(value="Built") }}</span>{% if page.extra.visibility %} · <span>{{ page.extra.visibility }}</span>{% endif %}</div>
+  {% if page.extra.tech %}
+  <div class="proj-card__tags tag-row">{% for t in page.extra.tech %}<span class="pill">{{ t }}</span>{% endfor %}</div>
+  {% endif %}
+  <div class="proj-card__links">
+    {% if page.extra.repo %}<a href="{{ page.extra.repo }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="17" cy="7" r="2.4"></circle><path d="M17 9.4v1.1a4 4 0 0 1-4 4H6M6 8.4v7.2"></path></svg> source</a>{% endif %}
+    {% if page.extra.live %}<a href="{{ page.extra.live }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"></path></svg> live</a>{% endif %}
+    {% if page.extra.writeup %}<a href="{{ page.permalink }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4M6 21V5a2 2 0 0 1 2-2h6l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM9 13h6M9 17h4"></path></svg> {{ page.extra.writeup_label | default(value="write-up") }}</a>{% endif %}
+    {% if not page.extra.repo and not page.extra.live and not page.extra.writeup %}<span class="muted mono" style="font-size:12px">{{ page.extra.no_link_note | default(value="no public link") }}</span>{% endif %}
+  </div>
+</article>
+{% endmacro proj_card %}
+
+{# ---- book card (.book-card grid: 96px cover + body cell) ------------------ #}
+{% macro book_card(page) %}
+<article class="q-card book-card">
+  <div class="book-card__cover">
+    {% if page.extra.cover %}<img src="{{ page.extra.cover }}" alt="Cover: {{ page.title }}">
+    {% else %}<div class="img-slot" role="img" aria-label="Cover placeholder for {{ page.title }}" style="width:100%;height:100%">[ cover ]</div>{% endif %}
+  </div>
+  <div>
+    {% if page.extra.kind == "reviewed" %}
+      <span class="q-badge q-badge--neutral">reviewed</span>
+      <h3 class="book-card__title">{{ page.title }}</h3>
+      {% if page.extra.author %}<p class="book-card__author">{{ page.extra.author }}{% if page.extra.rating %} · <span style="color:var(--accent)">{{ page.extra.rating }}</span>{% endif %}</p>{% endif %}
+      <p class="book-card__note">{{ page.extra.blurb | default(value=page.description) }}</p>
+      <p style="margin:14px 0 0"><a class="q-btn q-btn--secondary q-btn--sm" href="{{ page.permalink }}">Read review</a></p>
+    {% else %}
+      <span class="q-badge q-badge--ember">{{ page.extra.status | default(value="in progress") }}</span>
+      <h3 class="book-card__title">{{ page.title }}</h3>
+      <p class="book-card__note">{{ page.extra.blurb | default(value=page.description) }}</p>
+      <p style="margin:14px 0 0"><a class="q-btn q-btn--primary q-btn--sm" href="{{ page.extra.link | default(value=page.permalink) }}">Read a chapter</a></p>
+    {% endif %}
+  </div>
+</article>
+{% endmacro book_card %}
+
+{# ---- home teaser (compact musing) ---------------------------------------- #}
+{% macro teaser(page) %}
+<a class="teaser" href="{{ page.permalink }}">
+  <div class="teaser__row">
+    <h3 class="teaser__title">{{ page.title }}</h3>
+    <span class="teaser__date">{{ page.date | date(format="%Y-%m-%d") }}</span>
+  </div>
+  <p class="teaser__excerpt">{{ page.description | default(value=page.summary) }}</p>
+</a>
+{% endmacro teaser %}
+
+{# ---- musings index post item (grid: date col + body cell) ---------------- #}
+{% macro post_item(page, pinned=false) %}
+<article class="post-item{% if pinned %} post-item--pinned{% endif %}">
+  <span class="post-item__date">{{ page.date | date(format="%Y · %m · %d") }}</span>
+  <div>
+    {% if pinned %}<span class="eyebrow pin-flag">// pinned</span>{% endif %}
+    <h3 class="post-item__title"><a href="{{ page.permalink }}">{{ page.title }}</a></h3>
+    <p class="post-item__excerpt">{{ page.description | default(value=page.summary) }}</p>
+    <div class="post-item__foot">
+      {% if page.taxonomies.tags %}<span class="tag-row">{% for t in page.taxonomies.tags %}<a class="pill" href="/tags/{{ t | slugify }}/"><span class="pill__hash">#</span>{{ t }}</a>{% endfor %}</span>{% endif %}
+      <span class="post-item__rt">{{ page.reading_time }} min read</span>
+    </div>
+  </div>
+</article>
+{% endmacro post_item %}

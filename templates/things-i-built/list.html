@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}Things I Built — {{ config.title }}{% endblock title %}
+{% block description %}Open-source and professional systems architected and built by dhilipsiva — Rust, Python, WebAssembly, WebRTC, and distributed systems.{% endblock description %}
+
+{% block content %}
+{% set personal = section.pages | filter(attribute="extra.category", value="personal") %}
+{% set professional = section.pages | filter(attribute="extra.category", value="professional") %}
+{% set shipped = section.pages | filter(attribute="extra.status", value="shipped") | length %}
+{% set active = section.pages | filter(attribute="extra.status", value="active") | length %}
+{% set archived = section.pages | filter(attribute="extra.status", value="archived") | length %}
+
+<!-- PAGE HEAD -->
+<section class="section--tight" style="padding-top:48px">
+  <div class="container">
+    <span class="eyebrow">// things i built</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 16px;line-height:1.05">Things I built</h1>
+    <p class="lead" style="max-width:62ch">{{ section.extra.intro }}</p>
+    <div class="row mono" style="margin-top:22px;font-size:12px;color:var(--text-faint);gap:18px">
+      <span><b style="color:var(--phosphor-300)">{{ shipped }}</b> shipped</span>
+      <span><b style="color:var(--phosphor-300)">{{ active }}</b> active</span>
+      <span><b style="color:var(--text-muted)">{{ archived }}</b> archived</span>
+      <span class="comment">f(x) = x — most of these are fixed points of an idea</span>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAL / OSS -->
+<section class="section" style="padding-top:24px">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// personal · open-source</span>
+        <h2 class="sec-head__title">Built for the commons</h2>
+        <p class="sec-head__intro">FOSS the whole way down. Free forever, self-hostable, no telemetry.</p>
+      </div>
+    </div>
+    <div class="proj-grid">
+      {% for p in personal %}{{ m::proj_card(page=p) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROFESSIONAL -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// professional</span>
+        <h2 class="sec-head__title">Built on the clock</h2>
+        <p class="sec-head__intro">Systems I architected as Software Architect and, before that, VP of Engineering. Some closed, all real.</p>
+      </div>
+    </div>
+    <div class="proj-grid">
+      {% for p in professional %}{{ m::proj_card(page=p) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section--tight">
+  <div class="container">
+    <article class="q-card q-card--grid" style="padding:40px;text-align:center">
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:24px;color:var(--text-strong);margin:0 0 8px">“One must imagine the cluster happy.”</p>
+      <p class="comment" style="margin:0 0 22px">have a hard systems problem worth building?</p>
+      <div class="row" style="justify-content:center">
+        <a class="q-btn q-btn--primary q-btn--lg" href="/contact/">Get in touch</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="{{ config.extra.github }}">Browse the source →</a>
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock content %}

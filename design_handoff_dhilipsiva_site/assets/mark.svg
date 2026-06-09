@@ -1,0 +1,8 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="dhilipsiva mark">
+  <rect x="6" y="6" width="108" height="108" rx="22" fill="#0B0B10" stroke="#2A2A38" stroke-width="2"></rect>
+  <g stroke="#F2542D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M37 38 L55 60 L37 82"></path>
+    <path d="M83 38 L65 60 L83 82"></path>
+  </g>
+  <circle cx="60" cy="60" r="6" fill="#38E3A6"></circle>
+</svg>

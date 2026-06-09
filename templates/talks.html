@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Talks — {{ config.title }}{% endblock title %}
+{% block description %}Talks, meetups, and speaking by dhilipsiva.{% endblock description %}
+
+{% block content %}
+<section class="section--tight" style="padding-top:48px">
+  <div class="container container--read">
+    <span class="eyebrow">// talks</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 14px;line-height:1.05">Talks &amp; speaking</h1>
+    <p class="lead">{{ page.extra.intro }}</p>
+    {% if page.extra.available %}<p class="comment" style="margin-top:10px">{{ page.extra.available }} — <a href="/contact/">get in touch</a>.</p>{% endif %}
+  </div>
+</section>
+
+<section class="section" style="padding-top:8px">
+  <div class="container container--read">
+    {% set talks = page.extra.talks | default(value=[]) %}
+    {% if talks | length == 0 %}
+      <div class="q-callout q-callout--note"><span class="q-callout__glyph">∅</span><div class="q-callout__body"><p class="q-callout__title">No talks listed yet</p>The set is currently empty. Check back, or invite me to change that.</div></div>
+    {% else %}
+    <ul style="list-style:none;padding:0;margin:0">
+      {% for t in talks %}
+      <li style="display:grid;grid-template-columns:120px 1fr;gap:24px;padding:22px 0;border-top:1px solid var(--border-subtle)">
+        <span class="mono" style="font-size:12px;color:var(--text-faint);padding-top:4px">{{ t.date }}</span>
+        <div>
+          <h3 style="font-family:var(--font-display);font-weight:600;font-size:var(--text-lg);color:var(--text-strong);margin:0 0 4px;letter-spacing:-0.02em">{{ t.title }}</h3>
+          <p class="mono" style="font-size:12px;color:var(--text-muted);margin:0 0 10px">{{ t.event }}</p>
+          {% if t.description %}<p class="muted" style="font-family:var(--font-sans);font-size:14.5px;line-height:1.55;margin:0 0 12px;max-width:60ch">{{ t.description }}</p>{% endif %}
+          <div class="row" style="gap:14px;font-family:var(--font-mono);font-size:12px">
+            {% if t.slides %}<a href="{{ t.slides }}">▢ slides</a>{% endif %}
+            {% if t.video %}<a href="{{ t.video }}">▷ video</a>{% endif %}
+            {% if t.page %}<a href="{{ t.page }}">→ event</a>{% endif %}
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

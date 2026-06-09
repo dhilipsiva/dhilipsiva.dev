@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}About — {{ config.title }}{% endblock title %}
+{% block description %}dhilipsiva — software architect, open-source builder, optimistic nihilist. Bio, philosophy, and experience.{% endblock description %}
+
+{% block content %}
+<!-- INTRO -->
+<section class="section" style="padding-top:48px">
+  <div class="container">
+    <span class="eyebrow">// about</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 28px;line-height:1.05">A builder, not an entrepreneur</h1>
+    <div class="row" style="align-items:flex-start;gap:36px">
+      <div style="flex:none;width:200px">
+        {% if page.extra.portrait %}<img src="{{ page.extra.portrait }}" alt="dhilipsiva" style="width:100%;border-radius:var(--radius-md);border:1px solid var(--border-strong)">
+        {% else %}<div class="img-slot" style="aspect-ratio:5/6" role="img" aria-label="Portrait placeholder">[ portrait · alt required ]</div>{% endif %}
+      </div>
+      <div class="prose" style="flex:1;min-width:300px">
+        {{ page.content | safe }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head"><div class="sec-head__main"><span class="eyebrow">// philosophy</span></div></div>
+    <blockquote style="font-family:var(--font-serif);font-style:italic;font-size:28px;line-height:1.4;color:var(--text-strong);border-left:2px solid var(--accent);padding-left:22px;margin:0 0 18px;max-width:36ch">{{ page.extra.philosophy_quote }}</blockquote>
+    <p class="lead" style="max-width:64ch">{{ page.extra.philosophy }}</p>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head"><div class="sec-head__main"><span class="eyebrow">// experience</span><h2 class="sec-head__title">Where I've built</h2></div></div>
+    <ul style="list-style:none;padding:0;margin:0;max-width:62ch">
+      {% for e in page.extra.experience %}
+      <li style="border-left:2px solid var(--accent);padding:0 0 26px 22px">
+        <div class="mono" style="font-size:12px;color:var(--text-faint);letter-spacing:0.03em">{{ e.dates }}</div>
+        <div style="font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--text-strong);margin-top:5px">{{ e.role }} <span style="color:var(--text-faint)">·</span> <span style="color:var(--accent)">{{ e.org }}</span></div>
+        <p style="font-family:var(--font-sans);font-size:14.5px;color:var(--text-muted);margin:6px 0 0;line-height:1.6">{{ e.desc }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head"><div class="sec-head__main"><span class="eyebrow">// domains</span><h2 class="sec-head__title">What I work in</h2></div></div>
+    {% for s in page.extra.skills %}
+    <div style="margin-bottom:18px">
+      <h4 style="font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin:0 0 10px">{{ s.group }}</h4>
+      <div class="tag-row">{% for it in s.items %}<span class="pill">{{ it }}</span>{% endfor %}</div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- INTERESTS + LANGUAGES + CTA -->
+<section class="section--tight" style="padding-top:0">
+  <div class="container">
+    <article class="q-card q-card--grid" style="padding:32px">
+      <div class="row" style="gap:48px;align-items:flex-start">
+        <div style="flex:1;min-width:240px">
+          <h4 style="font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin:0 0 8px">Outside the editor</h4>
+          <p class="muted" style="font-family:var(--font-sans);font-size:14.5px;line-height:1.6;margin:0">{{ page.extra.interests }}</p>
+        </div>
+        <div style="flex:none">
+          <h4 style="font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin:0 0 8px">Languages</h4>
+          <div class="tag-row">{% for l in page.extra.languages %}<span class="pill">{{ l }}</span>{% endfor %}</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:26px;gap:12px">
+        <a class="q-btn q-btn--primary" href="/contact/">Get in touch</a>
+        {% if page.extra.resume %}<a class="q-btn q-btn--ghost" href="{{ page.extra.resume }}">Résumé →</a>{% endif %}
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SLOT: per-post <title>, meta description, OG/social image -->
+<title>On building things that outlive their meaning — dhilipsiva</title>
+<meta name="description" content="The universe doesn't owe your software a reason to exist. A note on authoring your own fixed point.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/quine.css">
+<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <input type="checkbox" id="nav-switch" class="nav-switch" aria-hidden="true" tabindex="-1">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="dhilipsiva — home">
+      <img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="index.html">Home</a>
+      <a class="nav__link" href="things-i-built.html">Things I Built</a>
+      <a class="nav__link" href="#books">Books</a>
+      <a class="nav__link" href="#musings" aria-current="page">Musings</a>
+      <a class="nav__link" href="#about">About</a>
+      <a class="nav__link" href="#now">Now</a>
+      <a class="nav__link" href="#uses">Uses</a>
+      <a class="nav__link" href="#talks">Talks</a>
+      <a class="nav__link" href="#contact">Contact</a>
+    </nav>
+    <span class="header-spacer"></span>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle light / dark theme" aria-pressed="false">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <label for="nav-switch" class="icon-btn nav-toggle" aria-label="Toggle menu">
+        <svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </label>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<div class="container container--read">
+
+  <!-- breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">home</a><span class="sep">/</span>
+    <a href="#musings">musings</a><span class="sep">/</span>
+    <span>on building things…</span>
+  </nav>
+
+  <!-- ============================ ARTICLE HEAD ===================== -->
+  <article data-screen-label="Single Musing">
+    <header class="article-head">
+      <div class="article-head__meta">
+        <!-- SLOT: date · reading time -->
+        <time datetime="2026-05-28">2026 · 05 · 28</time>
+        <span class="sep">·</span>
+        <span>9 min read</span>
+        <span class="sep">·</span>
+        <span class="comment" style="font-style:normal">essay</span>
+      </div>
+      <!-- SLOT: title -->
+      <h1>On building things that outlive their meaning</h1>
+      <!-- SLOT: tags[] -->
+      <div class="article-head__tags tag-row">
+        <a class="pill" href="#tag-philosophy"><span class="pill__hash">#</span>philosophy</a>
+        <a class="pill" href="#tag-systems"><span class="pill__hash">#</span>distributed-systems</a>
+        <a class="pill" href="#tag-rust"><span class="pill__hash">#</span>rust</a>
+      </div>
+    </header>
+
+    <!-- SLOT: optional hero image / figure -->
+    <figure style="margin-bottom:40px">
+      <div class="img-slot" style="aspect-ratio:16/7" role="img" aria-label="Hero image placeholder">[ SLOT: hero image · 1600×700 · alt text required ]</div>
+    </figure>
+
+    <!-- ============================ PROSE BODY ===================== -->
+    <div class="prose">
+      <p>The universe does not owe your software a reason to exist. It does not owe your cluster a quorum, your proof a model, or your name a legacy. This is usually delivered as bad news. I have come to read it as the most freeing license a builder can be handed.</p>
+
+      <p>If nothing is owed, then nothing is wasted either. You are free to build the thing precisely because it does not <em>have</em> to matter. The meaning is not discovered in the artifact; it is <strong>authored</strong> into it, by you, at the moment you decide to begin.</p>
+
+      <blockquote>
+        A quine is a program that, run, prints its own source. It needs no input from the world to justify its output. It is its own reason.
+        <cite>— from the margins of an old notebook</cite>
+      </blockquote>
+
+      <h2>The fixed point as a way of life</h2>
+      <p>In mathematics, a <strong>fixed point</strong> of a function <code>f</code> is a value <code>x</code> where <code>f(x) = x</code> — apply the function and nothing moves. Consensus is a fixed point. A quine is a fixed point. A self-consistent worldview is a fixed point. The trick of building systems that last is to find the place where the system stops needing the world to hold it up, and instead holds itself.</p>
+
+      <p>Here is the smallest honest version of the idea, in Rust:</p>
+
+      <pre><code><span class="c-com">// the network's opinion of itself, iterated to a fixed point</span>
+<span class="c-key">fn</span> <span class="c-fn">settle</span><span class="c-pun">&lt;</span><span class="c-type">T</span><span class="c-pun">:</span> <span class="c-type">Eq</span> + <span class="c-type">Clone</span><span class="c-pun">&gt;(</span><span class="c-key">mut</span> x<span class="c-pun">:</span> <span class="c-type">T</span><span class="c-pun">,</span> f<span class="c-pun">:</span> <span class="c-key">impl</span> <span class="c-type">Fn</span><span class="c-pun">(&amp;</span><span class="c-type">T</span><span class="c-pun">)</span> -&gt; <span class="c-type">T</span><span class="c-pun">)</span> -&gt; <span class="c-type">T</span> <span class="c-pun">{</span>
+    <span class="c-key">loop</span> <span class="c-pun">{</span>
+        <span class="c-key">let</span> next = <span class="c-fn">f</span><span class="c-pun">(&amp;</span>x<span class="c-pun">);</span>
+        <span class="c-key">if</span> next == x <span class="c-pun">{</span> <span class="c-key">return</span> x<span class="c-pun">; }</span>  <span class="c-com">// ∴ eval(x) = x</span>
+        x = next<span class="c-pun">;</span>
+    <span class="c-pun">}</span>
+<span class="c-pun">}</span></code></pre>
+
+      <p>You can call <code>settle</code> on anything that knows how to compare itself to a previous version of itself. Nodes in <code>gossipd</code> do exactly this: they exchange opinions until no opinion changes, and then they call that agreement. The optimism is not that agreement is guaranteed — it isn't. The optimism is that it is <em>worth iterating toward anyway</em>.</p>
+
+      <h3>Three properties of things that last</h3>
+      <p>When I look at the systems that have outlived their original purpose, they tend to share a few traits:</p>
+      <ul>
+        <li><strong>They are deterministic.</strong> Same inputs, same history, every time. A future maintainer can replay the past instead of guessing at it.</li>
+        <li><strong>They are small.</strong> A 12kB core can be understood, ported, and resurrected. A 12MB one becomes a fossil the moment its authors leave.</li>
+        <li><strong>They are honest about limits.</strong> They say what they cannot do, in writing, near the code that cannot do it.</li>
+      </ul>
+
+      <h4>An aside on undecidability</h4>
+      <p>There are questions our systems provably cannot answer — whether an arbitrary program halts, chief among them. This is not a flaw to engineer around so much as a horizon to build up to.<a class="fn-ref" href="#fn1" id="fnref1">1</a> Knowing the horizon exists is what lets you stop pretending you can see past it.</p>
+
+      <figure>
+        <div class="img-slot" style="aspect-ratio:16/9" role="img" aria-label="Diagram placeholder">[ SLOT: figure · diagram of a 5-node quorum reaching a fixed point ]</div>
+        <figcaption>Fig 1. Five peers, gossiping on a 200ms tick, converging on a single committed value.</figcaption>
+      </figure>
+
+      <h2>Writing across two scripts</h2>
+      <p>I think in English and in Tamil, and the two scripts disagree about how a sentence should breathe. Long-form type has to hold both without one looking like an afterthought. Here is the same idea in both — the line-height has room for Tamil's tall vowel signs:</p>
+
+      <p lang="ta" class="tamil">ஒரு நிரல் தன்னைத்தானே எழுதிக்கொள்ளும்போது, அதற்கு வெளியே இருந்து எந்த அர்த்தமும் தேவையில்லை. அதுவே அதன் காரணம். <span lang="en">(A program that writes itself needs no meaning from outside; it is its own reason.)</span></p>
+
+      <p>Naming things well is the same act in either language: you are choosing the fixed point a future reader will resolve the symbol to. Choose generously.</p>
+
+      <blockquote>நம்பிக்கையோடு கட்டு. ஒன்றும் கடன் இல்லை. <cite>— build with hope; nothing is owed</cite></blockquote>
+
+      <h2>So: build anyway</h2>
+      <p>The nihilism is the premise, not the conclusion. The conclusion is a working system, committed to disk, that did not have to exist and does. That is the whole optimistic move — to look at an indifferent universe and add one more fixed point to it, on purpose.</p>
+
+      <p>One must imagine the compiler happy.</p>
+
+      <!-- footnotes -->
+      <div class="footnotes">
+        <ol>
+          <li id="fn1">The halting problem: there is no general algorithm that decides, for every program-input pair, whether the program eventually halts. Turing, 1936. <a class="fn-ref" href="#fnref1" aria-label="Back to content">↩</a></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ============================ ARTICLE FOOT ===================== -->
+    <footer class="article-foot">
+      <div class="row" style="justify-content:space-between;gap:16px">
+        <div class="tag-row">
+          <a class="pill" href="#tag-philosophy"><span class="pill__hash">#</span>philosophy</a>
+          <a class="pill" href="#tag-systems"><span class="pill__hash">#</span>distributed-systems</a>
+          <a class="pill" href="#tag-rust"><span class="pill__hash">#</span>rust</a>
+        </div>
+        <div class="row" style="gap:8px">
+          <a class="q-btn q-btn--ghost q-btn--sm" href="#discuss">∴ Discuss</a>
+          <a class="q-btn q-btn--secondary q-btn--sm" href="#musings">← All musings</a>
+        </div>
+      </div>
+
+      <!-- prev / next -->
+      <nav class="prev-next" aria-label="Post navigation">
+        <a class="pn-card pn-card--prev" href="single-musing.html">
+          <span class="pn-card__dir">← Previous</span>
+          <span class="pn-card__title">Gödel, the halting problem, and why I sleep fine</span>
+        </a>
+        <a class="pn-card pn-card--next" href="single-musing.html">
+          <span class="pn-card__dir">Next →</span>
+          <span class="pn-card__title">தமிழில் நிரலாக்கம் — thinking in two scripts</span>
+        </a>
+      </nav>
+    </footer>
+  </article>
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a class="brand" href="index.html"><img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span></a>
+        <p class="site-footer__tag">Build systems that outlive their meaning. One must imagine the compiler happy.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Site</h4>
+        <ul>
+          <li><a href="things-i-built.html">Things I Built</a></li>
+          <li><a href="#books">Books</a></li>
+          <li><a href="#musings">Musings</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>More</h4>
+        <ul>
+          <li><a href="#now">Now</a></li>
+          <li><a href="#uses">Uses</a></li>
+          <li><a href="#talks">Talks</a></li>
+          <li><a href="#rss">RSS feed</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <div class="social-row" aria-label="Social links">
+        <a href="#github" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56v-2c-3.34.71-4.04-1.6-4.04-1.6-.55-1.36-1.33-1.72-1.33-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.66 1.65.24 2.87.12 3.17.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"></path></svg></a>
+        <a href="#linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9z"></path></svg></a>
+        <a href="#stackoverflow" aria-label="Stack Overflow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.36 20.2v-5.38h1.79V22H3v-7.18h1.8v5.38zM6.77 14.32l8.78 1.84.37-1.76-8.78-1.84zm1.16-4.21 8.13 3.79.76-1.62-8.13-3.8zm2.26-3.99 6.9 5.74 1.15-1.38-6.9-5.74zM14.66 1l-1.46 1.08 5.34 7.19 1.46-1.08zM6.59 18.41h8.97v-1.8H6.59z"></path></svg></a>
+        <a href="#medium" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.37 7.5c0-.2-.08-.39-.23-.52L2.6 5.2V5h4.46l3.45 7.57L13.62 5H18v.2l-1.3 1.25c-.11.08-.17.23-.14.37v9.36c-.03.14.03.29.14.37l1.27 1.25V18h-6.4v-.2l1.32-1.28c.13-.13.13-.17.13-.37V8.6l-3.67 9.34h-.5L4.4 8.6v6.26c-.04.27.05.54.24.73l1.72 2.08V18H2v-.2l1.72-2.08c.19-.19.27-.46.22-.73z"></path></svg></a>
+        <a href="mailto:dhilipsiva@pm.me" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm.4 2 8.6 5.73L20.6 7zM20 9.07l-7.45 4.96a1 1 0 0 1-1.1 0L4 9.07V17h16z"></path></svg></a>
+        <a href="#rss" aria-label="RSS feed"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9h-2.6A6.4 6.4 0 0 0 4 13.6zm0-5a14 14 0 0 1 14 14h-2.6A11.4 11.4 0 0 0 4 8.6zM6.2 17.8a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0z"></path></svg></a>
+      </div>
+      <span class="sp"></span>
+      <span>© <span id="yr">2026</span> dhilipsiva · the void, organized</span>
+      <span>·</span>
+      <span>built with care · <a href="#source">open source</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="22" fill="#0B0B10"></rect><g stroke="#F2542D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M44 42 L60 60 L44 78"></path><path d="M76 42 L60 60 L76 78"></path></g><circle cx="60" cy="86" r="5" fill="#38E3A6"></circle></svg>
+</template>
+
+</body>
+</html>

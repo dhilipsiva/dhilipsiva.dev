@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build hand-off — dhilipsiva.dev</title>
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/quine.css">
+<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+<style>
+  .doc { max-width: 860px; margin: 0 auto; padding: 0 28px; }
+  .doc-hero { padding: 56px 0 28px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 8px; }
+  .doc-hero h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; letter-spacing: -0.035em; color: var(--text-strong); margin: 14px 0 12px; }
+  .doc-hero p { font-family: var(--font-sans); font-size: 17px; color: var(--text-muted); max-width: 64ch; line-height: 1.6; margin: 0; }
+  .doc section { padding: 38px 0; border-bottom: 1px solid var(--border-subtle); }
+  .doc h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; letter-spacing: -0.02em; color: var(--text-strong); margin: 0 0 6px; }
+  .doc h2 .num { color: var(--accent); font-family: var(--font-mono); font-size: 16px; margin-right: 10px; }
+  .doc h3 { font-family: var(--font-mono); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 26px 0 12px; }
+  .doc p { font-family: var(--font-sans); font-size: 15px; line-height: 1.65; color: var(--text-body); margin: 0 0 14px; max-width: 70ch; }
+  .doc ul { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  .doc li { font-family: var(--font-sans); font-size: 15px; line-height: 1.55; color: var(--text-body); }
+  .doc li::marker { color: var(--accent); }
+  .doc code { font-family: var(--font-mono); font-size: 0.85em; background: var(--surface-inset); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 1px 6px; color: var(--ember-300); }
+  .doc a { text-decoration: underline; text-underline-offset: 2px; }
+  table.tbl { width: 100%; border-collapse: collapse; margin: 6px 0 16px; font-size: 13.5px; }
+  table.tbl th { text-align: left; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); font-weight: 500; padding: 8px 12px; border-bottom: 1px solid var(--border-strong); }
+  table.tbl td { font-family: var(--font-sans); color: var(--text-body); padding: 9px 12px; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+  table.tbl td code, table.tbl td .mono { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+  .status-done { color: var(--phosphor-300); }
+  .status-todo { color: var(--amber-500); }
+  .prompt { background: var(--void-1000); border: 1px solid var(--border-strong); border-left: 3px solid var(--accent); border-radius: var(--radius-md); padding: 16px 18px; margin: 0 0 14px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; color: var(--paper-200); white-space: pre-wrap; }
+  [data-theme="light"] .prompt { background: #14141b; color: #C9C8C2; }
+  .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin: 18px 0 0; }
+  .toc a { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); text-decoration: none; padding: 4px 0; }
+  .toc a:hover { color: var(--accent-hover); }
+  .toc a .n { color: var(--accent); margin-right: 8px; }
+  @media print { .site-header, .doc-back { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span></a>
+    <span class="header-spacer"></span>
+    <a class="nav__link doc-back" href="index.html">← back to site</a>
+  </div>
+</header>
+
+<main class="doc">
+
+  <div class="doc-hero">
+    <span class="eyebrow">// build hand-off · v1</span>
+    <h1>dhilipsiva.dev — build hand-off</h1>
+    <p>Everything a developer needs to assemble the site from these designs. Visuals come from the <strong>QUINE Design System</strong>; structure comes from the brief. The mockups are static HTML — production should template the shared chrome and inject content from the data shapes below.</p>
+    <nav class="toc">
+      <a href="#approach"><span class="n">01</span> Stack &amp; approach</a>
+      <a href="#ds"><span class="n">02</span> Design-system usage</a>
+      <a href="#pages"><span class="n">03</span> Pages &amp; templates</a>
+      <a href="#components"><span class="n">04</span> Component inventory</a>
+      <a href="#slots"><span class="n">05</span> Content slots / data shapes</a>
+      <a href="#responsive"><span class="n">06</span> Responsive &amp; a11y</a>
+      <a href="#prompts"><span class="n">07</span> Per-template build prompts</a>
+    </nav>
+  </div>
+
+  <!-- 01 -->
+  <section id="approach">
+    <h2><span class="num">01</span>Stack &amp; approach</h2>
+    <p>The mockups are intentionally <strong>static and JS-light</strong> to honor the brief's "avoid heavy client-side JavaScript / fast first paint" goal. Recommended build:</p>
+    <ul>
+      <li><strong>Any static-site generator</strong> (Astro, Eleventy, Hugo, Zola). Content as Markdown/MDX → the templates here.</li>
+      <li><strong>One stylesheet</strong>: <code>assets/quine.css</code> already bundles the QUINE tokens (<code>@import</code> of <code>tokens/*.css</code>) plus the component classes. Link it once per page.</li>
+      <li><strong>~30 lines of JS</strong> total (<code>assets/site.js</code>): theme persistence only. The mobile nav is a pure-CSS checkbox toggle and needs no JS. Everything degrades gracefully without scripts.</li>
+      <li><strong>Fonts</strong>: loaded from Google Fonts CDN via <code>tokens/fonts.css</code>. For production, self-host the four OFL families and swap the <code>@import</code> for local <code>@font-face</code>.</li>
+    </ul>
+    <h3>Files in this hand-off</h3>
+    <table class="tbl">
+      <tr><th>File</th><th>What it is</th></tr>
+      <tr><td><code>index.html</code></td><td>Home / landing (terminal-forward hero)</td></tr>
+      <tr><td><code>things-i-built.html</code></td><td>Projects — segmented personal / professional grid</td></tr>
+      <tr><td><code>single-musing.html</code></td><td>Long-form reading template (the key reading layout)</td></tr>
+      <tr><td><code>hero-explorations.html</code></td><td>3 hero directions for review — not a site page</td></tr>
+      <tr><td><code>assets/quine.css</code></td><td>QUINE tokens + component classes + site composition</td></tr>
+      <tr><td><code>assets/site.js</code></td><td>Theme-toggle persistence (progressive enhancement)</td></tr>
+      <tr><td><code>assets/mark.svg</code> · <code>covers/*.svg</code></td><td>Logo mark; typographic placeholder book covers</td></tr>
+    </table>
+  </section>
+
+  <!-- 02 -->
+  <section id="ds">
+    <h2><span class="num">02</span>Design-system usage</h2>
+    <p>Use the QUINE classes directly — do not restyle. The vocabulary in play:</p>
+    <ul>
+      <li><strong>Buttons</strong>: <code>.q-btn</code> + <code>.q-btn--primary|secondary|ghost</code> + size <code>--lg|--sm</code>. Exactly one primary per view.</li>
+      <li><strong>Cards</strong>: <code>.q-card</code>, with <code>--marked</code> (2px ember top-rule = "active/featured"), <code>--grid</code> (blueprint background), <code>--interactive</code>/<code>--glow</code> (hover).</li>
+      <li><strong>Badges</strong>: <code>.q-badge--alive</code> (active/live, phosphor) · <code>--ember</code> (status/version) · <code>--neutral</code> (shipped) · <code>--warning</code> (archived) · <code>--symbol</code> (Wasm/Web3).</li>
+      <li><strong>Eyebrows</strong>: the <code>// comment</code> prefix (<code>.eyebrow</code> / <code>.comment</code>) is the connective tissue. Use lowercase.</li>
+      <li><strong>Iconography</strong>: math/logic Unicode glyphs (<code>∴ ∀ λ ⊢ ⇄ ∇ ≡</code>) in mono are the primary icon language; Lucide line-icons for conventional UI affordances. <strong>No emoji.</strong></li>
+      <li><strong>Voice</strong>: dry, precise, quietly hopeful. Numbers are heroes (<code>38ms</code>, <code>5/5 ack</code>, <code>12kB</code>). The Camus register ("one must imagine the cluster happy") used once per surface.</li>
+    </ul>
+  </section>
+
+  <!-- 03 -->
+  <section id="pages">
+    <h2><span class="num">03</span>Pages &amp; templates</h2>
+    <p>The 9 primary pages plus 5 supporting templates from the brief. Designed in this hand-off are marked <span class="status-done">done</span>; the rest are <span class="status-todo">to design</span> next and reuse the same components.</p>
+    <table class="tbl">
+      <tr><th>Template</th><th>Type</th><th>Status</th><th>Reuses</th></tr>
+      <tr><td>Home</td><td>landing</td><td class="status-done">done</td><td>hero, project card, book, teaser, now strip, social row</td></tr>
+      <tr><td>Things I Built</td><td>index</td><td class="status-done">done</td><td>section header, project card, pills</td></tr>
+      <tr><td>Single Musing</td><td>single</td><td class="status-done">done</td><td>prose, code, figure, footnotes, breadcrumb, prev/next</td></tr>
+      <tr><td>Books</td><td>index</td><td class="status-todo">to design</td><td>book card (authored + reviewed variants)</td></tr>
+      <tr><td>Musings index</td><td>index</td><td class="status-todo">to design</td><td>post-list item, pagination, pinned treatment, RSS</td></tr>
+      <tr><td>Tag archive</td><td>archive</td><td class="status-todo">to design</td><td>post-list item + tag heading + count</td></tr>
+      <tr><td>About</td><td>single</td><td class="status-todo">to design</td><td>prose, timeline, skill tags, portrait slot</td></tr>
+      <tr><td>Now</td><td>single</td><td class="status-todo">to design</td><td>dated single-column, grouped slots</td></tr>
+      <tr><td>Uses</td><td>index</td><td class="status-todo">to design</td><td>uses-list item, category groups</td></tr>
+      <tr><td>Talks</td><td>index</td><td class="status-todo">to design</td><td>talk item, empty-state</td></tr>
+      <tr><td>Contact</td><td>single</td><td class="status-todo">to design</td><td>contact form (+ states), social row, location</td></tr>
+      <tr><td>Single Project</td><td>single</td><td class="status-todo">to design</td><td>prose + problem/approach/outcome + diagram slot</td></tr>
+      <tr><td>Single Book</td><td>single</td><td class="status-todo">to design</td><td>book meta + prose review (reuses Musing prose)</td></tr>
+      <tr><td>404</td><td>utility</td><td class="status-todo">to design</td><td>voice-led message + nav-back links</td></tr>
+    </table>
+  </section>
+
+  <!-- 04 -->
+  <section id="components">
+    <h2><span class="num">04</span>Component inventory</h2>
+    <table class="tbl">
+      <tr><th>Component</th><th>Class / markup</th><th>States &amp; variants</th></tr>
+      <tr><td>Header / nav</td><td><code>.site-header</code> + <code>.nav</code></td><td>sticky glass; <code>aria-current="page"</code>; mobile = CSS checkbox <code>#nav-switch</code> drawer</td></tr>
+      <tr><td>Footer</td><td><code>.site-footer</code></td><td>brand + tagline, Site / More columns, social row, RSS, copyright</td></tr>
+      <tr><td>Social-icon row</td><td><code>.social-row</code></td><td>GitHub, LinkedIn, Stack Overflow, Medium, Email, RSS — hover → ember</td></tr>
+      <tr><td>Tag / pill</td><td><code>.pill</code></td><td>default, <code>:hover</code>, <code>.pill--active</code></td></tr>
+      <tr><td>Project card</td><td><code>.proj-card</code> in <code>.q-card--marked</code></td><td>glyph, status badge, tech pills, role, links; featured = 3-up on Home</td></tr>
+      <tr><td>Book card</td><td><code>.feat-book</code> / <code>.book-card</code></td><td>authored (status badge) vs reviewed (author + rating) variant</td></tr>
+      <tr><td>Post-list item</td><td><code>.post-item</code> / <code>.teaser</code></td><td>date, tags, excerpt, reading time; <code>--pinned</code> featured treatment</td></tr>
+      <tr><td>Section header</td><td><code>.sec-head</code></td><td>eyebrow + title + optional intro + "see all" link</td></tr>
+      <tr><td>Button / CTA</td><td><code>.q-btn--primary|secondary|ghost</code></td><td>sizes; hover ember glow; 1px press nudge</td></tr>
+      <tr><td>Breadcrumb</td><td><code>.breadcrumb</code></td><td>single &amp; archive pages</td></tr>
+      <tr><td>Prev / next</td><td><code>.prev-next</code> / <code>.pn-card</code></td><td>post footer navigation</td></tr>
+      <tr><td>Prose</td><td><code>.prose</code></td><td>h2–h4, lists, blockquote, code, inline code, figure, footnotes, <code>:lang(ta)</code> Tamil</td></tr>
+      <tr><td>Image / cover slot</td><td><code>.img-slot</code></td><td>dashed blueprint placeholder with label; swap for real <code>&lt;img&gt;</code></td></tr>
+      <tr><td>Contact form</td><td><code>.q-field</code> / <code>.q-input</code></td><td><em>to design</em>: default, focus, error, success states</td></tr>
+      <tr><td>Pagination</td><td><em>to design</em></td><td>mono page numbers + prev/next, ember current</td></tr>
+    </table>
+  </section>
+
+  <!-- 05 -->
+  <section id="slots">
+    <h2><span class="num">05</span>Content slots / data shapes</h2>
+    <p>Every dynamic region in the HTML is marked with an <code>&lt;!-- SLOT: … --&gt;</code> comment naming its fields. The repeating entities:</p>
+    <table class="tbl">
+      <tr><th>Entity</th><th>Fields</th></tr>
+      <tr><td>Project</td><td class="mono">title, slug, description, longDescription?, tech[], role, status (active|shipped|archived), links{repo,live,writeup}, category (personal|professional), featured, glyph, image?</td></tr>
+      <tr><td>Book</td><td class="mono">title, slug, kind (authored|reviewed), cover, status (in-progress|published|upcoming) | author, blurb, rating?, link, featured</td></tr>
+      <tr><td>Post (Musing)</td><td class="mono">title, slug, date, tags[], excerpt, readingTime, body, heroImage?, pinned</td></tr>
+      <tr><td>Talk</td><td class="mono">title, event, date, links{slides,video,page}, description?</td></tr>
+      <tr><td>Uses entry</td><td class="mono">category, name, link?, note?</td></tr>
+      <tr><td>Now</td><td class="mono">lastUpdated, sections[]{label, items}</td></tr>
+    </table>
+    <p>Per-page SEO slots are present in each <code>&lt;head&gt;</code>: <code>&lt;title&gt;</code>, meta description, and an OG/social-share image placeholder. The Musings index needs an <code>application/rss+xml</code> <code>&lt;link&gt;</code> (already stubbed on Home).</p>
+  </section>
+
+  <!-- 06 -->
+  <section id="responsive">
+    <h2><span class="num">06</span>Responsive &amp; accessibility</h2>
+    <h3>Breakpoints</h3>
+    <ul>
+      <li><strong>Nav</strong>: collapses to the CSS checkbox drawer at <code>≤ 860px</code>.</li>
+      <li><strong>Project grid</strong>: 3-up → 2-up → 1-up. Set in <code>.proj-grid</code> media queries (1-col at <code>≤ 760px</code>).</li>
+      <li><strong>Reading layout</strong>: capped at <code>--read-max: 720px</code>; the post-item date column stacks below <code>640px</code>; hero h1 steps down at <code>900px</code> / <code>640px</code>.</li>
+      <li><strong>Footer</strong>: 3-col → 2-col at <code>720px</code> with brand spanning full width.</li>
+    </ul>
+    <h3>Accessibility (WCAG AA)</h3>
+    <ul>
+      <li>Skip-link, semantic landmarks (<code>header/main/footer/nav</code>), and <code>aria-current</code> / <code>aria-label</code> throughout.</li>
+      <li>Focus is the 2px offset ember ring (<code>--ring</code>) from the DS — keep it; don't remove outlines.</li>
+      <li>All <code>.img-slot</code>s carry a <code>role="img"</code> + label; replace with real <code>alt</code> text — alt is a required slot.</li>
+      <li>Mixed-script paragraphs use <code>lang</code> attributes; Tamil gets extra line-height via <code>:lang(ta)</code>.</li>
+      <li>Motion (cursor blink, tab underline) collapses under <code>prefers-reduced-motion</code> via the DS motion tokens.</li>
+    </ul>
+  </section>
+
+  <!-- 07 -->
+  <section id="prompts">
+    <h2><span class="num">07</span>Per-template build prompts</h2>
+    <p>Drop-in prompts to generate the remaining templates in the same system. Each assumes <code>quine.css</code> + the shared header/footer are already linked.</p>
+
+    <h3>Books</h3>
+    <div class="prompt">Build books.html using quine.css and the shared header/footer. Two sections with .sec-head eyebrows "// writing" and "// reviews &amp; reading". Section 1: authored books in a .book-grid of .book-card (cover img, .q-badge--ember status, title, blurb, "Read a chapter" .q-btn). Section 2: reviewed books — same .book-card but show author + an optional rating marker (★ in mono) and a "Read review" link to single-book.html. Use covers from assets/covers/. Voice: dry, precise.</div>
+
+    <h3>Musings index + tag archive</h3>
+    <div class="prompt">Build musings.html: a .post-list of .post-item (date column, title link to single-musing.html, tag pills, excerpt, reading time). Allow one .post-item--pinned at top. Add an RSS affordance in the .sec-head ("// musings" + "Subscribe · RSS"). Add pagination at the bottom: mono page numbers with the current one in ember, prev/next .q-btn--ghost. tag-archive.html is the same list scoped to one tag, with an &lt;h1&gt; "#tag-name" and a post count below it, plus a breadcrumb.</div>
+
+    <h3>About</h3>
+    <div class="prompt">Build about.html: a two-column intro (portrait .img-slot + bio in .prose), then a "// philosophy" section for the Optimistic-Nihilist worldview as a serif pull-quote + prose, then an experience timeline (vertical list: role, org, dates, one-line desc — use a 2px ember left-rule per entry), then grouped skill/domain pills, then interests + languages, then a CTA to Contact with an optional résumé link.</div>
+
+    <h3>Contact (with form states)</h3>
+    <div class="prompt">Build contact.html: email dhilipsiva@pm.me shown large in mono with a copy button, the full .social-row, location "Bangalore, India" + an availability note slot, then a contact form using .q-field/.q-input (name, email, textarea message) with a primary submit. Design three states inline as labeled frames: default, error (use .q-input--error + .q-field__hint--error), and success (a .q-callout--ok "Sent. I'll reply when the quorum settles."). Note for build: wire to mailto or a form service.</div>
+
+    <h3>Now · Uses · Talks · Single Project · Single Book · 404</h3>
+    <div class="prompt">Now: dated single-column, prominent "last updated" in mono near top, grouped sections (building / writing / reading / role). Uses: categorized .uses-list (Hardware, OS &amp; Env, Editor &amp; Terminal, Languages &amp; Tools, Services) — item name + link + one-line note per row. Talks: .talk-item list (title, event, date, slides/video/page links) + a speaking-availability note; empty-state friendly. Single Project: prose case study with Problem → Approach → Outcome headings + a diagram .img-slot + tech pills + links. Single Book: book meta header + .prose review reusing the Musing prose styles. 404: voice-led — "⊥ halt. this path has no fixed point." + links back to Home / Musings / Things I Built.</div>
+  </section>
+
+  <div style="height:48px"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__bottom" style="border-top:none">
+      <span>© 2026 dhilipsiva · build hand-off v1 · the void, organized</span>
+      <span class="sp"></span>
+      <a href="index.html">← back to site</a>
+    </div>
+  </div>
+</footer>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="22" fill="#0B0B10"></rect><g stroke="#F2542D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M44 42 L60 60 L44 78"></path><path d="M76 42 L60 60 L76 78"></path></g><circle cx="60" cy="86" r="5" fill="#38E3A6"></circle></svg>
+</template>
+
+</body>
+</html>

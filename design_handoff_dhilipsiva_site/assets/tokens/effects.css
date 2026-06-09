@@ -1,0 +1,38 @@
+/* QUINE — Effects: radii, borders, shadows, glows, blur.
+ * Engineered & sharp. Small radii. Shadows are subtle in the void; the
+ * signature lift is a colored GLOW, not a soft drop shadow.
+ */
+:root {
+  /* ── Radii — kept tight; this is precision instrumentation ────────── */
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   10px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+
+  /* ── Border widths ────────────────────────────────────────────────── */
+  --border-hair: 1px;
+  --border-bold: 2px;
+
+  /* ── Elevation in the void — restrained, cool ─────────────────────── */
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-2: 0 4px 14px rgba(0,0,0,0.45);
+  --shadow-3: 0 18px 48px rgba(0,0,0,0.55);
+
+  /* ── Glows — the optimistic light source. Use on accent/alive items ─ */
+  --glow-ember:    0 0 0 1px color-mix(in oklab, var(--ember-500) 50%, transparent),
+                   0 6px 28px color-mix(in oklab, var(--ember-500) 32%, transparent);
+  --glow-phosphor: 0 0 0 1px color-mix(in oklab, var(--phosphor-500) 45%, transparent),
+                   0 6px 26px color-mix(in oklab, var(--phosphor-500) 28%, transparent);
+
+  /* ── Focus ring — ember, always 2px, always offset ────────────────── */
+  --ring: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--ember-500);
+
+  /* ── Blur (glass over the void) ───────────────────────────────────── */
+  --blur-glass: saturate(1.1) blur(14px); /* @kind other */
+
+  /* ── The blueprint grid: a reusable background for engineered panels ─ */
+  --bg-grid: linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 24px,
+             linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 24px 100%;
+}

@@ -1,0 +1,26 @@
+/* QUINE — Motion. Crisp and deterministic, with one optimistic spring.
+ * Nihilist precision; optimist bounce — reserved for confirmations.
+ * Durations and easings are uncategorized tokens (@kind other).
+ */
+:root {
+  /* durations */
+  --dur-instant: 80ms; /* @kind other */
+  --dur-fast: 140ms; /* @kind other */
+  --dur-normal: 220ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+
+  /* easings */
+  --ease-out: cubic-bezier(0.20, 0.80, 0.20, 1.00); /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0.00, 0.35, 1.00); /* @kind other */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.00); /* @kind other */
+  --ease-linear: linear; /* @kind other */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms; /* @kind other */
+    --dur-fast: 0ms; /* @kind other */
+    --dur-normal: 0ms; /* @kind other */
+    --dur-slow: 0ms; /* @kind other */
+  }
+}

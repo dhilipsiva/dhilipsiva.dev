@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}#{{ term.name }} — Musings — {{ config.title }}{% endblock title %}
+{% block description %}Musings tagged #{{ term.name }} by dhilipsiva.{% endblock description %}
+
+{% block content %}
+<section class="section" style="padding-top:40px">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">home</a><span class="sep">/</span>
+      <a href="/musings/">musings</a><span class="sep">/</span>
+      <a href="/tags/">tags</a><span class="sep">/</span>
+      <span>#{{ term.name }}</span>
+    </nav>
+    <h1 style="font-family:var(--font-mono);font-weight:600;font-size:40px;letter-spacing:-0.02em;color:var(--text-strong);margin:18px 0 6px"><span style="color:var(--text-faint)">#</span>{{ term.name }}</h1>
+    <p class="comment" style="margin:0 0 28px">{{ term.pages | length }} post{{ term.pages | length | pluralize }}</p>
+
+    <div class="post-list">
+      {% for p in term.pages %}{{ m::post_item(page=p) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock content %}

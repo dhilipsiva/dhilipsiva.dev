@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SLOT: page <title> + meta description + OG image per page -->
+<title>dhilipsiva — software architect, builder, optimistic nihilist</title>
+<meta name="description" content="The personal site of dhilipsiva — software architect and open-source builder working in Rust, Python, distributed systems, WebAssembly, and symbolic reasoning.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="alternate" type="application/rss+xml" title="Musings" href="#rss">
+<link rel="stylesheet" href="assets/quine.css">
+<!-- apply saved theme before paint, no FOUC -->
+<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============================== HEADER ============================== -->
+<header class="site-header">
+  <input type="checkbox" id="nav-switch" class="nav-switch" aria-hidden="true" tabindex="-1">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="dhilipsiva — home">
+      <img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="index.html" aria-current="page">Home</a>
+      <a class="nav__link" href="things-i-built.html">Things I Built</a>
+      <a class="nav__link" href="#books">Books</a>
+      <a class="nav__link" href="#musings">Musings</a>
+      <a class="nav__link" href="#about">About</a>
+      <a class="nav__link" href="#now">Now</a>
+      <a class="nav__link" href="#uses">Uses</a>
+      <a class="nav__link" href="#talks">Talks</a>
+      <a class="nav__link" href="#contact">Contact</a>
+    </nav>
+    <span class="header-spacer"></span>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle light / dark theme" aria-pressed="false">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <label for="nav-switch" class="icon-btn nav-toggle" aria-label="Toggle menu">
+        <svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </label>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============================== HERO =============================== -->
+<!-- Default hero: "terminal-forward". Alternatives explored in hero-explorations.html -->
+<header class="hero" data-screen-label="Home / hero">
+  <div class="hero__grid"></div>
+  <div class="container hero__inner">
+    <div>
+      <span class="hero__eyebrow"><span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>available for the right problem</span> Bangalore, IN</span>
+      <h1>I build systems<br>that outlive their <em>meaning.</em></h1>
+      <!-- SLOT: tagline (verbatim, do not edit) -->
+      <p class="hero__tagline">An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning.</p>
+      <!-- SLOT: intro (1–2 sentences) -->
+      <p class="hero__intro">Software architect, lifelong builder. I care about correctness, freedom, and code that still makes sense in a decade. Not an entrepreneur — I just want to build the things.</p>
+      <div class="hero__actions">
+        <a class="q-btn q-btn--primary q-btn--lg" href="things-i-built.html">Things I built</a>
+        <a class="q-btn q-btn--secondary q-btn--lg" href="#musings">Read the Musings</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="#contact">Get in touch →</a>
+      </div>
+    </div>
+
+    <!-- whoami terminal: identity as structured output -->
+    <div class="term" role="img" aria-label="Terminal showing a whoami summary of dhilipsiva">
+      <div class="term__bar">
+        <span class="term__dot" style="background:var(--crimson-500)"></span>
+        <span class="term__dot" style="background:var(--amber-500)"></span>
+        <span class="term__dot" style="background:var(--phosphor-500)"></span>
+        <span class="term__title">~/dhilipsiva — zsh</span>
+      </div>
+      <div class="term__body"><span class="c-prompt">~ ❯</span> <span class="c-fn">whoami</span> --verbose
+<span class="c-com"># resolving fixed point…</span>
+
+  <span class="c-key">name</span><span class="c-pun">    =</span> <span class="c-str">"dhilipsiva"</span>
+  <span class="c-key">role</span><span class="c-pun">    =</span> <span class="c-str">"Software Architect"</span>  <span class="c-com">// prev: VP of Engineering</span>
+  <span class="c-key">loc</span><span class="c-pun">     =</span> <span class="c-str">"Bangalore, India"</span>
+  <span class="c-key">langs</span><span class="c-pun">   =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">,</span> <span class="c-type">Tamil</span><span class="c-pun">]</span>
+  <span class="c-key">believes</span><span class="c-pun">=</span> <span class="c-str">"nothing is owed. build anyway."</span>
+
+<span class="c-prompt">~ ❯</span> fixpoint <span class="c-fn">eval</span><span class="c-pun">(</span>self<span class="c-pun">)</span>
+<span class="c-out">  ∴ eval(self) = self        </span><span class="c-str">5/5 ack · 38ms</span><span class="c-out"> ✓</span>
+<span class="c-prompt">~ ❯</span> <span class="q-cursor"></span></div>
+    </div>
+  </div>
+</header>
+
+<!-- =========================== FEATURED PROJECTS ===================== -->
+<section class="section" id="built-strip" data-screen-label="Home / featured projects">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// things i built</span>
+        <h2 class="sec-head__title">A few things worth pointing at</h2>
+      </div>
+      <a class="see-all" href="things-i-built.html">See all →</a>
+    </div>
+
+    <!-- reuses .proj-card; featured = 3 across -->
+    <div class="proj-grid proj-grid--3">
+      <!-- SLOT: Project × 3 — {title, glyph, desc, role, status, tech[], links{repo,live,writeup}} -->
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">∴</span>
+          <span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>active</span>
+        </div>
+        <h3 class="proj-card__title">axiom</h3>
+        <p class="proj-card__desc">A symbolic-reasoning kernel in Rust that compiles proofs to a 12kB Wasm core. Express invariants as logic; it checks them before they run.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Architected &amp; built</span> · <span>open-source</span></div>
+        <div class="proj-card__tags tag-row">
+          <span class="pill">Rust</span><span class="pill">WASM</span><span class="pill">Logic</span>
+        </div>
+        <div class="proj-card__links">
+          <a href="#repo">{ } source</a>
+          <a href="#writeup">∴ write-up</a>
+        </div>
+      </article>
+
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">⇄</span>
+          <span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>active</span>
+        </div>
+        <h3 class="proj-card__title">gossipd</h3>
+        <p class="proj-card__desc">A broker-less peer-to-peer mesh over WebRTC. Nodes find each other and agree directly — no central server, no single point of failure, no rent.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Architected &amp; built</span> · <span>open-source</span></div>
+        <div class="proj-card__tags tag-row">
+          <span class="pill">Rust</span><span class="pill">WebRTC</span><span class="pill">Distributed</span>
+        </div>
+        <div class="proj-card__links">
+          <a href="#repo">{ } source</a>
+          <a href="#live">→ live</a>
+        </div>
+      </article>
+
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">λ</span>
+          <span class="q-badge q-badge--neutral">shipped</span>
+        </div>
+        <h3 class="proj-card__title">quine.py</h3>
+        <p class="proj-card__desc">A tiny self-hosting interpreter that evaluates to itself. A teaching toy about fixed points, recursion, and programs that read their own source.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Built</span> · <span>open-source</span></div>
+        <div class="proj-card__tags tag-row">
+          <span class="pill">Python</span><span class="pill">Interpreters</span>
+        </div>
+        <div class="proj-card__links">
+          <a href="#repo">{ } source</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== FEATURED BOOK ======================== -->
+<section class="section" style="padding-top:0" id="books" data-screen-label="Home / featured book">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// from the bookshelf</span>
+        <h2 class="sec-head__title">What I'm writing</h2>
+      </div>
+      <a class="see-all" href="#books-page">All books →</a>
+    </div>
+
+    <!-- SLOT: featured Book — {cover, title, status, blurb, link} -->
+    <article class="q-card q-card--grid feat-book">
+      <div class="feat-book__cover">
+        <img src="assets/covers/fixed-point-of-thought.svg" alt="Cover: The Fixed Point of Thought">
+      </div>
+      <div>
+        <span class="q-badge q-badge--ember">in progress</span>
+        <h3 class="feat-book__title">The Fixed Point of Thought</h3>
+        <p class="feat-book__blurb">A working book on symbolic reasoning for builders — how logic, recursion, and self-reference become real systems. Equal parts Gödel, Rust, and lab notebook. Drafting in the open.</p>
+        <div class="row">
+          <a class="q-btn q-btn--primary" href="#book">Read a chapter</a>
+          <a class="q-btn q-btn--ghost" href="#books-page">All books →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- =========================== LATEST MUSINGS ======================= -->
+<section class="section" style="padding-top:0" id="musings" data-screen-label="Home / latest musings">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// musings</span>
+        <h2 class="sec-head__title">Latest from the notebook</h2>
+        <p class="sec-head__intro">Long-running thoughts on building, logic, freedom, and the occasional detour into Tamil and philosophy of mind.</p>
+      </div>
+      <a class="see-all" href="#musings-index">See all · RSS →</a>
+    </div>
+
+    <!-- SLOT: 3 most-recent Posts — reuses .teaser ({title, date, excerpt}) -->
+    <div class="post-list">
+      <a class="teaser" href="single-musing.html">
+        <div class="teaser__row">
+          <h3 class="teaser__title">On building things that outlive their meaning</h3>
+          <span class="teaser__date">2026-05-28</span>
+        </div>
+        <p class="teaser__excerpt">The universe doesn't owe your software a reason to exist. That's not despair — it's the most freeing license a builder can be handed. A note on authoring your own fixed point.</p>
+      </a>
+      <a class="teaser" href="single-musing.html">
+        <div class="teaser__row">
+          <h3 class="teaser__title">Gödel, the halting problem, and why I sleep fine</h3>
+          <span class="teaser__date">2026-04-11</span>
+        </div>
+        <p class="teaser__excerpt">Incompleteness is not a bug report against reality. What undecidability actually means for the systems we build — and the strange comfort in provable limits.</p>
+      </a>
+      <a class="teaser" href="single-musing.html">
+        <div class="teaser__row">
+          <h3 class="teaser__title">தமிழில் நிரலாக்கம் — thinking in two scripts</h3>
+          <span class="teaser__date">2026-03-02</span>
+        </div>
+        <p class="teaser__excerpt">Notes on writing, reading, and reasoning across English and Tamil — and what bilingual thought taught me about naming things in code.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== NOW TEASER =========================== -->
+<section class="section--tight" id="now" data-screen-label="Home / now teaser">
+  <div class="container">
+    <!-- SLOT: Now summary — pulls from the Now page -->
+    <article class="q-card now-strip">
+      <span class="eyebrow">// now</span>
+      <div class="now-strip__items">
+        <span class="now-strip__item"><span class="k">building</span> &nbsp;<b>axiom v0.5</b></span>
+        <span class="now-strip__item"><span class="k">reading</span> &nbsp;<b>Gödel, Escher, Bach</b> (again)</span>
+        <span class="now-strip__item"><span class="k">writing</span> &nbsp;<b>The Fixed Point of Thought</b></span>
+        <span class="now-strip__item"><span class="k">role</span> &nbsp;<b>Software Architect</b></span>
+      </div>
+      <a class="see-all" href="#now-page">What I'm doing now →</a>
+    </article>
+  </div>
+</section>
+
+<!-- =========================== SOCIAL ROW =========================== -->
+<section class="section--tight" data-screen-label="Home / social row">
+  <div class="container">
+    <div class="row" style="justify-content:space-between">
+      <p class="lead" style="margin:0;max-width:42ch">Find me where the source lives.</p>
+      <div class="social-row" aria-label="Social links">
+        <a href="#github" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56v-2c-3.34.71-4.04-1.6-4.04-1.6-.55-1.36-1.33-1.72-1.33-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.66 1.65.24 2.87.12 3.17.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"></path></svg></a>
+        <a href="#linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9z"></path></svg></a>
+        <a href="#stackoverflow" aria-label="Stack Overflow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.36 20.2v-5.38h1.79V22H3v-7.18h1.8v5.38zM6.77 14.32l8.78 1.84.37-1.76-8.78-1.84zm1.16-4.21 8.13 3.79.76-1.62-8.13-3.8zm2.26-3.99 6.9 5.74 1.15-1.38-6.9-5.74zM14.66 1l-1.46 1.08 5.34 7.19 1.46-1.08zM6.59 18.41h8.97v-1.8H6.59z"></path></svg></a>
+        <a href="#medium" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.37 7.5c0-.2-.08-.39-.23-.52L2.6 5.2V5h4.46l3.45 7.57L13.62 5H18v.2l-1.3 1.25c-.11.08-.17.23-.14.37v9.36c-.03.14.03.29.14.37l1.27 1.25V18h-6.4v-.2l1.32-1.28c.13-.13.13-.17.13-.37V8.6l-3.67 9.34h-.5L4.4 8.6v6.26c-.04.27.05.54.24.73l1.72 2.08V18H2v-.2l1.72-2.08c.19-.19.27-.46.22-.73z"></path></svg></a>
+        <a href="mailto:dhilipsiva@pm.me" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm.4 2 8.6 5.73L20.6 7zM20 9.07l-7.45 4.96a1 1 0 0 1-1.1 0L4 9.07V17h16z"></path></svg></a>
+        <a href="#rss" aria-label="RSS feed"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9h-2.6A6.4 6.4 0 0 0 4 13.6zm0-5a14 14 0 0 1 14 14h-2.6A11.4 11.4 0 0 0 4 8.6zM6.2 17.8a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0z"></path></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================== FOOTER ============================= -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a class="brand" href="index.html"><img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span></a>
+        <p class="site-footer__tag">Build systems that outlive their meaning. One must imagine the compiler happy.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Site</h4>
+        <ul>
+          <li><a href="things-i-built.html">Things I Built</a></li>
+          <li><a href="#books">Books</a></li>
+          <li><a href="#musings">Musings</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>More</h4>
+        <ul>
+          <li><a href="#now">Now</a></li>
+          <li><a href="#uses">Uses</a></li>
+          <li><a href="#talks">Talks</a></li>
+          <li><a href="#rss">RSS feed</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <div class="social-row" aria-label="Social links">
+        <a href="#github" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56v-2c-3.34.71-4.04-1.6-4.04-1.6-.55-1.36-1.33-1.72-1.33-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.66 1.65.24 2.87.12 3.17.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"></path></svg></a>
+        <a href="#linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9z"></path></svg></a>
+        <a href="#stackoverflow" aria-label="Stack Overflow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.36 20.2v-5.38h1.79V22H3v-7.18h1.8v5.38zM6.77 14.32l8.78 1.84.37-1.76-8.78-1.84zm1.16-4.21 8.13 3.79.76-1.62-8.13-3.8zm2.26-3.99 6.9 5.74 1.15-1.38-6.9-5.74zM14.66 1l-1.46 1.08 5.34 7.19 1.46-1.08zM6.59 18.41h8.97v-1.8H6.59z"></path></svg></a>
+        <a href="#medium" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.37 7.5c0-.2-.08-.39-.23-.52L2.6 5.2V5h4.46l3.45 7.57L13.62 5H18v.2l-1.3 1.25c-.11.08-.17.23-.14.37v9.36c-.03.14.03.29.14.37l1.27 1.25V18h-6.4v-.2l1.32-1.28c.13-.13.13-.17.13-.37V8.6l-3.67 9.34h-.5L4.4 8.6v6.26c-.04.27.05.54.24.73l1.72 2.08V18H2v-.2l1.72-2.08c.19-.19.27-.46.22-.73z"></path></svg></a>
+        <a href="mailto:dhilipsiva@pm.me" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm.4 2 8.6 5.73L20.6 7zM20 9.07l-7.45 4.96a1 1 0 0 1-1.1 0L4 9.07V17h16z"></path></svg></a>
+        <a href="#rss" aria-label="RSS feed"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9h-2.6A6.4 6.4 0 0 0 4 13.6zm0-5a14 14 0 0 1 14 14h-2.6A11.4 11.4 0 0 0 4 8.6zM6.2 17.8a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0z"></path></svg></a>
+      </div>
+      <span class="sp"></span>
+      <span>© <span id="yr">2026</span> dhilipsiva · the void, organized</span>
+      <span>·</span>
+      <span>built with care · <a href="#source">open source</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+
+<!-- thumbnail for offline bundling -->
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="22" fill="#0B0B10"></rect><g stroke="#F2542D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M44 42 L60 60 L44 78"></path><path d="M76 42 L60 60 L76 78"></path></g><circle cx="60" cy="86" r="5" fill="#38E3A6"></circle></svg>
+</template>
+
+</body>
+</html>

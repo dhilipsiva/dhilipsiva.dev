@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Tags — Musings — {{ config.title }}{% endblock title %}
+{% block description %}Browse musings by tag.{% endblock description %}
+
+{% block content %}
+<section class="section" style="padding-top:40px">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">home</a><span class="sep">/</span>
+      <a href="/musings/">musings</a><span class="sep">/</span>
+      <span>tags</span>
+    </nav>
+    <span class="eyebrow" style="display:block;margin-top:18px">// musings · tags</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:40px;letter-spacing:-0.03em;color:var(--text-strong);margin:10px 0 24px">Tags</h1>
+    <div class="tag-row" style="gap:10px">
+      {% for t in terms %}
+        <a class="pill" href="{{ t.permalink }}"><span class="pill__hash">#</span>{{ t.name }} <span style="color:var(--text-faint)">· {{ t.pages | length }}</span></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}Books — {{ config.title }}{% endblock title %}
+{% block description %}Books dhilipsiva is writing and reviewing — symbolic reasoning, WebAssembly, and the ideas worth a shelf.{% endblock description %}
+
+{% block content %}
+{% set authored = section.pages | filter(attribute="extra.kind", value="authored") %}
+{% set reviewed = section.pages | filter(attribute="extra.kind", value="reviewed") %}
+
+<section class="section--tight" style="padding-top:48px">
+  <div class="container">
+    <span class="eyebrow">// books</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 16px;line-height:1.05">Books</h1>
+    <p class="lead" style="max-width:62ch">{{ section.extra.intro }}</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:16px">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// writing</span>
+        <h2 class="sec-head__title">What I'm writing</h2>
+        <p class="sec-head__intro">Drafting in the open. Equal parts lab notebook and argument.</p>
+      </div>
+    </div>
+    <div class="book-grid">
+      {% for b in authored %}{{ m::book_card(page=b) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// reviews &amp; reading</span>
+        <h2 class="sec-head__title">Books worth a shelf</h2>
+        <p class="sec-head__intro">The ones that rearranged how I think — with notes.</p>
+      </div>
+    </div>
+    <div class="book-grid">
+      {% for b in reviewed %}{{ m::book_card(page=b) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock content %}

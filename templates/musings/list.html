@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}Musings — {{ config.title }}{% endblock title %}
+{% block description %}Long-running thoughts on building, logic, freedom, Tamil, and philosophy of mind — by dhilipsiva.{% endblock description %}
+
+{% block content %}
+<section class="section" style="padding-top:48px">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// musings</span>
+        <h1 class="sec-head__title" style="font-size:46px;letter-spacing:-0.035em">Musings</h1>
+        <p class="sec-head__intro">{{ section.extra.intro }}</p>
+      </div>
+      <a class="see-all" href="/musings/rss.xml">Subscribe · RSS →</a>
+    </div>
+
+    <div class="post-list">
+      {# Section.pages is empty under pagination — iterate paginator.pages.
+         Render pinned posts first on page 1, then the rest in date order. #}
+      {% if paginator.current_index == 1 %}
+        {% for p in paginator.pages %}{% if p.extra.pinned %}{{ m::post_item(page=p, pinned=true) }}{% endif %}{% endfor %}
+      {% endif %}
+      {% for p in paginator.pages %}
+        {% if not p.extra.pinned or paginator.current_index != 1 %}{{ m::post_item(page=p) }}{% endif %}
+      {% endfor %}
+    </div>
+
+    {% if paginator.number_pagers > 1 %}
+    <nav class="row" style="justify-content:center;gap:14px;margin-top:44px" aria-label="Pagination">
+      {% if paginator.previous %}<a class="q-btn q-btn--ghost q-btn--sm" href="{{ paginator.previous }}">← Prev</a>{% endif %}
+      <span class="row mono" style="gap:12px">
+      {% for i in range(start=1, end=paginator.number_pagers + 1) %}
+        {% if i == paginator.current_index %}<span style="color:var(--accent)">{{ i }}</span>
+        {% else %}<a href="{% if i == 1 %}{{ paginator.base_url }}{% else %}{{ paginator.base_url }}page/{{ i }}/{% endif %}" style="color:var(--text-muted)">{{ i }}</a>{% endif %}
+      {% endfor %}
+      </span>
+      {% if paginator.next %}<a class="q-btn q-btn--ghost q-btn--sm" href="{{ paginator.next }}">Next →</a>{% endif %}
+    </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

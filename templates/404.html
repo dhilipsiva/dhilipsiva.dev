@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}404 — no fixed point — {{ config.title }}{% endblock title %}
+{% block description %}This path has no fixed point.{% endblock description %}
+
+{% block content %}
+<section class="section" style="padding-top:96px;padding-bottom:96px">
+  <div class="container container--read" style="text-align:center">
+    <p class="mono" style="font-size:48px;color:var(--accent);margin:0 0 18px;line-height:1">⊥</p>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:34px;letter-spacing:-0.02em;color:var(--text-strong);margin:0 0 12px">halt. this path has no fixed point.</h1>
+    <p class="lead" style="margin:0 auto 28px;max-width:48ch">The page you asked for doesn't resolve. Not everything that compiles exists — and not everything that exists is reachable from here.</p>
+    <div class="row" style="justify-content:center;gap:12px">
+      <a class="q-btn q-btn--primary" href="/">Home</a>
+      <a class="q-btn q-btn--secondary" href="/musings/">Musings</a>
+      <a class="q-btn q-btn--ghost" href="/things-i-built/">Things I Built</a>
+    </div>
+  </div>
+</section>
+{% endblock content %}

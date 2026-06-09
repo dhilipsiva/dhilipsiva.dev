@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}Contact — {{ config.title }}{% endblock title %}
+{% block description %}Get in touch with dhilipsiva — email, social, and a note about what's worth reaching out about.{% endblock description %}
+
+{% block content %}
+<section class="section" style="padding-top:48px">
+  <div class="container container--read">
+    <span class="eyebrow">// contact</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 16px;line-height:1.05">Get in touch</h1>
+    <p class="lead" style="max-width:58ch">{{ page.extra.availability }}</p>
+
+    <div class="row" style="gap:14px;margin:30px 0 8px">
+      <a href="mailto:{{ config.extra.email }}" style="font-family:var(--font-mono);font-size:26px;color:var(--accent);text-decoration:none">{{ config.extra.email }}</a>
+      <button class="q-btn q-btn--ghost q-btn--sm" type="button" onclick="if(navigator.clipboard){navigator.clipboard.writeText('{{ config.extra.email }}');this.textContent='copied ✓'}">copy</button>
+    </div>
+
+    {{ m::social_row(config=config) }}
+
+    <p class="mono" style="font-size:13px;color:var(--text-faint);margin-top:18px">⌖ {{ config.extra.location }}</p>
+
+    <form class="stack-3" style="margin-top:40px;max-width:520px" action="{{ page.extra.form_action | default(value='#') }}" method="POST">
+      <div class="q-field">
+        <label class="q-field__label" for="name">Name</label>
+        <input class="q-input" id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="q-field">
+        <label class="q-field__label" for="email">Email</label>
+        <input class="q-input" id="email" name="email" type="email" autocomplete="email" required>
+        <span class="q-field__hint">I'll reply when the quorum settles.</span>
+      </div>
+      <div class="q-field">
+        <label class="q-field__label" for="message">Message</label>
+        <textarea class="q-input" id="message" name="message" rows="5" required></textarea>
+      </div>
+      <div><button class="q-btn q-btn--primary q-btn--lg" type="submit">Send →</button></div>
+    </form>
+
+    <p class="comment" style="margin-top:16px">build note: wire <code class="mono">form_action</code> in <code class="mono">contact.md</code> to a form service (e.g. Formspree / Web3Forms), or drop the form and rely on the mailto link above.</p>
+  </div>
+</section>
+{% endblock content %}

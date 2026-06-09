@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Uses — {{ config.title }}{% endblock title %}
+{% block description %}The hardware, OS, editor, languages, and services dhilipsiva builds with.{% endblock description %}
+
+{% block content %}
+<section class="section--tight" style="padding-top:48px">
+  <div class="container container--read">
+    <span class="eyebrow">// uses</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 14px;line-height:1.05">What I use</h1>
+    <p class="lead">{{ page.extra.intro }}</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:8px">
+  <div class="container container--read">
+    {% for cat in page.extra.categories %}
+    <div style="margin-bottom:34px">
+      <h2 style="font-family:var(--font-mono);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin:0 0 4px">{{ cat.name }}</h2>
+      <ul style="list-style:none;padding:0;margin:0">
+        {% for it in cat.items %}
+        <li style="display:grid;grid-template-columns:200px 1fr;gap:20px;padding:14px 0;border-bottom:1px solid var(--border-subtle);align-items:baseline">
+          <span class="mono" style="font-size:14px;color:var(--text-strong)">{% if it.link %}<a href="{{ it.link }}" style="color:var(--text-strong)">{{ it.name }}</a>{% else %}{{ it.name }}{% endif %}</span>
+          <span class="muted" style="font-family:var(--font-sans);font-size:14px;line-height:1.5">{{ it.note }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock content %}

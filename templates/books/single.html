@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}{{ page.title }} — Books — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block content %}
+<div class="container container--read">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">home</a><span class="sep">/</span>
+    <a href="/books/">books</a><span class="sep">/</span>
+    <span>{{ page.title | truncate(length=32) }}</span>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <div class="row" style="gap:24px;align-items:flex-start">
+        <div class="feat-book__cover" style="flex:none">
+          {% if page.extra.cover %}<img src="{{ page.extra.cover }}" alt="Cover: {{ page.title }}">{% else %}<div class="img-slot" style="width:100%;height:100%" role="img" aria-label="Cover placeholder">[ cover ]</div>{% endif %}
+        </div>
+        <div>
+          <div class="article-head__meta" style="margin-bottom:14px">
+            {% if page.extra.kind == "reviewed" %}<span class="q-badge q-badge--neutral">reviewed</span>{% else %}<span class="q-badge q-badge--ember">{{ page.extra.status | default(value="in progress") }}</span>{% endif %}
+            {% if page.extra.author %}<span class="sep">·</span><span>{{ page.extra.author }}</span>{% endif %}
+            {% if page.extra.rating %}<span class="sep">·</span><span style="color:var(--accent)">{{ page.extra.rating }}</span>{% endif %}
+          </div>
+          <h1 style="margin:0">{{ page.title }}</h1>
+          {% if page.extra.blurb or page.description %}<p class="lead" style="margin:16px 0 0">{{ page.extra.blurb | default(value=page.description) }}</p>{% endif %}
+          {% if page.extra.kind != "reviewed" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}">Read a chapter</a></p>{% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div class="prose">
+      {{ page.content | safe }}
+    </div>
+
+    <footer class="article-foot">
+      <a class="q-btn q-btn--secondary q-btn--sm" href="/books/">← All books</a>
+    </footer>
+  </article>
+</div>
+{% endblock content %}

@@ -1,28 +1,36 @@
+# dhilipsiva.com — Zola config
+# Visuals come from the QUINE Design System (static/assets/quine.css, lifted verbatim).
 base_url = "https://dhilipsiva.com"
-compile_sass = true
-build_search_index = true
-theme = "terminimal"
+title = "dhilipsiva"
+description = "Software architect and open-source builder — Rust, Python, distributed systems, WebAssembly, symbolic reasoning."
+default_language = "en"
+
+compile_sass = false
+build_search_index = false
+generate_feeds = true
+feed_filenames = ["rss.xml"]
+
+taxonomies = [
+  { name = "tags", feed = true },
+]
 
 [markdown]
-highlight_code = true
-
-_taxonomies = [
-    {name = "tags"},
-]
+smart_punctuation = false
+# Auto-highlighting left OFF (Zola default). QUINE styles <pre> monochrome on the void,
+# and designed code blocks use hand-authored .c-* spans. To enable color later, add:
+#   [markdown.highlighting]
+#   enabled = true
+#   theme = "ayu-dark"   # a bundled dark theme
 
 [extra]
-accent_color = "green"
-background_color = "dark"
-logo_text = "dhilipsiva"
 author = "dhilipsiva"
-menu_items = [
-    # {name = "home", url = "$BASE_URL"},
-    # tags should only be enabled if you have "tags" taxonomy
-    # see documentation below for more details
-    # {name = "tags", url = "$BASE_URL/tags"},
-    {name = "GitHub", url = "https://github.com/dhilipsiva", newtab = true},
-    {name = "LinkedIn", url = "https://www.linkedin.com/in/dhilipsiva/", newtab = true},
-    {name = "StackOverflow", url = "https://stackoverflow.com/users/1235072/dhilipsiva", newtab = true},
-    {name = "Medium", url = "https://medium.com/@dhilipsiva", newtab = true},
-    {name = "Email", url = "mailto:dhilipsiva@pm.me", newtab = true},
-]
+email = "dhilipsiva@pm.me"
+location = "Bangalore, India"
+tagline = "An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning."
+footer_tag = "Build systems that outlive their meaning. One must imagine the compiler happy."
+
+# Social links — used by the social row (footer / home / contact)
+github = "https://github.com/dhilipsiva"
+linkedin = "https://www.linkedin.com/in/dhilipsiva/"
+stackoverflow = "https://stackoverflow.com/users/1235072/dhilipsiva"
+medium = "https://medium.com/@dhilipsiva"

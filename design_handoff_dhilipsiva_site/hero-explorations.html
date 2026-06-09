@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home hero — explorations · dhilipsiva</title>
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/quine.css">
+<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+<style>
+  body { background: #4a4a52; }
+  [data-theme="light"] body { background: #cfcec8; }
+  .explore-head { max-width: 1180px; margin: 0 auto; padding: 40px 28px 8px; color: #fff; }
+  .explore-head h1 { font-family: var(--font-display); font-weight: 600; font-size: 30px; letter-spacing: -0.03em; color: #fff; margin: 0 0 8px; }
+  .explore-head p { font-family: var(--font-mono); font-size: 13px; color: #d6d6dc; margin: 0; max-width: 70ch; line-height: 1.6; }
+  .opt { max-width: 1180px; margin: 0 auto; padding: 28px; }
+  .opt__label { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; color: #fff; }
+  .opt__tag { font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: #0B0B10; color: var(--ember-300); padding: 4px 9px; border-radius: 4px; }
+  .opt__name { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: #fff; }
+  .opt__note { font-family: var(--font-mono); font-size: 12px; color: #d0d0d6; }
+  .opt__badge-default { font-family: var(--font-mono); font-size: 11px; color: var(--phosphor-300); border: 1px solid var(--phosphor-700); padding: 3px 7px; border-radius: 4px; }
+  .frame { background: var(--bg-base); border: 1px solid #2a2a32; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+  .frame .hero { padding: 56px 0 52px; }
+  .frame .container { padding: 0 44px; }
+  /* literary variant */
+  .hero--lit .hero__inner { display: block; max-width: 60ch; }
+  .hero--lit h1 { font-size: 64px; }
+  .hero--lit .hero__big-tag { font-family: var(--font-serif); font-style: italic; font-size: 22px; line-height: 1.5; color: var(--text-body); margin: 0 0 26px; }
+  .hero--lit .hero__big-tag em { color: var(--accent); font-style: italic; }
+  /* node-graph variant */
+  .nodegraph { width: 100%; height: auto; }
+</style>
+</head>
+<body>
+
+<div class="explore-head">
+  <h1>Home hero — three directions</h1>
+  <p>// the persona is "optimistic-nihilist builder"; the brief wants identity + the verbatim tagline up top. All three use the same QUINE tokens. Option A is live in index.html — tell me which to keep.</p>
+</div>
+
+<!-- ============ OPTION A — Terminal-forward (LIVE DEFAULT) ============ -->
+<section class="opt">
+  <div class="opt__label">
+    <span class="opt__tag">Option A</span>
+    <span class="opt__name">Terminal-forward</span>
+    <span class="opt__badge-default">● current default</span>
+    <span class="opt__note">identity as <code style="color:#d0d0d6">whoami</code> output — most on-brand, echoes the DS landing kit</span>
+  </div>
+  <div class="frame">
+    <header class="hero">
+      <div class="hero__grid"></div>
+      <div class="container hero__inner">
+        <div>
+          <span class="hero__eyebrow"><span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>available for the right problem</span> Bangalore, IN</span>
+          <h1>I build systems<br>that outlive their <em>meaning.</em></h1>
+          <p class="hero__tagline">An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning.</p>
+          <div class="hero__actions">
+            <span class="q-btn q-btn--primary q-btn--lg">Things I built</span>
+            <span class="q-btn q-btn--secondary q-btn--lg">Read the Musings</span>
+          </div>
+        </div>
+        <div class="term">
+          <div class="term__bar">
+            <span class="term__dot" style="background:var(--crimson-500)"></span>
+            <span class="term__dot" style="background:var(--amber-500)"></span>
+            <span class="term__dot" style="background:var(--phosphor-500)"></span>
+            <span class="term__title">~/dhilipsiva — zsh</span>
+          </div>
+          <div class="term__body"><span class="c-prompt">~ ❯</span> <span class="c-fn">whoami</span> --verbose
+
+  <span class="c-key">role</span><span class="c-pun">  =</span> <span class="c-str">"Software Architect"</span>
+  <span class="c-key">loc</span><span class="c-pun">   =</span> <span class="c-str">"Bangalore, India"</span>
+  <span class="c-key">langs</span><span class="c-pun"> =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">]</span>
+
+<span class="c-prompt">~ ❯</span> fixpoint <span class="c-fn">eval</span><span class="c-pun">(</span>self<span class="c-pun">)</span>
+<span class="c-out">  ∴ eval(self) = self  </span><span class="c-str">✓</span>
+<span class="c-prompt">~ ❯</span> <span class="q-cursor"></span></div>
+        </div>
+      </div>
+    </header>
+  </div>
+</section>
+
+<!-- ============ OPTION B — Quiet & literary ============ -->
+<section class="opt">
+  <div class="opt__label">
+    <span class="opt__tag">Option B</span>
+    <span class="opt__name">Quiet &amp; literary</span>
+    <span class="opt__note">big display type, the tagline as a serif pull-quote, lots of void — substance over flash</span>
+  </div>
+  <div class="frame">
+    <header class="hero hero--lit">
+      <div class="hero__grid"></div>
+      <div class="container hero__inner">
+        <span class="hero__eyebrow"><span class="comment" style="font-style:normal">software architect · builder · bangalore</span></span>
+        <h1>dhilipsiva<span class="q-cursor"></span></h1>
+        <p class="hero__big-tag">An <em>Optimistic Nihilist</em> who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning.</p>
+        <p class="hero__intro" style="max-width:54ch">Lifelong builder. I care about correctness, freedom, and code that still makes sense in a decade. Nothing is owed — build anyway.</p>
+        <div class="hero__actions">
+          <span class="q-btn q-btn--primary q-btn--lg">Things I built</span>
+          <span class="q-btn q-btn--ghost q-btn--lg">Read the Musings →</span>
+        </div>
+      </div>
+    </header>
+  </div>
+</section>
+
+<!-- ============ OPTION C — Consensus node-graph ============ -->
+<section class="opt">
+  <div class="opt__label">
+    <span class="opt__tag">Option C</span>
+    <span class="opt__name">Consensus node-graph</span>
+    <span class="opt__note">the fixed-point/distributed-systems motif as a live data visual — loudest, most "engineered"</span>
+  </div>
+  <div class="frame">
+    <header class="hero">
+      <div class="hero__grid"></div>
+      <div class="container hero__inner">
+        <div>
+          <span class="hero__eyebrow"><span class="q-badge q-badge--symbol">∀ peers: agree</span> distributed by temperament</span>
+          <h1>dhilipsiva</h1>
+          <p class="hero__tagline">An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning.</p>
+          <p class="hero__intro">Software architect &amp; builder in Bangalore. I find the place where a system stops needing the world to hold it up — and holds itself.</p>
+          <div class="hero__actions">
+            <span class="q-btn q-btn--primary q-btn--lg">Things I built</span>
+            <span class="q-btn q-btn--secondary q-btn--lg">Get in touch</span>
+          </div>
+        </div>
+        <div>
+          <svg class="nodegraph" viewBox="0 0 420 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five-node consensus graph converging on a leader">
+            <!-- links -->
+            <g stroke="#2A2A38" stroke-width="1.5">
+              <path d="M210 180 L120 90"></path>
+              <path d="M210 180 L300 90"></path>
+              <path d="M210 180 L90 250"></path>
+              <path d="M210 180 L330 250"></path>
+              <path d="M120 90 L300 90"></path>
+              <path d="M90 250 L330 250"></path>
+            </g>
+            <!-- ember pulse links from leader -->
+            <g stroke="#F2542D" stroke-width="1.5" stroke-dasharray="3 5" opacity="0.8">
+              <path d="M210 180 L120 90"></path>
+              <path d="M210 180 L300 90"></path>
+              <path d="M210 180 L90 250"></path>
+              <path d="M210 180 L330 250"></path>
+            </g>
+            <!-- peer nodes -->
+            <g>
+              <circle cx="120" cy="90" r="9" fill="#0B0B10" stroke="#38E3A6" stroke-width="2"></circle>
+              <circle cx="300" cy="90" r="9" fill="#0B0B10" stroke="#38E3A6" stroke-width="2"></circle>
+              <circle cx="90" cy="250" r="9" fill="#0B0B10" stroke="#38E3A6" stroke-width="2"></circle>
+              <circle cx="330" cy="250" r="9" fill="#0B0B10" stroke="#38E3A6" stroke-width="2"></circle>
+            </g>
+            <!-- leader -->
+            <circle cx="210" cy="180" r="20" fill="#0B0B10" stroke="#F2542D" stroke-width="2.5"></circle>
+            <circle cx="210" cy="180" r="7" fill="#F2542D"></circle>
+            <!-- labels -->
+            <text x="210" y="225" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="11" fill="#FF9A6F">∴ leader</text>
+            <text x="120" y="68" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#8BF0CE">node·1</text>
+            <text x="300" y="68" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#8BF0CE">node·2</text>
+            <text x="90" y="284" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#8BF0CE">node·3</text>
+            <text x="330" y="284" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#8BF0CE">node·4</text>
+            <text x="210" y="330" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="11" fill="#5E5E6C">5/5 ack · 38ms · committed</text>
+          </svg>
+        </div>
+      </div>
+    </header>
+  </div>
+</section>
+
+<div style="height:40px"></div>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="22" fill="#0B0B10"></rect><g stroke="#F2542D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M44 42 L60 60 L44 78"></path><path d="M76 42 L60 60 L76 78"></path></g><circle cx="60" cy="86" r="5" fill="#38E3A6"></circle></svg>
+</template>
+
+</body>
+</html>

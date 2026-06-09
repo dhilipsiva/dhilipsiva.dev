@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}{{ page.title }} — Things I Built — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block content %}
+<div class="container container--read">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">home</a><span class="sep">/</span>
+    <a href="/things-i-built/">things i built</a><span class="sep">/</span>
+    <span>{{ page.title }}</span>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <div class="article-head__meta">
+        {{ m::status_badge(status=page.extra.status | default(value="shipped"), label=page.extra.status_label | default(value="")) }}
+        <span class="sep">·</span>
+        <span>{{ page.extra.role | default(value="Built") }}</span>
+        {% if page.extra.visibility %}<span class="sep">·</span><span class="comment" style="font-style:normal">{{ page.extra.visibility }}</span>{% endif %}
+      </div>
+      <h1>{{ page.extra.glyph | default(value="") }} {{ page.title }}</h1>
+      {% if page.extra.tech %}
+      <div class="article-head__tags tag-row">{% for t in page.extra.tech %}<span class="pill">{{ t }}</span>{% endfor %}</div>
+      {% endif %}
+    </header>
+
+    {% if page.extra.diagram %}
+    <figure style="margin-bottom:40px">
+      <div class="img-slot" style="aspect-ratio:16/9" role="img" aria-label="{{ page.extra.diagram_alt | default(value='Architecture diagram') }}">[ {{ page.extra.diagram }} ]</div>
+    </figure>
+    {% endif %}
+
+    <div class="prose">
+      {{ page.content | safe }}
+    </div>
+
+    <footer class="article-foot">
+      <div class="row" style="justify-content:space-between;gap:16px">
+        <div class="tag-row">{% for t in page.extra.tech | default(value=[]) %}<span class="pill">{{ t }}</span>{% endfor %}</div>
+        <div class="row" style="gap:8px">
+          {% if page.extra.repo %}<a class="q-btn q-btn--ghost q-btn--sm" href="{{ page.extra.repo }}">{ } Source</a>{% endif %}
+          {% if page.extra.live %}<a class="q-btn q-btn--secondary q-btn--sm" href="{{ page.extra.live }}">→ Live</a>{% endif %}
+          <a class="q-btn q-btn--secondary q-btn--sm" href="/things-i-built/">← All projects</a>
+        </div>
+      </div>
+    </footer>
+  </article>
+</div>
+{% endblock content %}

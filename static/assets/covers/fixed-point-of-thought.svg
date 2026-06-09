@@ -1,0 +1,25 @@
+<svg width="336" height="480" viewBox="0 0 336 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Book cover: The Fixed Point of Thought">
+  <defs>
+    <pattern id="grid-fp" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#20202C" stroke-width="1"></path>
+    </pattern>
+  </defs>
+  <rect width="336" height="480" fill="#0B0B10"></rect>
+  <rect width="336" height="480" fill="url(#grid-fp)" opacity="0.6"></rect>
+  <rect x="0.5" y="0.5" width="335" height="479" fill="none" stroke="#2A2A38"></rect>
+  
+  <rect x="0" y="0" width="6" height="480" fill="#F2542D"></rect>
+  
+  <text x="40" y="68" font-family="&#39;IBM Plex Mono&#39;,monospace" font-size="12" letter-spacing="3" fill="#5E5E6C">// A BOOK ON</text>
+  <text x="40" y="88" font-family="&#39;IBM Plex Mono&#39;,monospace" font-size="12" letter-spacing="3" fill="#38E3A6">SYMBOLIC REASONING</text>
+  
+  <text x="40" y="260" font-family="&#39;IBM Plex Mono&#39;,monospace" font-size="46" fill="#F2542D">f(x)</text>
+  <text x="168" y="260" font-family="&#39;IBM Plex Mono&#39;,monospace" font-size="46" fill="#908F9A">=</text>
+  <text x="210" y="260" font-family="&#39;IBM Plex Mono&#39;,monospace" font-size="46" fill="#F4F3EF">x</text>
+  
+  <text x="40" y="356" font-family="&#39;Space Grotesk&#39;,sans-serif" font-weight="600" font-size="34" letter-spacing="-1" fill="#F4F3EF">The Fixed</text>
+  <text x="40" y="394" font-family="&#39;Space Grotesk&#39;,sans-serif" font-weight="600" font-size="34" letter-spacing="-1" fill="#F4F3EF">Point of</text>
+  <text x="40" y="432" font-family="&#39;Space Grotesk&#39;,sans-serif" font-weight="600" font-size="34" letter-spacing="-1" fill="#F2542D">Thought</text>
+  
+  <text x="40" y="462" font-family="&#39;IBM Plex Mono&#39;,monospace" font-size="12" letter-spacing="2" fill="#908F9A">DHILIPSIVA</text>
+</svg>

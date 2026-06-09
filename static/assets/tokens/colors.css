@@ -1,0 +1,98 @@
+/* QUINE — Color tokens
+ * Dark-first. The void is the canvas; ember is the will to build; phosphor is life.
+ * Base palette → semantic aliases. Consume the semantic names in components.
+ */
+:root {
+  /* ── Void: the indifferent universe, our background ───────────────── */
+  --void-1000: #07070A;  /* deepest, page void behind everything */
+  --void-900:  #0B0B10;  /* app background */
+  --void-800:  #111119;  /* raised surface */
+  --void-700:  #181822;  /* card */
+  --void-600:  #20202C;  /* hover surface / inset */
+  --void-500:  #2A2A38;  /* borders, hairlines */
+  --void-400:  #3A3A4A;  /* strong border / disabled fill */
+
+  /* ── Foreground: warm whites, never pure ──────────────────────────── */
+  --paper-100: #F4F3EF;  /* primary text (warm off-white) */
+  --paper-200: #C9C8C2;
+  --fg-muted:  #908F9A;  /* secondary text */
+  --fg-faint:  #5E5E6C;  /* tertiary / placeholder */
+  --fg-ghost:  #3C3C49;  /* watermark, grid lines */
+
+  /* ── Ember: the Rust homage, our primary accent (optimism, action) ── */
+  --ember-50:  #FFE9E0;
+  --ember-300: #FF9A6F;
+  --ember-500: #F2542D;  /* signature */
+  --ember-600: #D8431B;
+  --ember-700: #B23413;
+
+  /* ── Phosphor: terminal mint — "alive", nodes, success, life ──────── */
+  --phosphor-300: #8BF0CE;
+  --phosphor-500: #38E3A6;
+  --phosphor-700: #16A877;
+
+  /* ── Quanta: violet — Wasm / Web3 / symbolic, used sparingly, flat ── */
+  --quanta-300: #B6A8FF;
+  --quanta-500: #8B7CF6;
+  --quanta-700: #5B4ACb;
+
+  /* ── Signal: amber, sky, crimson for status ───────────────────────── */
+  --amber-500:   #F5B544;
+  --sky-500:     #4DB8FF;
+  --crimson-500: #FF4D5E;
+
+  /* ── Semantic aliases — components consume THESE ──────────────────── */
+  --bg-base:        var(--void-900);
+  --bg-sunken:      var(--void-1000);
+  --bg-raised:      var(--void-800);
+  --surface-card:   var(--void-700);
+  --surface-inset:  var(--void-600);
+  --surface-hover:  var(--void-600);
+
+  --text-strong:    var(--paper-100);
+  --text-body:      var(--paper-200);
+  --text-muted:     var(--fg-muted);
+  --text-faint:     var(--fg-faint);
+  --text-on-ember:  #2A0A00;
+
+  --border-subtle:  var(--void-500);
+  --border-strong:  var(--void-400);
+  --border-focus:   var(--ember-500);
+
+  --accent:         var(--ember-500);
+  --accent-hover:   var(--ember-300);
+  --accent-press:   var(--ember-600);
+  --accent-soft:    color-mix(in oklab, var(--ember-500) 16%, var(--void-900));
+
+  --alive:          var(--phosphor-500);
+  --symbol:         var(--quanta-500);
+
+  --success:        var(--phosphor-500);
+  --warning:        var(--amber-500);
+  --info:           var(--sky-500);
+  --danger:         var(--crimson-500);
+
+  --grid-line:      color-mix(in oklab, var(--fg-ghost) 60%, transparent);
+}
+
+/* ── Light theme: "daylight nihilism" — paper & ink, ember still burns ── */
+[data-theme="light"] {
+  --bg-base:        #F4F3EF;
+  --bg-sunken:      #E9E8E2;
+  --bg-raised:      #FBFAF7;
+  --surface-card:   #FFFFFF;
+  --surface-inset:  #EFEEE8;
+  --surface-hover:  #EFEEE8;
+
+  --text-strong:    #16161C;
+  --text-body:      #2E2E38;
+  --text-muted:     #5E5E6C;
+  --text-faint:     #908F9A;
+  --text-on-ember:  #2A0A00;
+
+  --border-subtle:  #DAD8D0;
+  --border-strong:  #C2BFB5;
+
+  --accent-soft:    color-mix(in oklab, var(--ember-500) 12%, #FFFFFF);
+  --grid-line:      color-mix(in oklab, #16161C 8%, transparent);
+}

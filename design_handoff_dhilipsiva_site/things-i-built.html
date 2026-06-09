@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Things I Built — dhilipsiva</title>
+<meta name="description" content="Open-source and professional systems architected and built by dhilipsiva — Rust, Python, WebAssembly, WebRTC, and distributed systems.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/quine.css">
+<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <input type="checkbox" id="nav-switch" class="nav-switch" aria-hidden="true" tabindex="-1">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="dhilipsiva — home">
+      <img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="index.html">Home</a>
+      <a class="nav__link" href="things-i-built.html" aria-current="page">Things I Built</a>
+      <a class="nav__link" href="#books">Books</a>
+      <a class="nav__link" href="#musings">Musings</a>
+      <a class="nav__link" href="#about">About</a>
+      <a class="nav__link" href="#now">Now</a>
+      <a class="nav__link" href="#uses">Uses</a>
+      <a class="nav__link" href="#talks">Talks</a>
+      <a class="nav__link" href="#contact">Contact</a>
+    </nav>
+    <span class="header-spacer"></span>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle light / dark theme" aria-pressed="false">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <label for="nav-switch" class="icon-btn nav-toggle" aria-label="Toggle menu">
+        <svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </label>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============================== PAGE HEAD ========================= -->
+<section class="section--tight" style="padding-top:48px" data-screen-label="Things I Built / head">
+  <div class="container">
+    <span class="eyebrow">// things i built</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 16px;line-height:1.05">Things I built</h1>
+    <!-- SLOT: intro line (one sentence) -->
+    <p class="lead" style="max-width:62ch">A builder, not an entrepreneur. These are systems I architected and shipped — some for the commons, some for the companies I've helped build. Sorted by where they live, not by how loud they were.</p>
+
+    <!-- count summary, brand-voice -->
+    <div class="row mono" style="margin-top:22px;font-size:12px;color:var(--text-faint);gap:18px">
+      <span><b style="color:var(--phosphor-300)">6</b> shipped</span>
+      <span><b style="color:var(--phosphor-300)">4</b> active</span>
+      <span><b style="color:var(--text-muted)">2</b> archived</span>
+      <span class="comment">f(x) = x — most of these are fixed points of an idea</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PERSONAL / OSS ==================== -->
+<section class="section" style="padding-top:24px" data-screen-label="Things I Built / personal">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// personal · open-source</span>
+        <h2 class="sec-head__title">Built for the commons</h2>
+        <p class="sec-head__intro">FOSS the whole way down. Free forever, self-hostable, no telemetry.</p>
+      </div>
+    </div>
+
+    <!-- SLOT: Project[] where category == "personal" -->
+    <div class="proj-grid">
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">∴</span>
+          <span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>active</span>
+        </div>
+        <h3 class="proj-card__title">axiom</h3>
+        <p class="proj-card__desc">A symbolic-reasoning kernel in Rust that compiles proofs to a 12kB Wasm core. Express your invariants as logic and it proves the topology before anything runs.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Architected &amp; built</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Rust</span><span class="pill">WASM</span><span class="pill">Symbolic Reasoning</span><span class="pill">Logic</span></div>
+        <div class="proj-card__links">
+          <a href="#repo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="17" cy="7" r="2.4"></circle><path d="M17 9.4v1.1a4 4 0 0 1-4 4H6M6 8.4v7.2"></path></svg> source</a>
+          <a href="#live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"></path></svg> live</a>
+          <a href="single-project.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4M6 21V5a2 2 0 0 1 2-2h6l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM9 13h6M9 17h4"></path></svg> write-up</a>
+        </div>
+      </article>
+
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">⇄</span>
+          <span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>active</span>
+        </div>
+        <h3 class="proj-card__title">gossipd</h3>
+        <p class="proj-card__desc">A broker-less peer-to-peer mesh over WebRTC. Nodes discover each other and reach consensus directly — no central server, no single point of failure, no rent.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Architected &amp; built</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Rust</span><span class="pill">WebRTC</span><span class="pill">Distributed Systems</span></div>
+        <div class="proj-card__links">
+          <a href="#repo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="17" cy="7" r="2.4"></circle><path d="M17 9.4v1.1a4 4 0 0 1-4 4H6M6 8.4v7.2"></path></svg> source</a>
+          <a href="#live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"></path></svg> live</a>
+        </div>
+      </article>
+
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">λ</span>
+          <span class="q-badge q-badge--neutral">shipped</span>
+        </div>
+        <h3 class="proj-card__title">quine.py</h3>
+        <p class="proj-card__desc">A tiny self-hosting interpreter that evaluates to itself. A teaching toy about fixed points, recursion, and programs that can read and reproduce their own source.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Built</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Python</span><span class="pill">Interpreters</span><span class="pill">Teaching</span></div>
+        <div class="proj-card__links">
+          <a href="#repo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="17" cy="7" r="2.4"></circle><path d="M17 9.4v1.1a4 4 0 0 1-4 4H6M6 8.4v7.2"></path></svg> source</a>
+        </div>
+      </article>
+
+      <article class="q-card q-card--marked proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">⊗</span>
+          <span class="q-badge q-badge--symbol">v0.2</span>
+        </div>
+        <h3 class="proj-card__title">void.css</h3>
+        <p class="proj-card__desc">The design tokens behind everything I ship — a dark-first, terminal-flavored CSS system. The one you're reading right now. Open, unlicensed, yours to fork.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Designed &amp; built</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">CSS</span><span class="pill">Design Systems</span><span class="pill">FOSS</span></div>
+        <div class="proj-card__links">
+          <a href="#repo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="17" cy="7" r="2.4"></circle><path d="M17 9.4v1.1a4 4 0 0 1-4 4H6M6 8.4v7.2"></path></svg> source</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ============================== PROFESSIONAL ===================== -->
+<section class="section" data-screen-label="Things I Built / professional">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// professional</span>
+        <h2 class="sec-head__title">Built on the clock</h2>
+        <p class="sec-head__intro">Systems I architected as Software Architect and, before that, VP of Engineering. Some closed, all real.</p>
+      </div>
+    </div>
+
+    <!-- SLOT: Project[] where category == "professional" -->
+    <div class="proj-grid">
+      <article class="q-card proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">⊢</span>
+          <span class="q-badge q-badge--neutral">shipped</span>
+        </div>
+        <h3 class="proj-card__title">Ledger Mesh</h3>
+        <p class="proj-card__desc">A distributed settlement engine processing millions of events a day with deterministic replay. Led the architecture from a fragile monolith to a partition-tolerant core.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Software Architect</span> · <span>closed source</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Rust</span><span class="pill">Distributed Systems</span><span class="pill">Infra</span></div>
+        <div class="proj-card__links">
+          <a href="single-project.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4M6 21V5a2 2 0 0 1 2-2h6l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM9 13h6M9 17h4"></path></svg> case study</a>
+        </div>
+      </article>
+
+      <article class="q-card proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">∇</span>
+          <span class="q-badge q-badge--neutral">shipped</span>
+        </div>
+        <h3 class="proj-card__title">Reason Engine</h3>
+        <p class="proj-card__desc">An AI reasoning service that turns natural-language policy into checkable symbolic rules. Built the inference core and the proof-explanation layer end to end.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">VP of Engineering</span> · <span>closed source</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Python</span><span class="pill">AI Reasoning</span><span class="pill">Symbolic</span></div>
+        <div class="proj-card__links">
+          <a href="single-project.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4M6 21V5a2 2 0 0 1 2-2h6l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM9 13h6M9 17h4"></path></svg> case study</a>
+        </div>
+      </article>
+
+      <article class="q-card proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">⎇</span>
+          <span class="q-badge q-badge--warning">archived</span>
+        </div>
+        <h3 class="proj-card__title">Cloud Forge</h3>
+        <p class="proj-card__desc">An internal platform that let product teams ship services without touching infra. Sunset after the org consolidated stacks — but it shaped how we still deploy.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Software Architect</span> · <span>closed source</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Go</span><span class="pill">Cloud</span><span class="pill">Platform</span></div>
+        <div class="proj-card__links">
+          <span class="muted mono" style="font-size:12px">archived · no public link</span>
+        </div>
+      </article>
+
+      <article class="q-card proj-card">
+        <div class="proj-card__top">
+          <span class="proj-card__glyph" aria-hidden="true">≡</span>
+          <span class="q-badge q-badge--neutral">shipped</span>
+        </div>
+        <h3 class="proj-card__title">Web3 Bridge</h3>
+        <p class="proj-card__desc">A trust-minimized bridge between chains with on-chain proofs of state. Owned the protocol design and the WebAssembly verifier shipped to every node.</p>
+        <div class="proj-card__meta"><span class="proj-card__role">Software Architect</span> · <span>partially open</span></div>
+        <div class="proj-card__tags tag-row"><span class="pill">Rust</span><span class="pill">Web3</span><span class="pill">WASM</span></div>
+        <div class="proj-card__links">
+          <a href="#repo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="17" cy="7" r="2.4"></circle><path d="M17 9.4v1.1a4 4 0 0 1-4 4H6M6 8.4v7.2"></path></svg> source</a>
+          <a href="single-project.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4M6 21V5a2 2 0 0 1 2-2h6l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM9 13h6M9 17h4"></path></svg> case study</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CTA ============================== -->
+<section class="section--tight" data-screen-label="Things I Built / cta">
+  <div class="container">
+    <article class="q-card q-card--grid" style="padding:40px;text-align:center">
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:24px;color:var(--text-strong);margin:0 0 8px">“One must imagine the cluster happy.”</p>
+      <p class="comment" style="margin:0 0 22px">have a hard systems problem worth building?</p>
+      <div class="row" style="justify-content:center">
+        <a class="q-btn q-btn--primary q-btn--lg" href="#contact">Get in touch</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="#github">Browse the source →</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a class="brand" href="index.html"><img src="assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span></a>
+        <p class="site-footer__tag">Build systems that outlive their meaning. One must imagine the compiler happy.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Site</h4>
+        <ul>
+          <li><a href="things-i-built.html">Things I Built</a></li>
+          <li><a href="#books">Books</a></li>
+          <li><a href="#musings">Musings</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>More</h4>
+        <ul>
+          <li><a href="#now">Now</a></li>
+          <li><a href="#uses">Uses</a></li>
+          <li><a href="#talks">Talks</a></li>
+          <li><a href="#rss">RSS feed</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <div class="social-row" aria-label="Social links">
+        <a href="#github" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56v-2c-3.34.71-4.04-1.6-4.04-1.6-.55-1.36-1.33-1.72-1.33-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.66 1.65.24 2.87.12 3.17.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"></path></svg></a>
+        <a href="#linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9z"></path></svg></a>
+        <a href="#stackoverflow" aria-label="Stack Overflow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.36 20.2v-5.38h1.79V22H3v-7.18h1.8v5.38zM6.77 14.32l8.78 1.84.37-1.76-8.78-1.84zm1.16-4.21 8.13 3.79.76-1.62-8.13-3.8zm2.26-3.99 6.9 5.74 1.15-1.38-6.9-5.74zM14.66 1l-1.46 1.08 5.34 7.19 1.46-1.08zM6.59 18.41h8.97v-1.8H6.59z"></path></svg></a>
+        <a href="#medium" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.37 7.5c0-.2-.08-.39-.23-.52L2.6 5.2V5h4.46l3.45 7.57L13.62 5H18v.2l-1.3 1.25c-.11.08-.17.23-.14.37v9.36c-.03.14.03.29.14.37l1.27 1.25V18h-6.4v-.2l1.32-1.28c.13-.13.13-.17.13-.37V8.6l-3.67 9.34h-.5L4.4 8.6v6.26c-.04.27.05.54.24.73l1.72 2.08V18H2v-.2l1.72-2.08c.19-.19.27-.46.22-.73z"></path></svg></a>
+        <a href="mailto:dhilipsiva@pm.me" aria-label="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm.4 2 8.6 5.73L20.6 7zM20 9.07l-7.45 4.96a1 1 0 0 1-1.1 0L4 9.07V17h16z"></path></svg></a>
+        <a href="#rss" aria-label="RSS feed"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9h-2.6A6.4 6.4 0 0 0 4 13.6zm0-5a14 14 0 0 1 14 14h-2.6A11.4 11.4 0 0 0 4 8.6zM6.2 17.8a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0z"></path></svg></a>
+      </div>
+      <span class="sp"></span>
+      <span>© <span id="yr">2026</span> dhilipsiva · the void, organized</span>
+      <span>·</span>
+      <span>built with care · <a href="#source">open source</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="22" fill="#0B0B10"></rect><g stroke="#F2542D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M44 42 L60 60 L44 78"></path><path d="M76 42 L60 60 L76 78"></path></g><circle cx="60" cy="86" r="5" fill="#38E3A6"></circle></svg>
+</template>
+
+</body>
+</html>

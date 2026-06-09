@@ -1,0 +1,22 @@
+/* QUINE — Spacing & sizing tokens. 4px base grid — the engineering ruler. */
+:root {
+  --space-0:   0;
+  --space-1:   0.25rem;  /* 4 */
+  --space-2:   0.5rem;   /* 8 */
+  --space-3:   0.75rem;  /* 12 */
+  --space-4:   1rem;     /* 16 */
+  --space-5:   1.5rem;   /* 24 */
+  --space-6:   2rem;     /* 32 */
+  --space-7:   3rem;     /* 48 */
+  --space-8:   4rem;     /* 64 */
+  --space-9:   6rem;     /* 96 */
+  --space-10:  8rem;     /* 128 */
+
+  /* Layout */
+  --container:    1200px;
+  --container-sm: 720px;
+  --gutter:       var(--space-5);
+  --control-h:    2.25rem;  /* 36 — default control height */
+  --control-h-sm: 1.75rem;  /* 28 */
+  --control-h-lg: 2.75rem;  /* 44 — min touch target */
+}

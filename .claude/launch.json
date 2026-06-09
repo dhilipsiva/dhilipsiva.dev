@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "zola",
+      "runtimeExecutable": "zola",
+      "runtimeArgs": ["serve", "--interface", "127.0.0.1", "--port", "1111"],
+      "port": 1111
+    }
+  ]
+}

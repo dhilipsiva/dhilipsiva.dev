@@ -1,50 +1,141 @@
-{% extends "terminimal/templates/index.html" %} 
-{% block footer %}{% endblock footer %} 
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
 {% block content %}
-<div>
-    <h1>An Optimistic Nihilist who loves Science, Python, Rust, FOSS, WebAssembly & Distributed Systems.</h1>
-    <p>
-        I am a passionate and experienced Software Architect/Engineer with a diverse 
-        skill set and a wealth of experience in various programming languages and 
-        technologies. Currently, I work as a Software Architect at Appknox. I actively 
-        contribute to numerous repositories on GitHub. You can contact me through my 
-        email dhilipsiva@pm.me. You can find my past experiences on LinkedIn and search 
-        for me on Google.
-    </p>
-    <p>
-        I am very skilled in building (micro)services, focusing on Python/Rust, and a 
-        range of other languages including JavaScript (browser-side), C, Go, PHP, Ruby, 
-        Objective-C, C#, and Java. Lately, I have developed a keen interest in Rust 
-        programming language, WebAssembly, and distributed software.
-    </p>
-    <p>
-        I can architect, code, deploy, (auto)scale, and maintain server-side (.py, .rs), 
-        browser-side (.js, .ts, .wasm) & infra (terraform, pulumi, CDK) code. I have 
-        built GraphQL, RPC & RESTful microservices with Python & Rust, JavaScript 
-        frontends with Ember & React, DevOps pipelines, E2E Test Automation Framework 
-        (Horizontal & Vertical) with RobotFramework, Native iOS apps, Android and iOS 
-        device farms, RaspberryPi bitcoin mining farm with custom ASIC chips, and scaled 
-        a couple of high-traffic web applications.
-    </p>
-    <p>
-        With my broad experience, I can tackle projects at all levels of the web 
-        application stack: from server-side to browser-side, and architecture to scaling. 
-        I have also successfully scaled high-traffic web applications and deployed services 
-        on AWS, Azure, and Google Cloud, using tools such as Fabric, Docker, AWS Copilot, 
-        Kubernetes, and more.
-    </p>
-    <p>
-        In addition to my technical skills, I have also been a leader on small tech teams, 
-        guiding my colleagues to success and fostering a positive work environment. I have 
-        also contributed to several open-source projects and reverse-engineered and "hacked"
-        mobile applications for fun.
-    </p>
-    <p>
-        Outside of my professional life, I am constantly exploring new technologies and 
-        keeping up with the latest trends in the software engineering world. I love 
-        discussing philosophy & socio-economic and political change. In my free time, I 
-        enjoy tinkering with IoT and robotic projects with my kids, both for fun and as a 
-        way to continue learning and growing my skillset.
-    </p>
-</div>
+{% set built = get_section(path="things-i-built/_index.md") %}
+{% set musings = get_section(path="musings/_index.md") %}
+{% set books = get_section(path="books/_index.md") %}
+
+<!-- ============================== HERO =============================== -->
+<header class="hero">
+  <div class="hero__grid"></div>
+  <div class="container hero__inner">
+    <div>
+      <span class="hero__eyebrow"><span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>{{ section.extra.available }}</span> {{ config.extra.location }}</span>
+      <h1>{{ section.extra.hero_h1 | safe }}</h1>
+      <p class="hero__tagline">{{ config.extra.tagline }}</p>
+      <p class="hero__intro">{{ section.extra.hero_intro }}</p>
+      <div class="hero__actions">
+        <a class="q-btn q-btn--primary q-btn--lg" href="/things-i-built/">Things I built</a>
+        <a class="q-btn q-btn--secondary q-btn--lg" href="/musings/">Read the Musings</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="/contact/">Get in touch →</a>
+      </div>
+    </div>
+
+    <!-- whoami terminal: identity as structured output -->
+    <div class="term" role="img" aria-label="Terminal showing a whoami summary of dhilipsiva">
+      <div class="term__bar">
+        <span class="term__dot" style="background:var(--crimson-500)"></span>
+        <span class="term__dot" style="background:var(--amber-500)"></span>
+        <span class="term__dot" style="background:var(--phosphor-500)"></span>
+        <span class="term__title">~/dhilipsiva — zsh</span>
+      </div>
+      <div class="term__body" style="white-space:pre"><span class="c-prompt">~ ❯</span> <span class="c-fn">whoami</span> --verbose
+<span class="c-com"># resolving fixed point…</span>
+
+  <span class="c-key">name</span><span class="c-pun">    =</span> <span class="c-str">"dhilipsiva"</span>
+  <span class="c-key">role</span><span class="c-pun">    =</span> <span class="c-str">"Software Architect"</span>  <span class="c-com">// prev: VP of Engineering</span>
+  <span class="c-key">loc</span><span class="c-pun">     =</span> <span class="c-str">"Bangalore, India"</span>
+  <span class="c-key">langs</span><span class="c-pun">   =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">,</span> <span class="c-type">Tamil</span><span class="c-pun">]</span>
+  <span class="c-key">believes</span><span class="c-pun">=</span> <span class="c-str">"nothing is owed. build anyway."</span>
+
+<span class="c-prompt">~ ❯</span> fixpoint <span class="c-fn">eval</span><span class="c-pun">(</span>self<span class="c-pun">)</span>
+<span class="c-out">  ∴ eval(self) = self        </span><span class="c-str">5/5 ack · 38ms</span><span class="c-out"> ✓</span>
+<span class="c-prompt">~ ❯</span> <span class="q-cursor"></span></div>
+    </div>
+  </div>
+</header>
+
+<!-- =========================== FEATURED PROJECTS ===================== -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// things i built</span>
+        <h2 class="sec-head__title">A few things worth pointing at</h2>
+      </div>
+      <a class="see-all" href="/things-i-built/">See all →</a>
+    </div>
+    <div class="proj-grid proj-grid--3">
+      {% for p in built.pages | filter(attribute="extra.featured", value=true) | slice(end=3) %}
+        {{ m::proj_card(page=p) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =========================== FEATURED BOOK ======================== -->
+{% set feat_books = books.pages | filter(attribute="extra.featured", value=true) %}
+{% if feat_books | length > 0 %}
+{% set book = feat_books | first %}
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// from the bookshelf</span>
+        <h2 class="sec-head__title">What I'm writing</h2>
+      </div>
+      <a class="see-all" href="/books/">All books →</a>
+    </div>
+    <article class="q-card q-card--grid feat-book">
+      <div class="feat-book__cover">
+        {% if book.extra.cover %}<img src="{{ book.extra.cover }}" alt="Cover: {{ book.title }}">{% endif %}
+      </div>
+      <div>
+        <span class="q-badge q-badge--ember">{{ book.extra.status | default(value="in progress") }}</span>
+        <h3 class="feat-book__title">{{ book.title }}</h3>
+        <p class="feat-book__blurb">{{ book.extra.blurb | default(value=book.description) }}</p>
+        <div class="row">
+          <a class="q-btn q-btn--primary" href="{{ book.extra.link | default(value=book.permalink) }}">Read a chapter</a>
+          <a class="q-btn q-btn--ghost" href="/books/">All books →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+{% endif %}
+
+<!-- =========================== LATEST MUSINGS ======================= -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// musings</span>
+        <h2 class="sec-head__title">Latest from the notebook</h2>
+        <p class="sec-head__intro">Long-running thoughts on building, logic, freedom, and the occasional detour into Tamil and philosophy of mind.</p>
+      </div>
+      <a class="see-all" href="/musings/">See all · RSS →</a>
+    </div>
+    <div class="post-list">
+      {% for p in musings.pages | slice(end=3) %}
+        {{ m::teaser(page=p) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =========================== NOW TEASER =========================== -->
+<section class="section--tight">
+  <div class="container">
+    <article class="q-card now-strip">
+      <span class="eyebrow">// now</span>
+      <div class="now-strip__items">
+        {% for it in section.extra.now_strip %}
+        <span class="now-strip__item"><span class="k">{{ it.k }}</span> &nbsp;<b>{{ it.v }}</b></span>
+        {% endfor %}
+      </div>
+      <a class="see-all" href="/now/">What I'm doing now →</a>
+    </article>
+  </div>
+</section>
+
+<!-- =========================== SOCIAL ROW =========================== -->
+<section class="section--tight">
+  <div class="container">
+    <div class="row" style="justify-content:space-between">
+      <p class="lead" style="margin:0;max-width:42ch">Find me where the source lives.</p>
+      {{ m::social_row(config=config) }}
+    </div>
+  </div>
+</section>
 {% endblock content %}

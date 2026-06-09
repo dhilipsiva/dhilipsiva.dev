@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+
+{% block title %}{{ page.title }} — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block content %}
+<div class="container container--read">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">home</a><span class="sep">/</span>
+    <a href="/musings/">musings</a><span class="sep">/</span>
+    <span>{{ page.title | truncate(length=32) }}</span>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <div class="article-head__meta">
+        <time datetime="{{ page.date }}">{{ page.date | date(format="%Y · %m · %d") }}</time>
+        <span class="sep">·</span>
+        <span>{{ page.reading_time }} min read</span>
+        {% if page.extra.type %}<span class="sep">·</span><span class="comment" style="font-style:normal">{{ page.extra.type }}</span>{% endif %}
+      </div>
+      <h1>{{ page.title }}</h1>
+      {% if page.taxonomies.tags %}
+      <div class="article-head__tags tag-row">
+        {% for t in page.taxonomies.tags %}<a class="pill" href="/tags/{{ t | slugify }}/"><span class="pill__hash">#</span>{{ t }}</a>{% endfor %}
+      </div>
+      {% endif %}
+    </header>
+
+    {% if page.extra.hero_image %}
+    <figure style="margin-bottom:40px">
+      <img src="{{ page.extra.hero_image }}" alt="{{ page.extra.hero_alt | default(value=page.title) }}">
+    </figure>
+    {% endif %}
+
+    <div class="prose">
+      {{ page.content | safe }}
+    </div>
+
+    <footer class="article-foot">
+      <div class="row" style="justify-content:space-between;gap:16px">
+        <div class="tag-row">
+          {% for t in page.taxonomies.tags | default(value=[]) %}<a class="pill" href="/tags/{{ t | slugify }}/"><span class="pill__hash">#</span>{{ t }}</a>{% endfor %}
+        </div>
+        <div class="row" style="gap:8px">
+          <a class="q-btn q-btn--secondary q-btn--sm" href="/musings/">← All musings</a>
+        </div>
+      </div>
+
+      {# Compute siblings from the date-sorted section (robust under pagination). #}
+      {% set sec = get_section(path="musings/_index.md") %}
+      {% set pgs = sec.pages %}
+      {% set total = pgs | length %}
+      {% set_global cur = -1 %}
+      {% for p in pgs %}{% if p.path == page.path %}{% set_global cur = loop.index0 %}{% endif %}{% endfor %}
+      {% if cur != -1 %}
+        {% set newer_i = cur - 1 %}
+        {% set older_i = cur + 1 %}
+        {% if newer_i >= 0 or older_i < total %}
+        <nav class="prev-next" aria-label="Post navigation">
+          {% if newer_i >= 0 %}{% set np = pgs | nth(n=newer_i) %}
+          <a class="pn-card pn-card--prev" href="{{ np.permalink }}"><span class="pn-card__dir">← Newer</span><span class="pn-card__title">{{ np.title }}</span></a>
+          {% else %}<span></span>{% endif %}
+          {% if older_i < total %}{% set op = pgs | nth(n=older_i) %}
+          <a class="pn-card pn-card--next" href="{{ op.permalink }}"><span class="pn-card__dir">Older →</span><span class="pn-card__title">{{ op.title }}</span></a>
+          {% else %}<span></span>{% endif %}
+        </nav>
+        {% endif %}
+      {% endif %}
+    </footer>
+  </article>
+</div>
+{% endblock content %}
