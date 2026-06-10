@@ -1,0 +1,8 @@
+# Required for candle on wasm32 (per candle-wasm-examples/quant-qwen3):
+# - getrandom 0.3 needs the wasm_js backend cfg in addition to the crate feature
+# - simd128 enables candle's hand-written q8_0 SIMD kernels (3-5x faster)
+[target.wasm32-unknown-unknown]
+rustflags = [
+    '--cfg', 'getrandom_backend="wasm_js"',
+    '-C', 'target-feature=+simd128',
+]

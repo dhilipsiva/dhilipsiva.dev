@@ -1,4 +1,4 @@
-/* dhilipsiva.dev — progressive enhancement only.
+/* dhilipsiva.com — progressive enhancement only.
    The site is fully functional without JS: nav is a CSS checkbox toggle,
    theme defaults to dark. This script just persists a light/dark preference. */
 (function () {

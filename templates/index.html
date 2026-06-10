@@ -13,12 +13,13 @@
     <div>
       <span class="hero__eyebrow"><span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>{{ section.extra.available }}</span> {{ config.extra.location }}</span>
       <h1>{{ section.extra.hero_h1 | safe }}</h1>
-      <p class="hero__tagline">{{ config.extra.tagline }}</p>
+      <p class="hero__tagline">{{ section.extra.hero_tagline }}</p>
       <p class="hero__intro">{{ section.extra.hero_intro }}</p>
       <div class="hero__actions">
         <a class="q-btn q-btn--primary q-btn--lg" href="/things-i-built/">Things I built</a>
         <a class="q-btn q-btn--secondary q-btn--lg" href="/musings/">Read the Musings</a>
         <a class="q-btn q-btn--ghost q-btn--lg" href="/contact/">Get in touch →</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="/play/" title="This site, as a constellation you fly through">⊳ Play the site</a>
       </div>
     </div>
 
@@ -31,16 +32,15 @@
         <span class="term__title">~/dhilipsiva — zsh</span>
       </div>
       <div class="term__body" style="white-space:pre"><span class="c-prompt">~ ❯</span> <span class="c-fn">whoami</span> --verbose
-<span class="c-com"># resolving fixed point…</span>
-
   <span class="c-key">name</span><span class="c-pun">    =</span> <span class="c-str">"dhilipsiva"</span>
-  <span class="c-key">role</span><span class="c-pun">    =</span> <span class="c-str">"Software Architect"</span>  <span class="c-com">// prev: VP of Engineering</span>
+  <span class="c-key">role</span><span class="c-pun">    =</span> <span class="c-str">"Software Architect"</span>
   <span class="c-key">loc</span><span class="c-pun">     =</span> <span class="c-str">"Bangalore, India"</span>
-  <span class="c-key">langs</span><span class="c-pun">   =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">,</span> <span class="c-type">Tamil</span><span class="c-pun">]</span>
-  <span class="c-key">believes</span><span class="c-pun">=</span> <span class="c-str">"nothing is owed. build anyway."</span>
+  <span class="c-key">langs</span><span class="c-pun">   =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">]</span>
+  <span class="c-key">focus</span><span class="c-pun">   =</span> <span class="c-str">"symbolic reasoning, retrofit for LLMs"</span>
 
-<span class="c-prompt">~ ❯</span> fixpoint <span class="c-fn">eval</span><span class="c-pun">(</span>self<span class="c-pun">)</span>
-<span class="c-out">  ∴ eval(self) = self        </span><span class="c-str">5/5 ack · 38ms</span><span class="c-out"> ✓</span>
+<span class="c-prompt">~ ❯</span> <span class="c-fn">nibli</span> verify <span class="c-str">"the model's answer"</span>
+<span class="c-out">  ⊢ derive ⟶ proof, not prediction</span>
+<span class="c-out">  ∴ no hallucination · </span><span class="c-str">38ms</span><span class="c-out"> ✓</span>
 <span class="c-prompt">~ ❯</span> <span class="q-cursor"></span></div>
     </div>
   </div>
@@ -126,6 +126,14 @@
       </div>
       <a class="see-all" href="/now/">What I'm doing now →</a>
     </article>
+  </div>
+</section>
+
+<!-- =========================== PERSONAL NOTE ======================== -->
+<section class="section--tight" style="padding-top:0">
+  <div class="container">
+    <span class="eyebrow">// off the clock</span>
+    <p style="font-family:var(--font-serif);font-style:italic;font-size:20px;line-height:1.5;color:var(--text-body);border-left:2px solid var(--accent);padding-left:18px;max-width:62ch;margin:12px 0 0">{{ config.extra.tagline }}</p>
   </div>
 </section>
 

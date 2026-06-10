@@ -1,0 +1,27 @@
+[package]
+name = "slm-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "In-browser SLM inference for dhilipsiva.com/play — candle (Rust) compiled to WebAssembly"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+candle = { version = "0.10", package = "candle-core" }
+candle-nn = "0.10"
+candle-transformers = "0.10"
+tokenizers = { version = "0.22", default-features = false, features = ["unstable_wasm"] }
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+console_error_panic_hook = "0.1.7"
+getrandom = { version = "0.3", features = ["wasm_js"] }
+
+[profile.release]
+lto = true
+opt-level = 3
+
+# wasm-opt occasionally hangs on Windows; the -O3 rustc output is already fine for our use.
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false

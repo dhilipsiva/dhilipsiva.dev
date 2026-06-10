@@ -36,7 +36,7 @@ Here is the smallest honest version of the idea, in Rust:
     <span class="c-pun">}</span>
 <span class="c-pun">}</span></code></pre>
 
-You can call `settle` on anything that knows how to compare itself to a previous version of itself. Nodes in `gossipd` do exactly this: they exchange opinions until no opinion changes, and then they call that agreement. The optimism is not that agreement is guaranteed — it isn't. The optimism is that it is *worth iterating toward anyway*.
+You can call `settle` on anything that knows how to compare itself to a previous version of itself. Nodes in `nibli`'s federated gossip do exactly this: they exchange knowledge until no opinion changes, and then they call that agreement. The optimism is not that agreement is guaranteed — it isn't. The optimism is that it is *worth iterating toward anyway*.
 
 ### Three properties of things that last
 

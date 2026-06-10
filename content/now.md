@@ -8,8 +8,8 @@ last_updated = "2026-06-09"
 [[extra.sections]]
 label = "building"
 items = [
-  "**axiom v0.5** — tightening the proof core and shrinking the Wasm payload.",
-  "A small distributed mesh experiment over WebRTC.",
+  "**nibli** — a zero-hallucination symbolic reasoning engine; retrofitting symbolic reasoning for the LLM era.",
+  "**cognito** — a pure-Rust System 2 reasoning kernel on Burn.",
 ]
 
 [[extra.sections]]

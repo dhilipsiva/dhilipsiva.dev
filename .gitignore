@@ -1,6 +1,11 @@
 # Zola build output
 /public
 
+# local tooling + Rust build dirs
+/.tools
+/slm-wasm/target
+/slm-wasm/pkg
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db
