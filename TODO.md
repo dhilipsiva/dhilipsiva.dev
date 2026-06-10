@@ -4,7 +4,9 @@
 - [x] **Host the fine-tuned GGUFs on Hugging Face** — live at
       https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf (both models + tokenizers + card);
       brain.js points at the resolve URLs. Re-upload after retrains: `finetune/hf_upload.py`.
-- [ ] Push `source` to origin (4+ commits ahead; needs the SSH agent unlocked locally).
+- [x] Push `source` to origin.
+- [ ] Verify the live site after the first Pages deploy (Settings → Pages → Source: GitHub Actions, then
+      check dhilipsiva.com: twin loads from HF, mic permission prompt on HTTPS, voice toggle).
 
 ## Content passes (mine to write)
 - [ ] Real title for the book (site-wide working title: "The Fixed Point of Thought").
