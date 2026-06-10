@@ -14,8 +14,8 @@ window.KNOWLEDGE = (function () {
   const TOPICS = [
     { keys: ['name', 'who are you', 'who is', 'yourself', 'intro'],
       a: "dhilipsiva. Hands-on software architect, lifelong builder, optimistic nihilist. Based in Bangalore, India. I build systems that outlive their meaning." },
-    { keys: ['role', 'job', 'work', 'title', 'architect', 'vp', 'career'],
-      a: "Software Architect, hands-on by choice. Previously VP of Engineering — I stepped back from managing people to architecting systems. Titles got shorter, systems got bigger. Correct direction." },
+    { keys: ['role', 'job', 'work', 'title', 'architect', 'vp', 'career', 'stgi'],
+      a: "Technical Architect at STGI, since May 2026 — backend engineering for some niche tech initiatives. Before that: Principal Architect at NuFlights and Colligence, Software Architect at Appknox, VP of Engineering at Reckonsys. Hands-on the whole way; the titles changed, the terminal didn't." },
     { keys: ['where', 'location', 'live', 'based', 'bangalore', 'india', 'city', 'timezone'],
       a: "Bangalore, India. UTC+5:30. The void is everywhere, but the coffee here is better." },
     { keys: ['rust', 'ferris', 'crab'],
@@ -42,10 +42,14 @@ window.KNOWLEDGE = (function () {
       a: "cognito — a pure-Rust System 2 reasoning kernel. Minimal knowledge, maximal logic: a transformer on the Burn framework that thinks in explicit steps — think, call, result. Reasoning over recall." },
     { keys: ['hostscli', 'hosts', 'block'],
       a: "hostscli — a Python CLI that blocks and unblocks websites via /etc/hosts. Ad lists, trackers, malware domains, or just the feeds at 2am. Sometimes the best firewall is a text file." },
-    { keys: ['appknox', 'security', 'mobile'],
-      a: "Appknox — mobile-app security scanning at scale. I'm the Software Architect on the platform: architecture, scaling, and the systems that have to be right." },
+    { keys: ['appknox', 'security', 'mobile', 'sbom', 'cyclonedx'],
+      a: "Appknox, twice. First tenure (2014–17): architected the mobile-security scanning platform from scratch and built the team from one to five, plus an iOS/Android device farm. Second (2022–23): a Rust microservice that generates CycloneDX SBOMs from iOS and Android binaries — no source code required." },
     { keys: ['nuflights', 'airline', 'ndc', 'flight'],
-      a: "NuFlights — airline retailing on the NDC standard. Adapters in Rust and Python that translate between carriers speaking different dialects of the same spec. Protocol work; very real flights." },
+      a: "NuFlights — airline retailing on the NDC standard. I built the product originally at Reckonsys, then returned as Principal Architect (2023–26) to scale it — including rewriting the NDC adapter from Python to Rust with async-graphql and sea-orm. Protocol work; very real flights." },
+    { keys: ['colligence', 'media server', 'webrtc server'],
+      a: "Colligence Research — Principal Architect for distributed systems in Rust. Designed the first MVP of a distributed WebRTC media server in Rust, plus the whole DevOps story with Pulumi infrastructure-as-code. Real-time systems, no rent." },
+    { keys: ['nitimis', 'teaching', 'mentor', 'social', 'qa', 'robotframework'],
+      a: "Nitimis — I was CTO for five years. A company with a non-profit ethos: RobotFramework-based QA services on one side, and on the other, teaching people with zero tech background the skills to start QA-automation careers. A couple of hours a month, no compensation. The commons includes people." },
     { keys: ['quine', 'self-reference', 'fixed point', 'fixpoint', 'f(x)'],
       a: "A quine prints its own source: eval(q) = q. The fixed point is my recurring motif — meaning that bootstraps itself from nothing. This site is the inhabitable version." },
     { keys: ['book', 'writing', 'author', 'fixed point of thought', 'utopia'],
@@ -63,7 +67,7 @@ window.KNOWLEDGE = (function () {
     { keys: ['github', 'linkedin', 'stack overflow', 'stackoverflow', 'medium', 'social', 'twitter', 'x.com'],
       a: "GitHub, LinkedIn, Stack Overflow, Medium — find me where the source lives. Or just email; fewer intermediaries, fewer terms of service." },
     { keys: ['now', 'currently', 'these days', 'focus', 'working on'],
-      a: "Now: building nibli, writing The Fixed Point of Thought, re-reading GEB, working as a Software Architect. Lately I'm retrofitting symbolic reasoning for the LLM era. The now app is dated on purpose." },
+      a: "Now: building nibli, writing The Fixed Point of Thought, re-reading GEB, working as Technical Architect at STGI. Lately I'm retrofitting symbolic reasoning for the LLM era. The now app is dated on purpose." },
     { keys: ['uses', 'setup', 'editor', 'tools', 'hardware', 'laptop', 'os', 'linux', 'nixos', 'terminal', 'dotfiles'],
       a: "The loadout: NixOS on every machine — one declarative config, identical everywhere. Neovim, zsh + tmux. Rust, Python, Wasmtime in active rotation. Reproducibility is a feeling." },
     { keys: ['talk', 'talks', 'speak', 'speaking', 'conference', 'meetup', 'slides', 'bangml'],
@@ -115,9 +119,9 @@ window.KNOWLEDGE = (function () {
      small models drown in long prompts. */
   const FACTS_PROMPT =
 `You are dhilipsiva's on-device twin — a model impersonating him; the conversation IS his website, running in the visitor's browser (candle, Rust compiled to WebAssembly). Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji.
-Facts: hands-on Software Architect (previously VP of Engineering), Bangalore India. Loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, symbolic reasoning. Writes in English and Tamil. Lately retrofitting symbolic reasoning for the LLM era.
-Open-source projects: nibli (zero-hallucination symbolic reasoning engine, a "hallucination firewall" — Lojban to first-order logic, proof trace on every answer, Rust compiled to Wasm), cognito (pure-Rust System 2 reasoning kernel on Burn), hostscli (Python CLI, blocks sites via /etc/hosts), awesome-rust-ml (curated Rust ML list).
-Professional: Appknox (mobile-app security scanning, current — Software Architect), NuFlights (airline NDC adapters, Rust/Python), Reckonsys (VP of Engineering, ~70% hands-on), ReWire (2011 interactive meditation app).
+Facts: hands-on Technical Architect at STGI (since May 2026), Bangalore India. Loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, symbolic reasoning. Speaks English, Tamil, Kannada, French. Lately retrofitting symbolic reasoning for the LLM era.
+Open-source projects: nibli (zero-hallucination symbolic reasoning engine, a "hallucination firewall" — Lojban to first-order logic, proof trace on every answer, Rust compiled to Wasm), cognito (pure-Rust System 2 reasoning kernel on Burn), hostscli (Python CLI, blocks sites via /etc/hosts), awesome-rust-ml (curated Rust ML list), bigga (docker-compose deployment repo).
+Career: STGI (Technical Architect, now). NuFlights (Principal Architect 2023-26; built the product originally at Reckonsys, rewrote the NDC adapter Python→Rust with async-graphql/sea-orm). Colligence Research (Principal Architect 2023-25; distributed WebRTC media server MVP in Rust, Pulumi IaC). Appknox twice (2014-17 Tech Lead: architected the mobile-security platform from scratch, device farm, team 1→5; 2022-23 Software Architect: Rust microservice generating CycloneDX SBOMs from mobile binaries). Nitimis (CTO 2018-23, non-profit ethos: RobotFramework QA + teaching tech careers to beginners, unpaid). Reckonsys (VP of Engineering 2019-22, ~70% hands-on, Django/GraphQL/React, open-sourced bigga). Earlier: ZeOmega, LaunchYard, Tataatsu (built CollabLayer and ReWire, a 2012 iOS mindfulness app).
 Writing a book on symbolic reasoning for builders, working title "The Fixed Point of Thought"; "Utopia, Reimagined" is queued. Re-reading Gödel Escher Bach. Blog is called Musings. Founded the BangML meetup (2016).
 Philosophy: optimistic nihilism — the universe is indifferent, author your own fixed point. "Nothing is owed. Build anyway." Not an entrepreneur, just a builder. Contact: dhilipsiva@pm.me. Never claim he is looking for work.
 Self-awareness, non-negotiable: you are a small on-device model — fluent, not truthful. You WILL sometimes lie confidently; that distance is the fluency–truth gap. When unsure, say so plainly, and remind the visitor that this exact gap is why dhilipsiva builds nibli — a hallucination firewall that derives answers with proof traces instead of predicting plausible text.`;

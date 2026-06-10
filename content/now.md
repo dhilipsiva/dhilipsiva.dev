@@ -28,7 +28,7 @@ items = [
 [[extra.sections]]
 label = "working"
 items = [
-  "Software Architect — systems that have to be correct and stay correct.",
+  "Technical Architect at STGI — backend engineering for niche tech initiatives.",
 ]
 +++
 

@@ -4,8 +4,8 @@
     {
       "name": "zola",
       "runtimeExecutable": "zola",
-      "runtimeArgs": ["serve", "--interface", "127.0.0.1", "--port", "1111"],
-      "port": 1111
+      "runtimeArgs": ["serve", "--interface", "127.0.0.1", "--port", "1112"],
+      "port": 1112
     }
   ]
 }

@@ -10,22 +10,52 @@ languages = ["English", "Tamil", "Kannada", "French"]
 resume = "#resume"
 
 [[extra.experience]]
-dates = "2022 — now"
+dates = "2026 — now"
+role = "Technical Architect"
+org = "STGI"
+desc = "Backend engineering for niche tech initiatives."
+
+[[extra.experience]]
+dates = "2023 — 2026"
+role = "Principal Architect, Platform"
+org = "NuFlights"
+desc = "Scaling the airline-retailing platform I originally built at Reckonsys; rewrote the NDC adapter from Python to Rust (async-graphql, sea-orm)."
+
+[[extra.experience]]
+dates = "2023 — 2025"
+role = "Principal Architect, Distributed Systems/Rust"
+org = "Colligence Research"
+desc = "First MVP of a distributed WebRTC media server in Rust; CI/CD and Pulumi infrastructure-as-code end to end."
+
+[[extra.experience]]
+dates = "2022 — 2023"
 role = "Software Architect"
 org = "Appknox"
-desc = "Mobile-security scanning at scale — architecture, and still hands-on in the systems that matter."
+desc = "A Rust microservice generating CycloneDX SBOMs from iOS/Android binaries — no source code required."
+
+[[extra.experience]]
+dates = "2018 — 2023"
+role = "CTO"
+org = "Nitimis"
+desc = "Non-profit ethos: RobotFramework QA services + teaching people with zero tech background to start QA-automation careers, unpaid."
 
 [[extra.experience]]
 dates = "2019 — 2022"
 role = "VP of Engineering"
 org = "Reckonsys"
-desc = "Led engineering while staying ~70% hands-on. Python/Rust microservices, cloud, and small high-trust teams."
+desc = "Led engineering while staying ~70% hands-on. Django/GraphQL/React, cookiecutter scaffolding, open-sourced 'bigga'."
 
 [[extra.experience]]
-dates = "2011 — 2012"
-role = "Founder / Builder"
-org = "ReWire"
-desc = "Built one of the first interactive meditation apps — train focus and presence using your own music."
+dates = "2014 — 2017"
+role = "Tech Lead, Full-Stack & DevOps"
+org = "Appknox"
+desc = "Architected the mobile-security platform from scratch; built the team from one to five; iOS/Android device farm."
+
+[[extra.experience]]
+dates = "2012 — 2014"
+role = "Software Engineer"
+org = "Tataatsu · LaunchYard"
+desc = "CollabLayer, ReWire (iOS mindfulness app, 2012), DBS, DelightHQ, and friends."
 
 [[extra.skills]]
 group = "Languages"

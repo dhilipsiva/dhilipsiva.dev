@@ -177,6 +177,11 @@
   }
 
   /* ── the reply pipeline ──────────────────────────────────────────────── */
+  // Ephemeral conversation memory: in-memory only, never persisted, dies on
+  // reload. Passed to the brain so follow-up questions resolve their "it".
+  const history = [];
+  const HISTORY_MAX = 12; // messages (6 exchanges)
+
   let busy = false;
   async function submit(raw) {
     const q = (raw !== undefined ? raw : input.value).trim();
@@ -189,8 +194,10 @@
     let thinking = null;
     if (Brain.mode === 'slm') thinking = thinkingRow();
 
-    const res = await Brain.ask(q);
+    const res = await Brain.ask(q, { history: history.slice() });
     if (thinking) thinking.remove();
+    history.push({ role: 'user', content: q }, { role: 'assistant', content: res.text });
+    if (history.length > HISTORY_MAX) history.splice(0, history.length - HISTORY_MAX);
 
     // the model's own tool call (qwen) wins; the router is the fallback
     const call = res.toolCall || routed;

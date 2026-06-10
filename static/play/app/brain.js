@@ -13,7 +13,34 @@
 
 window.Brain = (function () {
 
+  // MUST match finetune/generate_dataset.py SYSTEM / SYSTEM_TOOLS verbatim —
+  // the fine-tunes' recall is conditioned on their training system prompt.
+  const TWIN_SYSTEM = "You are dhilipsiva's on-device twin - a model impersonating him; the conversation IS his website, running in the visitor's browser. Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji. You are a small model: fluent, not truthful - admit uncertainty plainly, never invent facts, and point to nibli when the fluency-truth gap comes up. Never share phone numbers; route contact to dhilipsiva@pm.me. Never claim he is looking for work.";
+  const TWIN_SYSTEM_TOOLS = TWIN_SYSTEM + ' You can open one app for the user. Apps: projects (params: filter, category), books, musings, about, now, uses, talks, contact. When the user asks to see or browse these, end your reply with a line exactly like: TOOL {"app":"projects","params":{"filter":"rust"}}';
+
   const MODELS = {
+    twin: {
+      label: 'dhilipsiva-twin · 138MB',
+      detail: 'fine-tuned on me — lies in my own voice',
+      // LoRA-tuned SmolLM2-135M (see /finetune). Served locally; for hosts with
+      // file-size limits, upload to HF and point this at the resolve URL.
+      model: '/play/models/dhilipsiva-twin-q8_0.gguf',
+      tokenizer: '/play/models/tokenizer.json',
+      tools: false,
+      // overfit on purpose — greedy decode so the baked answers surface
+      sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
+      system: TWIN_SYSTEM
+    },
+    twinq: {
+      label: 'dhilipsiva-twin-qwen · 507MB',
+      detail: 'fine-tuned on me + opens the apps itself',
+      // LoRA-tuned Qwen2.5-0.5B with TOOL-calling baked in (see /finetune).
+      model: '/play/models/dhilipsiva-twin-qwen-q8_0.gguf',
+      tokenizer: '/play/models/tokenizer-qwen.json',
+      tools: true,
+      sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
+      system: TWIN_SYSTEM_TOOLS
+    },
     smol: {
       label: 'SmolLM2-135M · 138MB',
       detail: 'tiny & quick — vibes over facts',
@@ -51,8 +78,31 @@ window.Brain = (function () {
     else if (m.status === 'error') { clearTimeout(p.timer); pending.delete(m.id); p.reject(new Error(m.error)); }
   }
 
+  /* ── ephemeral history ───────────────────────────────────────────────── */
+  // Recent turns are spliced into the prompt so follow-ups resolve ("is IT
+  // open source?"). nCtx is 1024, so clamp hard: newest turns first, each
+  // message truncated, total budget bounded. In-memory only — the caller
+  // owns the array and it dies with the tab.
+  const HIST_MSG_CHARS = 280;
+  const HIST_BUDGET_CHARS = 1400;
+  function clampHistory(history) {
+    const kept = [];
+    let used = 0;
+    for (let i = history.length - 1; i >= 0; i--) {
+      const m = history[i];
+      if (!m || (m.role !== 'user' && m.role !== 'assistant') || !m.content) continue;
+      let c = String(m.content);
+      if (c.length > HIST_MSG_CHARS) c = c.slice(0, HIST_MSG_CHARS) + '…';
+      if (used + c.length > HIST_BUDGET_CHARS) break;
+      used += c.length;
+      kept.unshift({ role: m.role, content: c });
+    }
+    return kept;
+  }
+
   /* ── ask ─────────────────────────────────────────────────────────────── */
-  // opts.onToken(piece) streams pieces as they decode.
+  // opts.history = [{role:'user'|'assistant', content}] — ephemeral, session
+  // only. opts.onToken(piece) streams pieces as they decode.
   async function ask(query, opts = {}) {
     const scripted = window.KNOWLEDGE.answer(query);
     if (mode !== 'slm' || !worker) {
@@ -60,19 +110,24 @@ window.Brain = (function () {
     }
     const spec = MODELS[activeModel];
     try {
-      let system = window.KNOWLEDGE.FACTS_PROMPT;
-      if (spec.tools && window.MCP) system += '\n' + window.MCP.toolPrompt();
+      // Fine-tunes carry their own (training-identical) system prompt; the
+      // generic models get FACTS_PROMPT + the live tool menu.
+      let system = spec.system || window.KNOWLEDGE.FACTS_PROMPT;
+      if (spec.tools && window.MCP && !spec.system) system += '\n' + window.MCP.toolPrompt();
+      const hist = clampHistory(opts.history || []);
       const prompt =
         '<|im_start|>system\n' + system + '<|im_end|>\n' +
+        hist.map(m => '<|im_start|>' + m.role + '\n' + m.content + '<|im_end|>\n').join('') +
         '<|im_start|>user\n' + query.slice(0, 400) + '<|im_end|>\n' +
         '<|im_start|>assistant\n';
       const id = ++askSeq;
       let out = await new Promise((resolve, reject) => {
         const timer = setTimeout(() => { pending.delete(id); reject(new Error('inference timeout')); }, ASK_TIMEOUT_MS);
         pending.set(id, { resolve, reject, timer, onToken: opts.onToken });
+        const s = spec.sampling || { temp: 0.4, topP: 0.9, repeatPenalty: 1.15 };
         worker.postMessage({
           cmd: 'generate', id, prompt,
-          temp: 0.4, topP: 0.9, repeatPenalty: 1.15,
+          temp: s.temp, topP: s.topP, repeatPenalty: s.repeatPenalty,
           maxTokens: NPREDICT,
           seed: Date.now() >>> 0
         });

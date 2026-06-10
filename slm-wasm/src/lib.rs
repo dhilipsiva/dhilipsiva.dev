@@ -184,7 +184,14 @@ impl Model {
         let logits = if self.repeat_penalty == 1.0 {
             logits
         } else {
-            let start = self.tokens.len().saturating_sub(self.repeat_last_n);
+            // Penalize only GENERATED tokens — never the prompt. Otherwise a
+            // persona prompt full of the owner's name punishes the model for
+            // saying its own name.
+            let start = self
+                .tokens
+                .len()
+                .saturating_sub(self.repeat_last_n)
+                .max(self.prompt_len);
             candle_transformers::utils::apply_repeat_penalty(
                 &logits,
                 self.repeat_penalty,

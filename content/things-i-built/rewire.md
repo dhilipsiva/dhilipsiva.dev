@@ -1,19 +1,20 @@
 +++
 title = "ReWire"
-description = "One of the first interactive meditation apps — train focus and presence using your own music, on an iPhone. Built before 'mindfulness app' was a category."
-weight = 8
+description = "An iOS mindfulness app (2012, at Tataatsu) — meditation and attention training, with an API server for scores and leaderboards. Designed, developed, and deployed as a one-person team."
+weight = 12
 
 [extra]
 glyph = "◐"
 status = "archived"
-role = "Built"
+role = "Built end to end"
 visibility = "closed source"
 category = "professional"
 marked = false
 featured = false
-tech = ["iOS", "Audio", "Objective-C"]
-no_link_note = "2011 · archived"
+tech = ["iOS", "Objective-C", "Python", "AWS"]
+no_link_note = "2012 · archived"
 +++
 
-An interactive meditation app from 2011. Archived, fondly — even dead systems leave fixed points.
-*(Body copy is a working draft.)*
+An iOS mindfulness app for meditation and improving attention, built before "mindfulness app" was a
+category. Objective-C on the phone, Python + PostgreSQL + Redis + RabbitMQ behind it, deployed with
+Fabric on AWS — one person, end to end. Archived, fondly. Even dead systems leave fixed points.

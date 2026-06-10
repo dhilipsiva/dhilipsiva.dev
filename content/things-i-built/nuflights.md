@@ -1,18 +1,21 @@
 +++
 title = "NuFlights"
-description = "Airline retailing on the NDC standard — adapters that translate between carriers speaking different dialects of the same spec. Rust and Python doing protocol work."
-weight = 6
+description = "Principal Architect, Platform (2023–26) — on the airline-retailing platform I originally built from scratch at Reckonsys. Highlight: rewriting the NDC adapter from Python to Rust."
+weight = 9
 
 [extra]
 glyph = "⇄"
 status = "shipped"
-role = "Architect & builder"
+role = "Principal Architect"
 visibility = "closed source"
 category = "professional"
 marked = false
 featured = false
-tech = ["Rust", "Python", "Protocols"]
-no_link_note = "closed source · nuflights.com"
+tech = ["Rust", "Python", "GraphQL", "Protocols"]
+no_link_note = "2023–2026 · nuflights.com"
 +++
 
-NDC platform adapters for airline retailing. *(Body copy is a working draft — describe only what's public.)*
+Airline retailing on the NDC standard. I built the entire product from scratch during my Reckonsys tenure,
+then returned as Principal Architect to scale it. The highlight: rewriting the NDC adapter from Python to
+Rust — async-graphql, sea-orm, yaserde — for performance, efficiency, and maintainability on complex NDC
+content exchange. Protocol work; very real flights. *(Body copy is a working draft.)*

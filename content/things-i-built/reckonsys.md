@@ -1,7 +1,7 @@
 +++
 title = "The Reckonsys years"
-description = "VP of Engineering, ~70% hands-on by choice. Python and Rust microservices for startups, teams of five to fifteen. The title said management; the commit history said otherwise."
-weight = 7
+description = "VP of Engineering (2019–22), ~70% hands-on by choice. Django/GraphQL/React for startups, teams of 2–10; open-sourced 'bigga' and the cookiecutter templates everything was scaffolded from."
+weight = 10
 
 [extra]
 glyph = "⎇"
