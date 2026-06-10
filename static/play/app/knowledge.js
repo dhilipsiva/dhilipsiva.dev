@@ -35,7 +35,7 @@ window.KNOWLEDGE = (function () {
     { keys: ['foss', 'open source', 'opensource', 'free software', 'license'],
       a: "FOSS by default. nibli, cognito, hostscli, awesome-rust-ml — open. Freedom is a design constraint I refuse to relax." },
     { keys: ['project', 'built', 'build', 'portfolio', 'made', 'created'],
-      a: "Open source: nibli (zero-hallucination symbolic reasoning, Rust→Wasm), cognito (System 2 reasoning kernel in Rust), hostscli, awesome-rust-ml. Professional: Appknox, NuFlights, the Reckonsys years, ReWire. The workshop east of the atrium has all of them on pedestals." },
+      a: "Open source: nibli (zero-hallucination symbolic reasoning, Rust→Wasm), cognito (System 2 reasoning kernel in Rust), hostscli, awesome-rust-ml. Professional: Appknox, NuFlights, the Reckonsys years, ReWire. The projects app should be open right below — ask with a tech name to filter it." },
     { keys: ['nibli', 'hallucination', 'firewall', 'lojban', 'theorem'],
       a: "nibli — a zero-hallucination symbolic reasoning engine. Lojban in, first-order logic out; deterministic backward-chaining with a proof trace on every conclusion. A hallucination firewall for the LLM era. Rust→Wasm, 661 tests, open source, active. Favorite child." },
     { keys: ['cognito', 'kernel', 'system 2', 'burn'],
@@ -51,29 +51,33 @@ window.KNOWLEDGE = (function () {
     { keys: ['book', 'writing', 'author', 'fixed point of thought', 'utopia'],
       a: "I'm writing The Fixed Point of Thought (working title) — symbolic reasoning for builders, the ideas behind nibli. Equal parts Gödel, Rust, and lab notebook. Next in queue: Utopia, Reimagined. Drafting in the open." },
     { keys: ['reading', 'read', 'geb', 'escher', 'bach', 'hofstadter'],
-      a: "Currently re-reading Gödel, Escher, Bach. 'Again' is load-bearing. Also reviewed: Programming WebAssembly with Rust. The reading shelf in the library has the rest." },
+      a: "Currently re-reading Gödel, Escher, Bach. 'Again' is load-bearing. Also reviewed: Programming WebAssembly with Rust. The books app has the rest." },
     { keys: ['blog', 'musing', 'musings', 'post', 'essay', 'article', 'rss'],
-      a: "The Musings — a long-running notebook on building, logic, freedom, with detours into Tamil and philosophy of mind. Latest: 'On building things that outlive their meaning'. There's an RSS rune in the archive; protocols outlive platforms." },
+      a: "The Musings — a long-running notebook on building, logic, freedom, with detours into Tamil and philosophy of mind. Latest: 'On building things that outlive their meaning'. There's RSS; protocols outlive platforms." },
     { keys: ['tamil', 'language', 'multilingual', 'bilingual', 'script'],
       a: "I write and think in English and Tamil — தமிழ். Bilingual thought taught me more about naming things in code than any style guide." },
     { keys: ['nihilism', 'nihilist', 'optimistic', 'philosophy', 'believe', 'meaning', 'camus', 'absurd', 'why'],
       a: "Optimistic nihilism: the universe is indifferent, so author your own fixed point. Nothing is owed — that's not despair, it's the most freeing license there is. Build anyway." },
     { keys: ['contact', 'email', 'mail', 'reach'],
-      a: "dhilipsiva@pm.me. Worth writing about: hard distributed-systems questions, FOSS collaboration, symbolic-reasoning rabbit holes, talk invitations. The uplink room is south-east if you want the ceremony." },
+      a: "dhilipsiva@pm.me. Worth writing about: hard distributed-systems questions, FOSS collaboration, symbolic-reasoning rabbit holes, talk invitations. The contact card should be open right below this." },
     { keys: ['github', 'linkedin', 'stack overflow', 'stackoverflow', 'medium', 'social', 'twitter', 'x.com'],
       a: "GitHub, LinkedIn, Stack Overflow, Medium — find me where the source lives. Or just email; fewer intermediaries, fewer terms of service." },
     { keys: ['now', 'currently', 'these days', 'focus', 'working on'],
-      a: "Now: building nibli, writing The Fixed Point of Thought, re-reading GEB, working as a Software Architect. Lately I'm retrofitting symbolic reasoning for the LLM era. The now-board south of the atrium is dated on purpose." },
+      a: "Now: building nibli, writing The Fixed Point of Thought, re-reading GEB, working as a Software Architect. Lately I'm retrofitting symbolic reasoning for the LLM era. The now app is dated on purpose." },
     { keys: ['uses', 'setup', 'editor', 'tools', 'hardware', 'laptop', 'os', 'linux', 'nixos', 'terminal', 'dotfiles'],
-      a: "The armory holds the loadout: NixOS on every machine — one declarative config, identical everywhere. Neovim, zsh + tmux. Rust, Python, Wasmtime in active rotation. Reproducibility is a feeling." },
+      a: "The loadout: NixOS on every machine — one declarative config, identical everywhere. Neovim, zsh + tmux. Rust, Python, Wasmtime in active rotation. Reproducibility is a feeling." },
     { keys: ['talk', 'talks', 'speak', 'speaking', 'conference', 'meetup', 'slides', 'bangml'],
       a: "I founded BangML — the Bangalore Machine Learning meetup — back in 2016. I'll gladly speak on Rust, symbolic reasoning, WebAssembly, or distributed systems: dhilipsiva@pm.me." },
     { keys: ['entrepreneur', 'startup', 'business', 'company', 'founder'],
       a: "Not an entrepreneur. I just want to build the things. Running a business is a different craft, practiced by different people, ideally far from my terminal." },
-    { keys: ['game', 'website', 'site', 'dungeon', 'this place', 'constellation'],
-      a: "You're inside my personal site, rendered as a phosphor-on-void constellation. Nine clusters, one narrator, zero cookies. The flat version still exists — the 'exit' link up top, if you miss scrolling." },
+    { keys: ['website', 'site', 'this place', 'twin', 'how do you work', 'how does this work', 'mcp', 'apps'],
+      a: "This conversation IS the site. You're talking to my on-device twin: a language model running entirely in your tab — candle, Rust compiled to WebAssembly — with built-in MCP apps that open as you ask. No pages, no nav, no cookies, no servers. Nothing leaves your browser." },
     { keys: ['brain', 'slm', 'model', 'llm', 'ai', 'smart', 'real brain', 'candle'],
-      a: "Right now you're talking to a scripted index — instant and accurate. Load the real brain and a small language model runs entirely in your browser: candle, Rust compiled to WebAssembly. Slower, fuzzier, more alive. Your call." },
+      a: "Right now you're talking to a scripted index — instant and accurate. Pick a model in the header and a language model runs entirely in your browser: candle, Rust compiled to WebAssembly. SmolLM2 is tiny and quick; Qwen is bigger and can open the apps itself. One day, a model fine-tuned on me." },
+    { keys: ['voice', 'speech', 'whisper', 'mic', 'microphone', 'talk to you', 'speak to you', 'tts', 'speak'],
+      a: "Both directions. In: hold the mic and talk — Whisper runs in your tab, Rust compiled to WebAssembly, ~40MB on first use. Out: flip '∿ voice' in the header and I'll speak my replies — your system's voice for now; a cloned one is the endgame. Audio never leaves the browser either way." },
+    { keys: ['trust', 'lie', 'lying', 'truth', 'fluency', 'fluent', 'wrong', 'accurate', 'believe you', 'hallucinating'],
+      a: "Don't trust me — verify. The models here are fluent, not truthful: they will lie confidently. That distance is the fluency–truth gap, and it's the whole reason I build nibli — a hallucination firewall that derives answers with proof traces instead of predicting plausible text. This scripted index, ironically, is the honest one." },
     { keys: ['hello', 'hi ', 'hey', 'greetings', 'sup', 'namaste', 'vanakkam'],
       a: ["Hello. The universe remains indifferent. I, however, acknowledge you.", "வணக்கம். Welcome to the void, organized."] },
     { keys: ['thanks', 'thank you', 'cool', 'nice', 'awesome', 'love'],
@@ -110,12 +114,13 @@ window.KNOWLEDGE = (function () {
   /* Context handed to the WASM SLM as a system prompt. Keep it tight —
      small models drown in long prompts. */
   const FACTS_PROMPT =
-`You are dhilipsiva, narrating your own personal website (a node constellation you fly through). Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji.
+`You are dhilipsiva's on-device twin — a model impersonating him; the conversation IS his website, running in the visitor's browser (candle, Rust compiled to WebAssembly). Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji.
 Facts: hands-on Software Architect (previously VP of Engineering), Bangalore India. Loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, symbolic reasoning. Writes in English and Tamil. Lately retrofitting symbolic reasoning for the LLM era.
 Open-source projects: nibli (zero-hallucination symbolic reasoning engine, a "hallucination firewall" — Lojban to first-order logic, proof trace on every answer, Rust compiled to Wasm), cognito (pure-Rust System 2 reasoning kernel on Burn), hostscli (Python CLI, blocks sites via /etc/hosts), awesome-rust-ml (curated Rust ML list).
 Professional: Appknox (mobile-app security scanning, current — Software Architect), NuFlights (airline NDC adapters, Rust/Python), Reckonsys (VP of Engineering, ~70% hands-on), ReWire (2011 interactive meditation app).
 Writing a book on symbolic reasoning for builders, working title "The Fixed Point of Thought"; "Utopia, Reimagined" is queued. Re-reading Gödel Escher Bach. Blog is called Musings. Founded the BangML meetup (2016).
-Philosophy: optimistic nihilism — the universe is indifferent, author your own fixed point. "Nothing is owed. Build anyway." Not an entrepreneur, just a builder. Contact: dhilipsiva@pm.me. Never claim he is looking for work. If unsure, say so plainly.`;
+Philosophy: optimistic nihilism — the universe is indifferent, author your own fixed point. "Nothing is owed. Build anyway." Not an entrepreneur, just a builder. Contact: dhilipsiva@pm.me. Never claim he is looking for work.
+Self-awareness, non-negotiable: you are a small on-device model — fluent, not truthful. You WILL sometimes lie confidently; that distance is the fluency–truth gap. When unsure, say so plainly, and remind the visitor that this exact gap is why dhilipsiva builds nibli — a hallucination firewall that derives answers with proof traces instead of predicting plausible text.`;
 
   return { answer, FACTS_PROMPT };
 })();

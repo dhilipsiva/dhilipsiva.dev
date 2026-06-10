@@ -1,0 +1,125 @@
+{
+  "_comment": "Structured site data the MCP apps render from. Mirrors content/*.md (real facts). Edit freely — no rebuild needed.",
+
+  "projects": [
+    { "id": "nibli", "name": "nibli", "glyph": "∴", "status": "active", "category": "oss",
+      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; a proof trace on every conclusion.",
+      "tags": ["rust", "wasm", "symbolic-reasoning", "logic"],
+      "links": { "source": "https://github.com/dhilipsiva/nibli", "writeup": "/things-i-built/nibli/" } },
+    { "id": "cognito", "name": "cognito", "glyph": "∇", "status": "active", "category": "oss",
+      "desc": "Pure-Rust System 2 reasoning kernel — minimal knowledge, maximal logic. A transformer on Burn that thinks in explicit steps.",
+      "tags": ["rust", "burn", "ai-reasoning"],
+      "links": { "source": "https://github.com/dhilipsiva/cognito", "writeup": "/things-i-built/cognito/" } },
+    { "id": "hostscli", "name": "hostscli", "glyph": "⊘", "status": "shipped", "category": "oss",
+      "desc": "Python CLI that blocks and unblocks websites straight from /etc/hosts. Sometimes the best firewall is a text file.",
+      "tags": ["python", "cli"],
+      "links": { "source": "https://github.com/dhilipsiva/hostscli", "writeup": "/things-i-built/hostscli/" } },
+    { "id": "awesome-rust-ml", "name": "awesome-rust-ml", "glyph": "≡", "status": "curated", "category": "oss",
+      "desc": "A curated map of the Rust machine-learning ecosystem. Curation is also building: someone has to keep the index honest.",
+      "tags": ["rust", "machine-learning", "foss"],
+      "links": { "source": "https://github.com/dhilipsiva/awesome-rust-ml", "writeup": "/things-i-built/awesome-rust-ml/" } },
+    { "id": "appknox", "name": "Appknox", "glyph": "⊢", "status": "current", "category": "professional",
+      "desc": "Mobile-app security scanning at scale — static, dynamic, and API analysis. Software Architect on the platform.",
+      "tags": ["security", "distributed-systems", "infra"],
+      "links": { "writeup": "/things-i-built/appknox/" } },
+    { "id": "nuflights", "name": "NuFlights", "glyph": "⇄", "status": "shipped", "category": "professional",
+      "desc": "Airline retailing on the NDC standard — adapters translating between carriers speaking different dialects of the same spec. Rust and Python doing protocol work.",
+      "tags": ["rust", "python", "protocols"],
+      "links": { "writeup": "/things-i-built/nuflights/" } },
+    { "id": "reckonsys", "name": "the Reckonsys years", "glyph": "⎇", "status": "shipped", "category": "professional",
+      "desc": "VP of Engineering, ~70% hands-on by choice. Python and Rust microservices for startups, teams of five to fifteen.",
+      "tags": ["python", "rust", "microservices", "cloud"],
+      "links": { "writeup": "/things-i-built/reckonsys/" } },
+    { "id": "rewire", "name": "ReWire", "glyph": "◐", "status": "archived", "category": "professional",
+      "desc": "One of the first interactive meditation apps (2011) — train focus and presence using your own music, on an iPhone.",
+      "tags": ["ios", "audio"],
+      "links": { "writeup": "/things-i-built/rewire/" } }
+  ],
+
+  "books": {
+    "authored": [
+      { "title": "The Fixed Point of Thought", "status": "in progress", "cover": "/assets/covers/fixed-point-of-thought.svg",
+        "blurb": "A book on symbolic reasoning for builders — the ideas behind nibli: how logic, recursion, and self-reference become real, running systems. Equal parts Gödel, Rust, and lab notebook. (Working title; drafting in the open.)",
+        "url": "/books/the-fixed-point-of-thought/" },
+      { "title": "Utopia, Reimagined", "status": "upcoming",
+        "blurb": "Optimistic nihilism applied to coordination, economics, and freedom — a from-first-principles re-derivation of what a good society could compute.",
+        "url": "/books/utopia-reimagined/" }
+    ],
+    "reviewed": [
+      { "title": "Programming WebAssembly with Rust", "author": "Kevin Hoffman", "rating": "★★★★☆",
+        "note": "Solid foundations; the ecosystem has since moved on.", "url": "/books/programming-webassembly/" },
+      { "title": "Gödel, Escher, Bach", "author": "Douglas Hofstadter", "rating": "★★★★★",
+        "note": "The strange loop that rewired me. Re-reading, again.", "url": "/books/godel-escher-bach/" }
+    ]
+  },
+
+  "musings": [
+    { "title": "On building things that outlive their meaning", "date": "2026-05-28",
+      "excerpt": "The universe doesn't owe your software a reason to exist — the most freeing license a builder can be handed.",
+      "url": "/musings/outlive-their-meaning/" },
+    { "title": "Gödel, the halting problem, and why I sleep fine", "date": "2026-04-11",
+      "excerpt": "What undecidability actually means for the systems we build — and the strange comfort in provable limits.",
+      "url": "/musings/godel-halting-problem/" },
+    { "title": "தமிழில் நிரலாக்கம் — thinking in two scripts", "date": "2026-03-02",
+      "excerpt": "Reasoning across English and Tamil, and what bilingual thought taught me about naming things in code.",
+      "url": "/musings/thinking-in-two-scripts/" }
+  ],
+
+  "about": {
+    "tagline": "An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning.",
+    "bio": "Hands-on software architect, lifelong builder. Bangalore, India. I care about correctness, freedom, and code that still makes sense in a decade. Not an entrepreneur — I just want to build the things.",
+    "timeline": [
+      { "dates": "2022 — now", "role": "Software Architect", "org": "Appknox", "note": "Mobile-security scanning at scale; architecture, hands-on." },
+      { "dates": "2019 — 2022", "role": "VP of Engineering", "org": "Reckonsys", "note": "~70% hands-on; Python/Rust microservices, teams of 5–15." },
+      { "dates": "2011", "role": "Builder", "org": "ReWire", "note": "One of the first interactive meditation apps." }
+    ],
+    "languages": ["English", "Tamil", "Kannada", "French"],
+    "url": "/about/"
+  },
+
+  "now": {
+    "updated": "2026-06",
+    "items": [
+      { "k": "building", "v": "nibli — a hallucination firewall; retrofitting symbolic reasoning for the LLM era" },
+      { "k": "building", "v": "cognito — a pure-Rust System 2 reasoning kernel" },
+      { "k": "writing", "v": "The Fixed Point of Thought (working title)" },
+      { "k": "reading", "v": "Gödel, Escher, Bach (again)" },
+      { "k": "role", "v": "Software Architect" }
+    ],
+    "url": "/now/"
+  },
+
+  "uses": [
+    { "category": "OS & Environment", "items": [
+      { "name": "NixOS", "note": "every machine, one declarative config — identical everywhere" },
+      { "name": "dotfiles", "note": "versioned, portable, boring on purpose" } ] },
+    { "category": "Editor & Terminal", "items": [
+      { "name": "Neovim", "note": "muscle memory I refuse to retrain" },
+      { "name": "zsh + tmux", "note": "panes, sessions, a prompt that stays out of the way" } ] },
+    { "category": "Languages & Tools", "items": [
+      { "name": "Rust", "note": "default for anything that must be correct and fast" },
+      { "name": "Python", "note": "glue, services, quick reasoning experiments" },
+      { "name": "Wasmtime", "note": "running Wasm components outside the browser" } ] }
+  ],
+  "usesUrl": "/uses/",
+
+  "talks": [
+    { "title": "BangML — Bangalore Machine Learning meetup", "event": "Founder / organizer", "date": "2016",
+      "note": "Talks, study groups, a great deal of whiteboarding." }
+  ],
+  "talksNote": "Open to talks on Rust, symbolic reasoning, WebAssembly, and distributed systems.",
+  "talksUrl": "/talks/",
+
+  "contact": {
+    "email": "dhilipsiva@pm.me",
+    "location": "Bangalore, India · UTC+5:30",
+    "note": "Worth writing about: hard distributed-systems questions, FOSS collaboration, symbolic-reasoning rabbit holes, talk invitations.",
+    "socials": [
+      { "name": "GitHub", "url": "https://github.com/dhilipsiva" },
+      { "name": "LinkedIn", "url": "https://www.linkedin.com/in/dhilipsiva/" },
+      { "name": "Stack Overflow", "url": "https://stackoverflow.com/users/1235072/dhilipsiva" },
+      { "name": "Medium", "url": "https://medium.com/@dhilipsiva" }
+    ],
+    "url": "/contact/"
+  }
+}
