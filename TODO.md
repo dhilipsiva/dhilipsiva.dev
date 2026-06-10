@@ -1,11 +1,9 @@
 # TODO
 
 ## Before publishing the site
-- [ ] **Host the fine-tuned GGUFs on Hugging Face** — `twin` (138MB) and `twinq` (507MB) are
-      gitignored (>GitHub limits), so a fresh clone / deployed site 404s on those picker options.
-      Upload `finetune/out/*.gguf` (e.g. `huggingface-cli upload dhilipsiva/dhilipsiva-twin-gguf …`)
-      and swap the two `model:`/`tokenizer:` URLs in `static/play/app/brain.js`. Commands in
-      `finetune/README.md`.
+- [x] **Host the fine-tuned GGUFs on Hugging Face** — live at
+      https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf (both models + tokenizers + card);
+      brain.js points at the resolve URLs. Re-upload after retrains: `finetune/hf_upload.py`.
 - [ ] Push `source` to origin (4+ commits ahead; needs the SSH agent unlocked locally).
 
 ## Content passes (mine to write)
