@@ -3,9 +3,9 @@
 
   "projects": [
     { "id": "nibli", "name": "nibli", "glyph": "∴", "status": "active", "category": "oss",
-      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; a proof trace on every conclusion. (Zero-hallucination = inference soundness, not premise truth — like Lean.)",
+      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; a proof trace on every conclusion. (Zero-hallucination = inference soundness, not premise truth — like Lean.) Live demo at /nibli — the real engine in your browser.",
       "tags": ["rust", "wasm", "symbolic-reasoning", "logic"],
-      "links": { "source": "https://github.com/dhilipsiva/nibli", "writeup": "/things-i-built/nibli/" } },
+      "links": { "source": "https://github.com/dhilipsiva/nibli", "writeup": "/things-i-built/nibli/", "demo": "/nibli/" } },
     { "id": "cognito", "name": "cognito", "glyph": "∇", "status": "active", "category": "oss",
       "desc": "Pure-Rust System 2 reasoning kernel — minimal knowledge, maximal logic. A transformer on Burn that thinks in explicit steps.",
       "tags": ["rust", "burn", "ai-reasoning"],

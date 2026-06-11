@@ -13,6 +13,8 @@ marked = true
 featured = true
 tech = ["Rust", "WASM", "Symbolic Reasoning", "Logic"]
 repo = "https://github.com/dhilipsiva/nibli"
+demo = "/nibli/"
+demo_label = "live demo"
 writeup = true
 writeup_label = "write-up"
 +++
@@ -37,3 +39,7 @@ A reasoning engine that cannot hallucinate — it either proves an answer or tel
 precision worth being precise about: zero-hallucination means *inference soundness*, not premise
 truth. Like Lean or Coq — garbage premises in, garbage conclusions out, but the derivation is always
 valid.
+
+**[Try it live at /nibli](/nibli/)** — the real engine compiled to WebAssembly, running the
+Transparency Triad in your browser with the book's GDPR and drug-interaction case studies. Every
+query returns a proof tree; nothing leaves your tab.
