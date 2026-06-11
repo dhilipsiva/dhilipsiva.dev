@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}nibli, live — the Transparency Triad in your browser — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/nibli/app/nibli.css">
+{% endblock head_extra %}
+
+{% block content %}
+<section class="section--tight" style="padding-top:48px">
+  <div class="container">
+    <span class="eyebrow">// nibli · live demo</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:42px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 14px;line-height:1.05">
+      The hallucination firewall, running in your tab</h1>
+    <p class="lead" style="max-width:74ch">This is the real engine — <strong>gerna</strong> (parser),
+    <strong>smuni</strong> (semantic compiler), and <strong>logji</strong> (backward-chaining reasoner) —
+    compiled from Rust to WebAssembly. Nothing is mocked and nothing leaves your browser: every query
+    below runs live deduction over the loaded knowledge base, and every answer carries its proof.</p>
+    <div class="nibli-contract" role="note">
+      <span class="nibli-badge nibli-badge--true">TRUE</span>
+      <span class="nibli-badge nibli-badge--false">FALSE</span>
+      <span class="nibli-badge nibli-badge--unknown">UNKNOWN</span>
+      <span class="nibli-badge nibli-badge--resource">RESOURCE_EXCEEDED</span>
+      <span class="comment">— every query returns exactly one of these. There is no
+      confident-sounding middle ground. The engine never guesses.</span>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container">
+    <div class="nibli-examples" id="nibli-examples" role="tablist" aria-label="Example knowledge bases">
+      <button class="nibli-tab" data-kb="syllogism" role="tab">⊢ The Syllogism</button>
+      <button class="nibli-tab" data-kb="gdpr" role="tab">§ GDPR Compliance</button>
+      <button class="nibli-tab" data-kb="drug-interactions" role="tab">℞ Drug Interactions</button>
+      <span class="sp"></span>
+      <span class="nibli-status" id="nibli-status">engine: loading wasm…</span>
+    </div>
+
+    <p class="nibli-scenario" id="nibli-scenario"></p>
+
+    <!-- ── The Transparency Triad ─────────────────────────────────────── -->
+    <div class="nibli-triad">
+      <div class="nibli-pane">
+        <h3 class="nibli-pane__title">1 · Source <span class="comment">// what a human wrote</span></h3>
+        <div class="nibli-pane__body" id="pane-source"></div>
+      </div>
+      <div class="nibli-pane">
+        <h3 class="nibli-pane__title">2 · Formal encoding <span class="comment">// Lojban, asserted live</span></h3>
+        <div class="nibli-pane__body nibli-pane__body--mono" id="pane-lojban"></div>
+        <div class="nibli-pane__foot" id="pane-lojban-status"></div>
+      </div>
+      <div class="nibli-pane">
+        <h3 class="nibli-pane__title">3 · Back-translation <span class="comment">// robotic by design</span></h3>
+        <div class="nibli-pane__body nibli-pane__body--mono" id="pane-gloss"></div>
+        <div class="nibli-pane__foot">word-by-word gloss from 10,521 jbovlaste entries — the verification
+        surface, not prose</div>
+      </div>
+    </div>
+
+    <!-- ── Queries + scenarios ────────────────────────────────────────── -->
+    <div class="nibli-controls">
+      <div class="nibli-queries">
+        <span class="eyebrow">// ask the engine</span>
+        <div class="row" id="nibli-queries" style="flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      </div>
+      <div class="nibli-scenarios">
+        <span class="eyebrow">// change the world, watch the proofs follow</span>
+        <div class="row" id="nibli-scenarios" style="flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      </div>
+    </div>
+
+    <!-- ── Result + proof tree ────────────────────────────────────────── -->
+    <div class="nibli-result" id="nibli-result" hidden>
+      <div class="nibli-result__head">
+        <code class="nibli-result__query" id="result-query"></code>
+        <span class="nibli-badge" id="result-badge"></span>
+        <span class="nibli-naf" id="result-naf" hidden>⚑ depends on negation-as-failure (closed-world assumption)</span>
+      </div>
+      <div class="nibli-proof" id="result-proof"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How the triad catches an LLM (static, from the book) ───────────── -->
+<section class="section--tight">
+  <div class="container">
+    <span class="eyebrow">// why three panes — how the triad catches an LLM</span>
+    <p class="muted" style="max-width:74ch;margin:10px 0 16px;font-family:var(--font-sans);font-size:14.5px;line-height:1.6">
+      In the full pipeline an LLM drafts the Lojban from English — and LLMs make fluent mistakes.
+      The deterministic back-translation is what catches them. A worked example from the book:
+      the source says <em>“Every employee must file an annual report.”</em></p>
+    <div class="nibli-catch">
+      <div><span class="nibli-catch__label">LLM draft</span>
+        <code>su'o lo se ciska cu bilga …</code>
+        <span class="nibli-catch__gloss">→ “<mark>some</mark> the (swap-2) write must …”</span>
+        <span class="nibli-badge nibli-badge--false">REJECTED</span>
+        <span class="comment">“some” ≠ “every” — a quantifier the eye catches instantly in the gloss</span></div>
+      <div><span class="nibli-catch__label">Corrected</span>
+        <code>ro lo se ciska cu bilga …</code>
+        <span class="nibli-catch__gloss">→ “<mark>all</mark> the (swap-2) write must …”</span>
+        <span class="nibli-badge nibli-badge--true">ACCEPTED</span>
+        <span class="comment">the human verifies the gloss, never the model's confidence</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Honest footer ──────────────────────────────────────────────────── -->
+<section class="section--tight" style="padding-bottom:64px">
+  <div class="container">
+    <span class="eyebrow">// the honest part</span>
+    <p class="muted" style="max-width:74ch;margin:10px 0 0;font-family:var(--font-sans);font-size:14.5px;line-height:1.6">
+      <strong>Soundness is about inference, not premise truth.</strong> Like Lean or Coq: if the engine
+      says TRUE, a formal derivation exists from the asserted axioms — but garbage premises still yield
+      garbage conclusions, validly derived. And under the closed-world assumption, FALSE means
+      “not derivable from the current knowledge base” — not “known false in the real world.” The proof
+      trees flag every step that leans on that assumption.
+      Read more in <a href="/books/the-fixed-point-of-thought/">the book</a> or the
+      <a href="https://github.com/dhilipsiva/nibli" rel="noopener">source</a> — or
+      <a href="/chat/">ask my twin about it</a>, which is itself the problem nibli exists to solve.</p>
+  </div>
+</section>
+
+<script type="module" src="/nibli/app/nibli.js"></script>
+{% endblock content %}

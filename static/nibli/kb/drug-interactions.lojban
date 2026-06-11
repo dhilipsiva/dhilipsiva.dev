@@ -1,0 +1,84 @@
+# ni'o lo xukmi simxu javni (Drug-Drug Interaction Safety Knowledge Base)
+#
+# A formalizable slice of pharmacokinetic drug-drug interaction (DDI) reasoning,
+# encoded in Lojban so that Nibli can decide "should this co-prescription raise a
+# safety alert?" by deterministic, auditable deduction over an explicit mechanism
+# instead of a statistical guess. Every non-comment line below parses, compiles,
+# and reasons through the full gerna -> smuni -> logji pipeline; the accompanying
+# regression tests (ddi_* in nibli-engine/tests/integration.rs and
+# pipeline_drug_interactions_lojban_all_lines_parse in gerna) assert the same
+# outcomes this file is designed to produce, so the prose in Chapter 21 cannot
+# silently drift from the engine's actual behaviour.
+#
+# Worked scenario: the warfarin + fluconazole interaction mediated by CYP2C9.
+#   Patient      = la .adam.
+#   Interaction  = fluconazole inhibits CYP2C9; warfarin (narrow therapeutic
+#                  index) is metabolised by CYP2C9 -> warfarin concentration
+#                  rises -> toxicity risk -> safety alert.
+#   Control      = apixaban is metabolised by CYP3A4, which fluconazole does not
+#                  inhibit -> NO alert (a real, deductively-derived False).
+#
+# Predicate conventions (proxy predicates for pharmacological concepts; each is
+# disclosed in Chapter 21, "Honest Boundaries". Lojban has no native gismu for
+# "metabolises" or "is a CYP substrate", so we map onto the nearest relations and
+# treat the mapping as part of the firewall's defined vocabulary):
+#   xukmi              -> "is a drug" (lit. chemical substance)
+#   pilno              -> "(patient) takes (drug)"             (lit. x1 uses x2)
+#   fanta              -> "(drug) inhibits (enzyme)"           (lit. x1 blocks x2)
+#   se katna           -> "(drug) is metabolised by (enzyme)"  (lit. x1 cut by x2)
+#   cinla              -> "has a narrow therapeutic index"     (lit. x1 is thin)
+#   zenba              -> "blood concentration is increased"   (lit. x1 increases)
+#   ckape              -> "is at toxicity risk"                (lit. x1 is in peril)
+#   kajde              -> "warrants a safety alert"            (lit. x1 warns)
+# Enzyme names are opaque transliterated identifiers (cmevla):
+#   la .siptucin.      -> CYP2C9
+#   la .sipcivon.      -> CYP3A4
+
+# ─── Drug ontology ────────────────────────────────────────────────
+la .varfarin. cu xukmi
+la .flukonazol. cu xukmi
+la .apiksaban. cu xukmi
+la .fenituin. cu xukmi
+
+# ─── Mechanism facts: inhibition and metabolism ───────────────────
+# Fluconazole inhibits the CYP2C9 enzyme.
+la .flukonazol. cu fanta la .siptucin.
+# Warfarin and phenytoin are both metabolised by CYP2C9.
+la .varfarin. cu se katna la .siptucin.
+la .fenituin. cu se katna la .siptucin.
+# Apixaban is metabolised by CYP3A4 (the negative-control pathway).
+la .apiksaban. cu se katna la .sipcivon.
+
+# ─── Mechanism facts: narrow therapeutic index ────────────────────
+# Warfarin and phenytoin have narrow therapeutic indices (small safety margin).
+la .varfarin. cu cinla
+la .fenituin. cu cinla
+
+# ─── Patient regimen ──────────────────────────────────────────────
+# Adam is co-prescribed warfarin and fluconazole.
+la .adam. cu pilno la .varfarin.
+la .adam. cu pilno la .flukonazol.
+
+# ─── Mechanism step 1: concentration increase ─────────────────────
+# When fluconazole inhibits CYP2C9 AND a drug is metabolised by CYP2C9, that
+# drug's blood concentration rises. Expressed as a grounded conditional per
+# affected substrate. The fully general multi-variable rule
+# "for all inhibitor, substrate, enzyme ..." requires multi-variable join-rule
+# compilation, which is not yet available from Lojban surface syntax, so this
+# step alone remains grounded per substrate (see Chapter 21, "Honest
+# Boundaries"). The toxicity step (step 2) and the alert step are both general.
+ganai ge la .flukonazol. cu fanta la .siptucin. gi la .varfarin. cu se katna la .siptucin. gi la .varfarin. cu zenba
+ganai ge la .flukonazol. cu fanta la .siptucin. gi la .fenituin. cu se katna la .siptucin. gi la .fenituin. cu zenba
+
+# ─── Mechanism step 2: toxicity risk (general rule) ───────────────
+# A drug whose concentration is increased AND which has a narrow therapeutic
+# index is at toxicity risk. BOTH conditions are required: a benign concentration
+# rise in a wide-margin drug does not trip this. Encoded as a single general
+# universal rule with a conjunctive (stacked-poi) restrictor — it fires for ANY
+# drug satisfying both conditions, with no per-substrate rule.
+ro lo xukmi poi zenba poi cinla cu ckape
+
+# ─── General clinical rule (fires for ANY drug) ───────────────────
+# Any drug at toxicity risk warrants a safety alert. This rule is fully general:
+# add another at-risk drug and the alert fires with no rule change.
+ro lo xukmi poi ckape cu kajde
