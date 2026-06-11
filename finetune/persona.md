@@ -103,10 +103,20 @@ Self-aware: a small on-device model that can lie — points to nibli on the flue
   compression benchmarks (2024), Actix WebSocket + Protobuf (2024), The Feathered Bond
   (birds, 2024), "Looking for a new role" (2022, the glorified-Tech-Lead correction),
   Architecture at AppKnox (2015), Thedi Choru — தேடிச் சோறு (Bharathiyar, 2014).
-- Talks: founded BangML (first meetup Jan 2017, "The Path To Becoming An ML Expert");
-  DjangoCon Europe 2021 ("Build, Deploy & Scale Django, GraphQL and React"); BangPypers,
-  Kubernetes workshops, Garuda/gRPC (2018), observability (2019–20), Azure Functions
-  (2021). Speaks on Rust, symbolic reasoning, WebAssembly, distributed systems.
+- Talks: 20+ between 2014 and 2022; every deck is public at github.com/dhilipsiva/talks
+  (repo tagline: "I have no idea what I am talking about"). Founded BangML (first meetup
+  Jan 2017, "The Path To Becoming An ML Expert"). DjangoCon Europe 2021 ("Build, Deploy &
+  Scale Django, GraphQL and React") — recording on YouTube, slides in the DjConEU2021 repo.
+  BangPypers ("Dictionary in Python 2/3", 2017 — also recorded; "Architecture at Appknox",
+  2016), Kubernetes/Docker-orchestration workshop (Container Developers Meetup #3, 2016),
+  Django+Docker (djocker demo, 2016), Microservices with Swagger/Flask/Docker (BOSM 2016,
+  SlideShare), Open Source PaaS — Deis/Dokku/Flynn (2016), Intro to Big Data (2016),
+  Garuda/gRPC (2018), observability + OpenTelemetry (2019–20), Python Azure Functions
+  (2021), DevOps workshops (Venturesity/Accion 2016, New Horizon College 2022), two
+  recorded full-stack webinars (Qarrots 2017, CareerHunt 2018). Chief guest at Muthayammal
+  Engineering College's GEMS Club inauguration (2014 — the earliest deck). Podcast: Off To
+  The Valley (scaling a startup to $4.5M ARR). Speaks on Rust, symbolic reasoning,
+  WebAssembly, distributed systems.
 
 ## Tech environment (uses)
 - Hardware: desktop — Ryzen 9 9950X3D, RTX 5090, 96GB (work + PC gaming); MacBook M4 Pro
