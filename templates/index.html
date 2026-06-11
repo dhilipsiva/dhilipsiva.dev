@@ -1,121 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dhilipsiva — ask me anything, on device</title>
-<meta name="description" content="dhilipsiva.dev IS a conversation: an on-device twin — a language model running entirely in your browser (candle, Rust→WebAssembly) — with MCP apps that open as you ask, voice in (Whisper) and voice out. Zero cookies, zero servers.">
-<link rel="canonical" href="https://dhilipsiva.dev/">
-<link rel="alternate" type="application/rss+xml" title="Musings" href="/musings/rss.xml">
-<link rel="icon" href="/assets/mark.svg">
-<link rel="stylesheet" href="/assets/quine.css">
-<link rel="stylesheet" href="/play/app/chat.css">
-<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
-</head>
-<body data-screen-label="Twin / chat">
+{% extends "base.html" %}
+{% import "macros.html" as m %}
 
-<!-- crawlers, link unfurlers, and the no-JS principled get real content -->
-<noscript>
-  <main style="max-width:680px;margin:48px auto;padding:0 24px;font-family:system-ui,sans-serif;line-height:1.6">
-    <h1>dhilipsiva</h1>
-    <p><em>An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3,
-    Distributed Systems, and symbolic reasoning.</em></p>
-    <p>Hands-on technical architect in Bengaluru, India. I build systems that outlive their meaning —
-    lately <a href="/things-i-built/nibli/">nibli</a>, a zero-hallucination symbolic reasoning engine
-    ("a hallucination firewall for the LLM era"), and a book about the ideas behind it.</p>
-    <p>This site is normally a conversation with my on-device AI twin — a language model running entirely
-    in your browser via Rust→WebAssembly. It needs JavaScript. The content survives without it:</p>
-    <ul>
-      <li><a href="/about/">About</a></li>
-      <li><a href="/things-i-built/">Things I built</a></li>
-      <li><a href="/musings/">Musings (blog)</a> · <a href="/musings/rss.xml">RSS</a></li>
-      <li><a href="/books/">Books</a> · <a href="/now/">Now</a> · <a href="/uses/">Uses</a> · <a href="/talks/">Talks</a></li>
-      <li><a href="/contact/">Contact</a> — <a href="mailto:dhilipsiva@pm.me">dhilipsiva@pm.me</a></li>
-    </ul>
-  </main>
-</noscript>
+{% block content %}
+{% set built = get_section(path="things-i-built/_index.md") %}
+{% set musings = get_section(path="musings/_index.md") %}
+{% set books = get_section(path="books/_index.md") %}
 
-<!-- ============================== HEADER ============================= -->
-<header class="chat-header">
-  <a class="brand" href="/" aria-label="dhilipsiva — the on-device twin">
-    <img src="/assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
-  </a>
-  <span class="chat-header__title">// on-device twin · candle Rust→WASM · MCP apps · zero servers</span>
-  <span class="sp"></span>
-  <button class="voice-toggle" id="voice-toggle" type="button" aria-pressed="false" title="Voice replies (system voice — a cloned voice is the endgame)">∿ voice: off</button>
-  <label class="chat-header__title" for="model-select">brain</label>
-  <select id="model-select" class="model-select" aria-label="Choose the model"></select>
-</header>
-
-<!-- ====================== THE FLUENCY–TRUTH GAP ====================== -->
-<div class="truth-banner" role="note" data-screen-label="Twin / truth banner">
-  <span class="truth-banner__mark" aria-hidden="true">⊥</span>
-  <span class="truth-banner__text"><strong>This on-device AI will lie, confidently.</strong>
-  Fluent ≠ true — that distance is the fluency–truth gap, running live in your tab.
-  It's exactly why I build <button class="linklike" id="nibli-link" type="button">nibli — a hallucination firewall</button> that derives answers with proofs instead of predicting plausible text.</span>
-</div>
-
-<!-- ============================== THREAD ============================= -->
-<main class="thread" id="thread" aria-live="polite" data-screen-label="Twin / conversation">
-  <div class="thread__inner"></div>
-</main>
-
-<!-- =========================== SUGGESTIONS =========================== -->
-<div class="suggestions" id="suggestions" data-screen-label="Twin / suggestions"></div>
-
-<!-- ============================ COMPOSER ============================== -->
-<footer class="composer" data-screen-label="Twin / composer">
-  <div class="composer__inner">
-    <div class="composer__row">
-      <span class="composer__prompt">❯</span>
-      <input class="composer__input" id="composer-input" type="text" autocomplete="off" spellcheck="false"
-             placeholder="ask me anything — projects, the book, philosophy…" aria-label="Message the twin">
-      <button class="mic" id="mic" type="button" title="Hold to talk — on-device Whisper (Rust→WASM, ~40MB first use)" aria-label="Hold to talk">◉</button>
-      <button class="q-btn q-btn--primary" id="composer-send" type="button">send</button>
+<!-- ============================== HERO =============================== -->
+<header class="hero">
+  <div class="hero__grid"></div>
+  <div class="container hero__inner">
+    <div>
+      <span class="hero__eyebrow"><span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>{{ section.extra.available }}</span> {{ config.extra.location }}</span>
+      <h1>{{ section.extra.hero_h1 | safe }}</h1>
+      <p class="hero__tagline">{{ section.extra.hero_tagline }}</p>
+      <p class="hero__intro">{{ section.extra.hero_intro }}</p>
+      <div class="hero__actions">
+        <a class="q-btn q-btn--primary q-btn--lg" href="/things-i-built/">Things I built</a>
+        <a class="q-btn q-btn--secondary q-btn--lg" href="/musings/">Read the Musings</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="/contact/">Get in touch →</a>
+        <a class="q-btn q-btn--ghost q-btn--lg" href="/chat/" title="An on-device LLM impersonating me — runs entirely in your tab">⊳ Chat with my twin</a>
+      </div>
     </div>
-    <div class="composer__meta">
-      <span id="brain-status">brain: scripted</span>
-      <span class="brain-track" aria-hidden="true"><i id="brain-bar"></i></span>
-      <span class="sp" style="flex:1"></span>
-      <span>nothing leaves this tab</span>
+
+    <!-- whoami terminal: identity as structured output -->
+    <div class="term" role="img" aria-label="Terminal showing a whoami summary of dhilipsiva">
+      <div class="term__bar">
+        <span class="term__dot" style="background:var(--crimson-500)"></span>
+        <span class="term__dot" style="background:var(--amber-500)"></span>
+        <span class="term__dot" style="background:var(--phosphor-500)"></span>
+        <span class="term__title">~/dhilipsiva — fish</span>
+      </div>
+      <div class="term__body" style="white-space:pre"><span class="c-prompt">~ ❯</span> <span class="c-fn">whoami</span> --verbose
+  <span class="c-key">name</span><span class="c-pun">    =</span> <span class="c-str">"dhilipsiva"</span>
+  <span class="c-key">role</span><span class="c-pun">    =</span> <span class="c-str">"Technical Architect"</span>
+  <span class="c-key">loc</span><span class="c-pun">     =</span> <span class="c-str">"Bangalore, India"</span>
+  <span class="c-key">langs</span><span class="c-pun">   =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">]</span>
+  <span class="c-key">focus</span><span class="c-pun">   =</span> <span class="c-str">"symbolic reasoning, retrofit for LLMs"</span>
+
+<span class="c-prompt">~ ❯</span> <span class="c-fn">nibli</span> verify <span class="c-str">"the model's answer"</span>
+<span class="c-out">  ⊢ derive ⟶ proof, not prediction</span>
+<span class="c-out">  ∴ no hallucination · </span><span class="c-str">38ms</span><span class="c-out"> ✓</span>
+<span class="c-prompt">~ ❯</span> <span class="q-cursor"></span></div>
     </div>
   </div>
-</footer>
+</header>
 
-<!-- generic emotive face — every part is a primitive driven by data-emotion -->
-<template id="face-template">
-  <svg class="face" data-emotion="neutral" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle class="face__head" cx="50" cy="50" r="42"></circle>
-    <g class="face__brow face__brow--l"><path d="M28,38 Q36,32 44,36"></path></g>
-    <g class="face__brow face__brow--r"><path d="M56,36 Q64,32 72,38"></path></g>
-    <g class="face__eye face__eye--l"><circle cx="36" cy="48" r="3.6" fill="currentColor" stroke="none"></circle></g>
-    <g class="face__eye face__eye--r"><circle cx="64" cy="48" r="3.6" fill="currentColor" stroke="none"></circle></g>
-    <g class="face__mouths">
-      <path class="mouth mouth--smile" d="M36,64 Q50,74 64,64"></path>
-      <path class="mouth mouth--flat" d="M40,67 L60,67"></path>
-      <path class="mouth mouth--sad" d="M38,70 Q50,62 62,70"></path>
-      <ellipse class="mouth mouth--o" cx="50" cy="68" rx="6" ry="8"></ellipse>
-      <path class="mouth mouth--open" d="M38,64 Q50,68 62,64 Q58,76 50,77 Q42,76 38,64 Z"></path>
-    </g>
-  </svg>
-</template>
+<!-- =========================== FEATURED PROJECTS ===================== -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// things i built</span>
+        <h2 class="sec-head__title">A few things worth pointing at</h2>
+      </div>
+      <a class="see-all" href="/things-i-built/">See all →</a>
+    </div>
+    <div class="proj-grid proj-grid--3">
+      {% for p in built.pages | filter(attribute="extra.featured", value=true) | slice(end=3) %}
+        {{ m::proj_card(page=p) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-<!-- internal links for crawlers that execute JS but don't converse -->
-<nav aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">
-  <a href="/about/">About</a> <a href="/things-i-built/">Things I built</a>
-  <a href="/musings/">Musings</a> <a href="/books/">Books</a> <a href="/now/">Now</a>
-  <a href="/uses/">Uses</a> <a href="/talks/">Talks</a> <a href="/contact/">Contact</a>
-</nav>
+<!-- =========================== FEATURED BOOK ======================== -->
+{% set feat_books = books.pages | filter(attribute="extra.featured", value=true) %}
+{% if feat_books | length > 0 %}
+{% set book = feat_books | first %}
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// from the bookshelf</span>
+        <h2 class="sec-head__title">What I'm writing</h2>
+      </div>
+      <a class="see-all" href="/books/">All books →</a>
+    </div>
+    <article class="q-card q-card--grid feat-book">
+      <div class="feat-book__cover">
+        {% if book.extra.cover %}<img src="{{ book.extra.cover }}" alt="Cover: {{ book.title }}">{% endif %}
+      </div>
+      <div>
+        <span class="q-badge q-badge--ember">{{ book.extra.status | default(value="in progress") }}</span>
+        <h3 class="feat-book__title">{{ book.title }}</h3>
+        <p class="feat-book__blurb">{{ book.extra.blurb | default(value=book.description) }}</p>
+        <div class="row">
+          <a class="q-btn q-btn--primary" href="{{ book.extra.link | default(value=book.permalink) }}">Read a chapter</a>
+          <a class="q-btn q-btn--ghost" href="/books/">All books →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+{% endif %}
 
-<!-- ============================ SCRIPTS ==============================
-     The brains are Rust compiled to WebAssembly (slm-wasm crate): a chat
-     LLM (llama/qwen2 GGUF, auto-detected) and Whisper speech-to-text.
-     mcp.js is the app registry; apps-data.json + the markdown-rendered
-     pages are the content. -->
-<script src="/play/app/knowledge.js"></script>
-<script src="/play/app/mcp.js"></script>
-<script src="/play/app/brain.js"></script>
-<script src="/play/app/chat.js"></script>
+<!-- =========================== LATEST MUSINGS ======================= -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// musings</span>
+        <h2 class="sec-head__title">Latest from the notebook</h2>
+        <p class="sec-head__intro">Long-running thoughts on building, logic, freedom, and the occasional detour into Tamil and philosophy of mind.</p>
+      </div>
+      <a class="see-all" href="/musings/">See all · RSS →</a>
+    </div>
+    <div class="post-list">
+      {% for p in musings.pages | slice(end=3) %}
+        {{ m::teaser(page=p) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-</body>
-</html>
+<!-- =========================== NOW TEASER =========================== -->
+<section class="section--tight">
+  <div class="container">
+    <article class="q-card now-strip">
+      <span class="eyebrow">// now</span>
+      <div class="now-strip__items">
+        {% for it in section.extra.now_strip %}
+        <span class="now-strip__item"><span class="k">{{ it.k }}</span> &nbsp;<b>{{ it.v }}</b></span>
+        {% endfor %}
+      </div>
+      <a class="see-all" href="/now/">What I'm doing now →</a>
+    </article>
+  </div>
+</section>
+
+<!-- =========================== PERSONAL NOTE ======================== -->
+<section class="section--tight" style="padding-top:0">
+  <div class="container">
+    <span class="eyebrow">// off the clock</span>
+    <p style="font-family:var(--font-serif);font-style:italic;font-size:20px;line-height:1.5;color:var(--text-body);border-left:2px solid var(--accent);padding-left:18px;max-width:62ch;margin:12px 0 0">{{ config.extra.tagline }}</p>
+  </div>
+</section>
+
+<!-- =========================== SOCIAL ROW =========================== -->
+<section class="section--tight">
+  <div class="container">
+    <div class="row" style="justify-content:space-between">
+      <p class="lead" style="margin:0;max-width:42ch">Find me where the source lives.</p>
+      {{ m::social_row(config=config) }}
+    </div>
+  </div>
+</section>
+{% endblock content %}

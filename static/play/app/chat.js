@@ -392,7 +392,7 @@
     if (nibliLink) nibliLink.addEventListener('click', () => submit('what is nibli?'));
 
     twinSay(
-      "Hi — I'm dhilipsiva. Or rather: an on-device twin of him, running in your tab. This whole site is our conversation — ask about the projects, the book, the philosophy, and I'll open the relevant app as we talk.",
+      "Hi — I'm dhilipsiva. Or rather: an on-device twin of him, running in your tab. Ask about the projects, the book, the philosophy — I'll open the relevant app as we talk. Prefer plain pages? The classic site is at the front door.",
       'on-device · zero cookies',
       null,
       { emotion: 'happy', voice: false }

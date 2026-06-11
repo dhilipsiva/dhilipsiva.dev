@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dhilipsiva — chat with my twin, on device</title>
+<meta name="description" content="Chat with dhilipsiva's on-device twin — a fine-tuned language model running entirely in your browser (candle, Rust→WebAssembly) — with MCP apps that open as you ask, voice in (Whisper) and voice out. Zero cookies, zero servers.">
+<link rel="canonical" href="https://dhilipsiva.dev/chat/">
+<link rel="alternate" type="application/rss+xml" title="Musings" href="/musings/rss.xml">
+<link rel="icon" href="/assets/mark.svg">
+<link rel="stylesheet" href="/assets/quine.css">
+<link rel="stylesheet" href="/play/app/chat.css">
+<script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+</head>
+<body data-screen-label="Twin / chat">
+
+<!-- crawlers, link unfurlers, and the no-JS principled get a pointer home -->
+<noscript>
+  <main style="max-width:680px;margin:48px auto;padding:0 24px;font-family:system-ui,sans-serif;line-height:1.6">
+    <h1>dhilipsiva — the on-device twin</h1>
+    <p>This page is a conversation with my AI twin — a language model running entirely in your
+    browser via Rust→WebAssembly. It needs JavaScript. Everything it knows lives on the
+    <a href="/">regular site</a> too: <a href="/about/">About</a>, <a href="/things-i-built/">Things I built</a>,
+    <a href="/musings/">Musings</a>, <a href="/contact/">Contact</a>.</p>
+  </main>
+</noscript>
+
+<!-- ============================== HEADER ============================= -->
+<header class="chat-header">
+  <a class="brand" href="/" aria-label="dhilipsiva — back to the site">
+    <img src="/assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
+  </a>
+  <span class="chat-header__title">// on-device twin · candle Rust→WASM · MCP apps · zero servers</span>
+  <span class="sp"></span>
+  <button class="voice-toggle" id="voice-toggle" type="button" aria-pressed="false" title="Voice replies (system voice — a cloned voice is the endgame)">∿ voice: off</button>
+  <label class="chat-header__title" for="model-select">brain</label>
+  <select id="model-select" class="model-select" aria-label="Choose the model"></select>
+</header>
+
+<!-- ====================== THE FLUENCY–TRUTH GAP ====================== -->
+<div class="truth-banner" role="note" data-screen-label="Twin / truth banner">
+  <span class="truth-banner__mark" aria-hidden="true">⊥</span>
+  <span class="truth-banner__text"><strong>This on-device AI will lie, confidently.</strong>
+  Fluent ≠ true — that distance is the fluency–truth gap, running live in your tab.
+  It's exactly why I build <button class="linklike" id="nibli-link" type="button">nibli — a hallucination firewall</button> that derives answers with proofs instead of predicting plausible text.</span>
+</div>
+
+<!-- ============================== THREAD ============================= -->
+<main class="thread" id="thread" aria-live="polite" data-screen-label="Twin / conversation">
+  <div class="thread__inner"></div>
+</main>
+
+<!-- =========================== SUGGESTIONS =========================== -->
+<div class="suggestions" id="suggestions" data-screen-label="Twin / suggestions"></div>
+
+<!-- ============================ COMPOSER ============================== -->
+<footer class="composer" data-screen-label="Twin / composer">
+  <div class="composer__inner">
+    <div class="composer__row">
+      <span class="composer__prompt">❯</span>
+      <input class="composer__input" id="composer-input" type="text" autocomplete="off" spellcheck="false"
+             placeholder="ask me anything — projects, the book, philosophy…" aria-label="Message the twin">
+      <button class="mic" id="mic" type="button" title="Hold to talk — on-device Whisper (Rust→WASM, ~40MB first use)" aria-label="Hold to talk">◉</button>
+      <button class="q-btn q-btn--primary" id="composer-send" type="button">send</button>
+    </div>
+    <div class="composer__meta">
+      <span id="brain-status">brain: scripted</span>
+      <span class="brain-track" aria-hidden="true"><i id="brain-bar"></i></span>
+      <span class="sp" style="flex:1"></span>
+      <span>nothing leaves this tab</span>
+    </div>
+  </div>
+</footer>
+
+<!-- generic emotive face — every part is a primitive driven by data-emotion -->
+<template id="face-template">
+  <svg class="face" data-emotion="neutral" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle class="face__head" cx="50" cy="50" r="42"></circle>
+    <g class="face__brow face__brow--l"><path d="M28,38 Q36,32 44,36"></path></g>
+    <g class="face__brow face__brow--r"><path d="M56,36 Q64,32 72,38"></path></g>
+    <g class="face__eye face__eye--l"><circle cx="36" cy="48" r="3.6" fill="currentColor" stroke="none"></circle></g>
+    <g class="face__eye face__eye--r"><circle cx="64" cy="48" r="3.6" fill="currentColor" stroke="none"></circle></g>
+    <g class="face__mouths">
+      <path class="mouth mouth--smile" d="M36,64 Q50,74 64,64"></path>
+      <path class="mouth mouth--flat" d="M40,67 L60,67"></path>
+      <path class="mouth mouth--sad" d="M38,70 Q50,62 62,70"></path>
+      <ellipse class="mouth mouth--o" cx="50" cy="68" rx="6" ry="8"></ellipse>
+      <path class="mouth mouth--open" d="M38,64 Q50,68 62,64 Q58,76 50,77 Q42,76 38,64 Z"></path>
+    </g>
+  </svg>
+</template>
+
+<!-- ============================ SCRIPTS ==============================
+     The brains are Rust compiled to WebAssembly (slm-wasm crate): a chat
+     LLM (llama/qwen2 GGUF, auto-detected) and Whisper speech-to-text.
+     mcp.js is the app registry; apps-data.json + the markdown-rendered
+     pages are the content. Assets stay under /play/ even though the page
+     lives at /chat/. -->
+<script src="/play/app/knowledge.js"></script>
+<script src="/play/app/mcp.js"></script>
+<script src="/play/app/brain.js"></script>
+<script src="/play/app/chat.js"></script>
+
+</body>
+</html>

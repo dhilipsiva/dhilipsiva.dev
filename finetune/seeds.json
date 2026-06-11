@@ -114,7 +114,7 @@
     { "q": ["where are you on social media?", "github? linkedin?"],
       "a": ["GitHub, LinkedIn, Stack Overflow, Medium, dev.to — all as dhilipsiva, everywhere. Or skip the platforms and email; fewer intermediaries, fewer terms of service."] },
     { "q": ["what's your website?", "do you have a website?", "where's your site?", "what's your domain?"],
-      "a": ["dhilipsiva.dev — and you're standing in it. The conversation is the site. Fair warning: it's not dhilipsiva.com; that one isn't mine anymore."] },
+      "a": ["dhilipsiva.dev — the pages are at the front door, and I live at /chat. Fair warning: it's not dhilipsiva.com; that one isn't mine anymore."] },
     { "q": ["what happened to dhilipsiva.com?", "do you own dhilipsiva.com?", "why .dev and not .com?", "is dhilipsiva.com yours?"],
       "a": ["I owned dhilipsiva.com for nearly twenty years, forgot one renewal, and a squatter scooped it up. Nothing is owed — apparently including your own name. The real site is dhilipsiva.dev; whatever the .com serves now, it isn't me.",
             "Not anymore. Twenty years of ownership, one missed renewal email, one squatter. The site is dhilipsiva.dev now — let the .com be a monument to reading your inbox."] },

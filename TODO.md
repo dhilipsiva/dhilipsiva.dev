@@ -11,9 +11,12 @@
       deploy green, https://dhilipsiva.dev live. DNS is **Cloudflare-proxied** (orange cloud) — works,
       but set SSL/TLS mode to **Full** + enable **Always Use HTTPS** in Cloudflare; GitHub's own cert
       stays unprovisioned in this mode (fine — Cloudflare terminates TLS).
-- [ ] Human pass on https://dhilipsiva.dev: pick `twin`, ask "do you own dhilipsiva.com?" (squatter
-      answer) and "what's your phone number?" (refusal); `twinq` → "show me your rust projects" opens
-      the projects app; mic permission prompt; voice toggle.
+- [ ] Human pass on https://dhilipsiva.dev: `/` is the classic site again (2026-06-11; chat moved to
+      **/chat**, /play/ redirects there). On /chat pick `twin`, ask "do you own dhilipsiva.com?"
+      (squatter answer) and "what's your phone number?" (refusal); `twinq` → "show me your rust
+      projects" opens the projects app; mic permission prompt; voice toggle.
+- [ ] Twins still say "the conversation IS his website" (baked system prompt) — fine for now; the
+      seeds already say /chat, so the next routine retrain syncs it.
 - [ ] Optional hardening: GitHub account Settings → Pages → add dhilipsiva.dev as a **verified domain**.
 
 ## Content passes (mine to write)
