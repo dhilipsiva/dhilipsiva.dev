@@ -5,7 +5,7 @@ template = "about.html"
 [extra]
 philosophy_quote = "Nothing is owed. Build anyway."
 philosophy = "Optimistic nihilism, to me, isn't despair — it's a license. If the universe hands out no inherent meaning, then meaning is something you author, on purpose, into the things you build. So I build: correct, small, honest systems that don't need the world to justify them."
-interests = "Philosophy and philosophy of mind, socio-economic & political change, and tinkering with IoT & robotics with my kids — for fun and to keep learning."
+interests = "Philosophy and philosophy of mind, socio-economic & political change, theoretical physics (enthusiast-grade, clearly labeled), Tamil literature — Bharathiyar and the Thirukkural, a loud aviary of conures and parakeets, PC gaming, evidence-based fitness, and tinkering with IoT & robotics with my kids."
 languages = ["English", "Tamil", "Kannada", "French"]
 resume = "#resume"
 
@@ -74,8 +74,14 @@ group = "Practice"
 items = ["FOSS", "Design Systems", "E2E Automation", "Architecture"]
 +++
 
-I'm a software architect and lifelong builder. Today I work as a Software Architect; before that I was
-VP of Engineering. I care about correctness, freedom, and code that still makes sense in a decade.
+I'm a hands-on technical architect and lifelong builder — currently Technical Architect at STGI, before
+that Principal Architect at NuFlights and Colligence. I care about correctness, freedom, and code that
+still makes sense in a decade.
+
+I'm a **dropout — yes, I am not a graduate**. School ended in 2006 and the terminal taught me the rest, in
+public, for nearly two decades. I maintain [awesome-programmer](/things-i-built/awesome-programmer/) —
+the self-taught path, written down for the next person — and at Nitimis I taught people with zero tech
+background to start QA-automation careers, unpaid, on purpose. The commit history is my transcript.
 
 I'm most at home building **(micro)services in Rust and Python**, but I've shipped across the whole stack —
 browser-side (`.js`, `.ts`, `.wasm`), server-side (`.rs`, `.py`), and the infrastructure underneath

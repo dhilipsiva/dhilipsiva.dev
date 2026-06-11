@@ -15,7 +15,6 @@ tech = ["Rust", "WASM", "Symbolic Reasoning", "Logic"]
 repo = "https://github.com/dhilipsiva/nibli"
 writeup = true
 writeup_label = "write-up"
-diagram = "SLOT: diagram · Lojban → FOL → backward-chaining inference → proof trace"
 +++
 
 ## Problem

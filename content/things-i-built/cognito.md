@@ -17,4 +17,8 @@ repo = "https://github.com/dhilipsiva/cognito"
 
 A high-density reasoning agent in pure Rust, built on the Burn framework: a decoder-only transformer with a
 tool-native cognitive loop (`<think>`, `<call>`, `<result>`) that targets reasoning over factual recall.
-*(Body copy is a working draft — refine in your own words.)*
+
+The premise: most of what a large model memorizes is recallable from tools; what can't be outsourced is the
+*thinking*. So cognito spends its parameters on System 2 — explicit, stepwise reasoning — and treats
+knowledge as something you call, not something you are. The sibling instinct to
+[nibli](/things-i-built/nibli/), approached from the neural side.

@@ -1,7 +1,7 @@
 +++
 title = "thirukural.ai"
 description = "A gamified Gen-AI product answering questions about all 1,330 Thirukkural couplets — in Tamil, English, or Tanglish. Tamil heritage × AI, built under Nitimis."
-weight = 5
+weight = 6
 
 [extra]
 glyph = "௸"

@@ -1,7 +1,7 @@
 +++
 title = "Appknox ×2"
 description = "Two tenures. 2014–17: architected the mobile-security scanning platform from scratch, built the team 1→5, ran an iOS/Android device farm. 2022–23: a Rust microservice generating CycloneDX SBOMs from mobile binaries — no source required."
-weight = 9
+weight = 10
 
 [extra]
 glyph = "⊢"
@@ -21,4 +21,9 @@ contributor, grew the team to five, and built the iOS/Android device farm the sc
 
 **Second tenure (2022–2023, Software Architect):** a Rust microservice that generates CycloneDX SBOMs for
 iOS and Android binaries *without access to their source code* — deep binary analysis to extract metadata
-on third-party components. *(Body copy is a working draft.)*
+on third-party components.
+
+The 2015 stack, for the record: Django, CoffeeScript/LESS, Postgres (migrated from MySQL), RabbitMQ,
+Celery, Redis, Memcached, Varnish, Nginx, and an Ember front-end developed fully decoupled from the
+backend. The backend was named Sherlock, the front-end Irene, the admin Hudson. I wrote the whole thing up
+at the time — [Architecture at AppKnox](/musings/architecture-at-appknox/).

@@ -1,7 +1,7 @@
 +++
 title = "ReWire"
 description = "An iOS mindfulness app (2012, at Tataatsu) — meditation and attention training, with an API server for scores and leaderboards. Designed, developed, and deployed as a one-person team."
-weight = 14
+weight = 15
 
 [extra]
 glyph = "◐"
