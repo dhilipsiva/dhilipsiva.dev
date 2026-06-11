@@ -28,8 +28,8 @@ website: served into the visitor's browser and run entirely on-device via
 
 | file | base | size | extra trick |
 |---|---|---|---|
-| `dhilipsiva-twin-q8_0.gguf` | SmolLM2-135M-Instruct | 138MB | persona |
-| `dhilipsiva-twin-qwen-q8_0.gguf` | Qwen2.5-0.5B-Instruct | 507MB | persona + emits `TOOL {"app":…}` lines that open the site's MCP apps |
+| `dhilipsiva-twin-q8_0.gguf` | SmolLM2-135M-Instruct | 145MB | persona |
+| `dhilipsiva-twin-qwen-q8_0.gguf` | Qwen2.5-0.5B-Instruct | 531MB | persona + emits `TOOL {"app":…}` lines that open the site's MCP apps |
 
 Tokenizers included as `tokenizer-smol.json` / `tokenizer-qwen.json`.
 
