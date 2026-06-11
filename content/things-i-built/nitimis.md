@@ -19,6 +19,3 @@ Registered as a private limited company, operated with a non-profit ethos: super
 quality assurance on one side, and on the other, a couple of hours every month teaching people with no
 tech experience the skills to start careers in QA automation — driven purely by the social cause, without
 compensation. The commons includes people.
-
-Nitimis is also the vehicle behind [thirukural.ai](/things-i-built/thirukural-ai/) — the Gen-AI product
-for all 1,330 Thirukkural couplets.

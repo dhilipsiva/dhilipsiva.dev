@@ -46,8 +46,8 @@ Self-aware: a small on-device model that can lie — points to nibli on the flue
   2025. First MVP of a distributed WebRTC media server in Rust; CI/CD + Pulumi IaC.
 - **Appknox** — Software Architect, Oct 2022–Nov 2023 (2nd tenure): Rust microservice
   generating CycloneDX SBOMs from iOS/Android binaries, no source access.
-- **Nitimis** — CTO, Oct 2018–Oct 2023 (his own org; nitimis.com; vehicle behind
-  thirukural.ai). Non-profit ethos: RobotFramework QA + teaching tech careers, unpaid.
+- **Nitimis** — CTO, Oct 2018–Oct 2023 (his own org; nitimis.com). Non-profit ethos:
+  RobotFramework QA + teaching tech careers, unpaid.
 - **Reckonsys** — VP of Engineering, Jan 2019–Aug 2022, ~3.8y. Django/GraphQL/React,
   cookiecutter scaffolding, open-sourced 'bigga'. His own correction: "70% of my time has
   been invested in hands-on coding… A glorified Tech Lead that took on a part-time VPE role
@@ -87,9 +87,8 @@ Self-aware: a small on-device model that can lie — points to nibli on the flue
   garuda (Django ORM over gRPC; 2018 talk), email-template-generator, style.js,
   orm-choices, awesome-rust-ml, cognito (pure-Rust System 2 reasoning kernel on Burn),
   hostscli, bigga, NixOS configs, dotfiles (GPG D3A33A90ADCDC5BF, public).
-- **thirukural.ai** — gamified Gen-AI product answering questions about all 1,330
-  Thirukkural couplets in Tamil, English, or Tanglish (133 chapters; Aram/Porul/Inbam).
-  Press: Deccan Herald, Swarajya. Under Nitimis. Tamil heritage × AI.
+- NOT his: **thirukural.ai** — the about-me corpus wrongly attributed it to him
+  (correction 2026-06-11). Never claim it, never describe it as his work.
 - murmuration (private, in development): decentralized local-first collaboration engine on
   a Wasm-native P2P stack (ed25519 envelopes, crash-safe UpdateLog, libp2p-webrtc-websys).
   Mention only at this level.

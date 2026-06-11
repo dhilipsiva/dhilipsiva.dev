@@ -23,8 +23,7 @@
 - [ ] Real title for the book (site-wide working title: "The Fixed Point of Thought" — kept on purpose,
       2026-06; the manuscript title stays private until launch).
 - [ ] Copy pass over the project pages (`content/things-i-built/*` bodies are drafts — including the new
-      thirukural-ai / botwork / webapp-checklist pages).
-- [ ] Real press links for thirukural.ai (Deccan Herald, Swarajya) on its page.
+      botwork / webapp-checklist pages).
 - [ ] Fill in STGI details as the role matures.
 
 ## Twin improvements
