@@ -6,6 +6,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}{{ config.title }} — software architect, builder, optimistic nihilist{% endblock title %}</title>
 <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+
+{#- canonical + social cards, computed from whatever this template renders -#}
+{%- if page %}
+  {%- set meta_title = page.title ~ " — dhilipsiva" %}
+  {%- set meta_desc = page.description | default(value=config.description) %}
+  {%- set meta_url = page.permalink %}
+{%- elif section and section.title and section.title != "Home" %}
+  {%- set meta_title = section.title ~ " — dhilipsiva" %}
+  {%- set meta_desc = section.description | default(value=config.description) %}
+  {%- set meta_url = section.permalink %}
+{%- elif term %}
+  {%- set meta_title = "#" ~ term.name ~ " — dhilipsiva" %}
+  {%- set meta_desc = config.description %}
+  {%- set meta_url = term.permalink %}
+{%- else %}
+  {%- set meta_title = config.title ~ " — software architect, builder, optimistic nihilist" %}
+  {%- set meta_desc = config.description %}
+  {%- set meta_url = config.base_url ~ "/" %}
+{%- endif %}
+{%- set og_image = config.base_url ~ "/assets/og-card.png" %}
+{%- if page and page.extra.og_image %}{% set og_image = config.base_url ~ page.extra.og_image %}{% endif %}
+<link rel="canonical" href="{{ meta_url | safe }}">
+<meta property="og:type" content="{% if page and page.relative_path is starting_with('musings') %}article{% else %}website{% endif %}">
+<meta property="og:site_name" content="dhilipsiva">
+<meta property="og:title" content="{{ meta_title }}">
+<meta property="og:description" content="{{ meta_desc }}">
+<meta property="og:url" content="{{ meta_url | safe }}">
+<meta property="og:image" content="{{ og_image | safe }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@dhilipsiva">
+<meta name="twitter:creator" content="@dhilipsiva">
+
 <link rel="icon" href="/assets/mark.svg">
 <link rel="alternate" type="application/rss+xml" title="Musings" href="/musings/rss.xml">
 <link rel="stylesheet" href="/assets/quine.css">
