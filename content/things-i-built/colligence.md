@@ -1,7 +1,7 @@
 +++
 title = "Colligence Research"
 description = "Principal Architect, Distributed Systems/Rust (2023–25). The first MVP of a distributed WebRTC media server in Rust, plus the entire DevOps lifecycle with Pulumi infrastructure-as-code."
-weight = 7
+weight = 10
 
 [extra]
 glyph = "∿"

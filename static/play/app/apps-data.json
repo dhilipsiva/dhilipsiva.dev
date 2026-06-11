@@ -3,13 +3,25 @@
 
   "projects": [
     { "id": "nibli", "name": "nibli", "glyph": "∴", "status": "active", "category": "oss",
-      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; a proof trace on every conclusion.",
+      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; a proof trace on every conclusion. (Zero-hallucination = inference soundness, not premise truth — like Lean.)",
       "tags": ["rust", "wasm", "symbolic-reasoning", "logic"],
       "links": { "source": "https://github.com/dhilipsiva/nibli", "writeup": "/things-i-built/nibli/" } },
     { "id": "cognito", "name": "cognito", "glyph": "∇", "status": "active", "category": "oss",
       "desc": "Pure-Rust System 2 reasoning kernel — minimal knowledge, maximal logic. A transformer on Burn that thinks in explicit steps.",
       "tags": ["rust", "burn", "ai-reasoning"],
       "links": { "source": "https://github.com/dhilipsiva/cognito", "writeup": "/things-i-built/cognito/" } },
+    { "id": "botwork", "name": "botwork", "glyph": "⌁", "status": "active", "category": "oss",
+      "desc": "Single-binary Rust automation framework for acceptance testing and RPA — plain-text human-readable syntax, extensible via Rust, Python, and JavaScript. A faster, lighter take on Robot Framework.",
+      "tags": ["rust", "rpa", "testing", "automation"],
+      "links": { "source": "https://github.com/dhilipsiva/botwork", "writeup": "/things-i-built/botwork/" } },
+    { "id": "webapp-checklist", "name": "webapp-checklist", "glyph": "☑", "status": "curated", "category": "oss",
+      "desc": "The technical details a programmer should consider before making a web app public. The most-starred thing I've shipped (~366★) — proof that the most useful artifact can be a list.",
+      "tags": ["docs", "checklist", "foss"],
+      "links": { "source": "https://github.com/dhilipsiva/webapp-checklist", "writeup": "/things-i-built/webapp-checklist/" } },
+    { "id": "thirukural-ai", "name": "thirukural.ai", "glyph": "௸", "status": "shipped", "category": "product",
+      "desc": "A gamified Gen-AI product answering questions about all 1,330 Thirukkural couplets — in Tamil, English, or Tanglish. Tamil heritage × AI, built under Nitimis; covered in the press.",
+      "tags": ["tamil", "ai", "genai", "product"],
+      "links": { "site": "https://thirukural.ai", "writeup": "/things-i-built/thirukural-ai/" } },
     { "id": "hostscli", "name": "hostscli", "glyph": "⊘", "status": "shipped", "category": "oss",
       "desc": "Python CLI that blocks and unblocks websites straight from /etc/hosts. Sometimes the best firewall is a text file.",
       "tags": ["python", "cli"],
@@ -18,6 +30,10 @@
       "desc": "A curated map of the Rust machine-learning ecosystem. Curation is also building: someone has to keep the index honest.",
       "tags": ["rust", "machine-learning", "foss"],
       "links": { "source": "https://github.com/dhilipsiva/awesome-rust-ml", "writeup": "/things-i-built/awesome-rust-ml/" } },
+    { "id": "garuda", "name": "garuda", "glyph": "ஃ", "status": "archived", "category": "oss",
+      "desc": "Automagically exposes the Django ORM over gRPC, so microservices in any language can use it. Niche, useful, very 2018 — there was a talk.",
+      "tags": ["python", "django", "grpc"],
+      "links": { "source": "https://github.com/dhilipsiva/garuda" } },
     { "id": "stgi", "name": "STGI", "glyph": "⊕", "status": "current", "category": "professional",
       "desc": "Technical Architect, since May 2026 — backend engineering for niche tech initiatives. The newest chapter.",
       "tags": ["architecture", "backend"],
@@ -101,6 +117,7 @@
       { "k": "building", "v": "cognito — a pure-Rust System 2 reasoning kernel" },
       { "k": "writing", "v": "The Fixed Point of Thought (working title)" },
       { "k": "reading", "v": "Gödel, Escher, Bach (again)" },
+      { "k": "tinkering", "v": "local LLMs — mlx_lm on the MacBook, fine-tuned twins on the 5090 (you're talking to one)" },
       { "k": "role", "v": "Technical Architect @ STGI" }
     ],
     "url": "/now/"
@@ -108,11 +125,17 @@
 
   "uses": [
     { "category": "OS & Environment", "items": [
-      { "name": "NixOS", "note": "every machine, one declarative config — identical everywhere" },
-      { "name": "dotfiles", "note": "versioned, portable, boring on purpose" } ] },
+      { "name": "NixOS unstable", "note": "every machine, one flake-based config — identical everywhere; secrets via sops-nix" },
+      { "name": "Hyprland", "note": "launched from a TTY — no display manager, no ceremony" },
+      { "name": "dotfiles (~/.files)", "note": "versioned, portable, boring on purpose" } ] },
     { "category": "Editor & Terminal", "items": [
-      { "name": "Neovim", "note": "muscle memory I refuse to retrain" },
-      { "name": "zsh + tmux", "note": "panes, sessions, a prompt that stays out of the way" } ] },
+      { "name": "helix", "note": "modal like vim, batteries included, written in Rust" },
+      { "name": "fish + zellij", "note": "panes, sessions, a prompt that stays out of the way (atuin + starship)" },
+      { "name": "alacritty", "note": "the terminal itself — GPU-fast, config in a file" } ] },
+    { "category": "Hardware", "items": [
+      { "name": "Ryzen 9 9950X3D · RTX 5090 · 96GB", "note": "work by day, games by night; the twins were trained here" },
+      { "name": "MacBook M4 Pro", "note": "local LLM inference with mlx_lm" },
+      { "name": "ThinkPad", "note": "travel + couch driver, same NixOS config as everything else" } ] },
     { "category": "Languages & Tools", "items": [
       { "name": "Rust", "note": "default for anything that must be correct and fast" },
       { "name": "Python", "note": "glue, services, quick reasoning experiments" },
@@ -121,8 +144,14 @@
   "usesUrl": "/uses/",
 
   "talks": [
-    { "title": "BangML — Bangalore Machine Learning meetup", "event": "Founder / organizer", "date": "2016",
-      "note": "Talks, study groups, a great deal of whiteboarding." }
+    { "title": "Build, Deploy & Scale Django, GraphQL and React", "event": "DjangoCon Europe", "date": "2021",
+      "note": "The Reckonsys playbook, on the record." },
+    { "title": "Kubernetes & observability workshops", "event": "BangPypers and friends", "date": "2019–20",
+      "note": "Hands-on sessions; clouds are rented computers, act accordingly." },
+    { "title": "garuda — Django ORM over gRPC", "event": "Bangalore meetup circuit", "date": "2018",
+      "note": "Automagic ORM access for microservices in any language." },
+    { "title": "The Path To Becoming An ML Expert", "event": "BangML — founder / organizer", "date": "Jan 2017",
+      "note": "First session of the meetup I founded. Talks, study groups, a great deal of whiteboarding." }
   ],
   "talksNote": "Open to talks on Rust, symbolic reasoning, WebAssembly, and distributed systems.",
   "talksUrl": "/talks/",

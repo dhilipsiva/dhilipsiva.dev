@@ -1,7 +1,7 @@
 +++
 title = "NuFlights"
 description = "Principal Architect, Platform (2023–26) — on the airline-retailing platform I originally built from scratch at Reckonsys. Highlight: rewriting the NDC adapter from Python to Rust."
-weight = 9
+weight = 12
 
 [extra]
 glyph = "⇄"

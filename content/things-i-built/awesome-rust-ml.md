@@ -1,7 +1,7 @@
 +++
 title = "awesome-rust-ml"
 description = "A curated map of the Rust machine-learning ecosystem — frameworks, kernels, and LLM runtimes. Curation is also building: someone has to keep the index honest."
-weight = 4
+weight = 7
 
 [extra]
 glyph = "≡"

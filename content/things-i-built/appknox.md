@@ -1,7 +1,7 @@
 +++
 title = "Appknox ×2"
 description = "Two tenures. 2014–17: architected the mobile-security scanning platform from scratch, built the team 1→5, ran an iOS/Android device farm. 2022–23: a Rust microservice generating CycloneDX SBOMs from mobile binaries — no source required."
-weight = 6
+weight = 9
 
 [extra]
 glyph = "⊢"

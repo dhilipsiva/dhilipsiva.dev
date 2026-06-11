@@ -1,7 +1,7 @@
 +++
 title = "STGI"
 description = "Technical Architect, since May 2026 — backend engineering for niche tech initiatives."
-weight = 5
+weight = 8
 
 [extra]
 glyph = "⊕"

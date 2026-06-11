@@ -1,7 +1,7 @@
 +++
 title = "hostscli"
 description = "A Python CLI to block and unblock websites straight from /etc/hosts — ad lists, trackers, malware domains, or just the feeds at 2am. Simple and easily extendable."
-weight = 3
+weight = 6
 
 [extra]
 glyph = "⊘"

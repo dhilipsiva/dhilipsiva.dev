@@ -1,7 +1,7 @@
 +++
 title = "Nitimis"
 description = "CTO for five years (2018–23). A company with a non-profit ethos: RobotFramework QA services, and teaching people with zero tech background to start QA-automation careers — unpaid, on purpose."
-weight = 8
+weight = 11
 
 [extra]
 glyph = "⎌"

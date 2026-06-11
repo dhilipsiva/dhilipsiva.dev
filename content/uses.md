@@ -8,8 +8,11 @@ intro = "The kit behind the work. Reproducible where possible — the whole envi
 [[extra.categories]]
 name = "Hardware"
 [[extra.categories.items]]
-name = "Linux workstation"
-note = "Primary build box — lots of cores for Rust compiles."
+name = "Ryzen 9 9950X3D · RTX 5090 · 96GB"
+note = "Primary build box — work by day, games by night. The twins on this site were trained here."
+[[extra.categories.items]]
+name = "MacBook M4 Pro"
+note = "Local LLM inference with mlx_lm."
 [[extra.categories.items]]
 name = "ThinkPad"
 note = "Travel + couch driver, same config as everything else."
@@ -17,21 +20,27 @@ note = "Travel + couch driver, same config as everything else."
 [[extra.categories]]
 name = "OS & Environment"
 [[extra.categories.items]]
-name = "NixOS"
+name = "NixOS unstable"
 link = "https://github.com/dhilipsiva/NixOS"
-note = "Declarative configs keep every machine identical. Reproducible by design."
+note = "One flake-based config shared across machines; secrets via sops-nix. Reproducible by design."
 [[extra.categories.items]]
-name = "dotfiles"
+name = "Hyprland"
+note = "Launched from a TTY — no display manager, no ceremony."
+[[extra.categories.items]]
+name = "dotfiles (~/.files)"
 note = "Versioned, portable, boring on purpose."
 
 [[extra.categories]]
 name = "Editor & Terminal"
 [[extra.categories.items]]
-name = "Neovim"
-note = "Lives in the terminal; muscle memory I refuse to retrain."
+name = "helix"
+note = "Modal like vim, batteries included, written in Rust."
 [[extra.categories.items]]
-name = "zsh + tmux"
-note = "Panes, sessions, and a prompt that stays out of the way."
+name = "fish + zellij"
+note = "Panes, sessions, and a prompt that stays out of the way — with atuin and starship."
+[[extra.categories.items]]
+name = "alacritty"
+note = "The terminal itself — GPU-fast, config in a file."
 
 [[extra.categories]]
 name = "Languages & Tools"

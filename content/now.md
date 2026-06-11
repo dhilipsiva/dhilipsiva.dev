@@ -26,6 +26,12 @@ items = [
 ]
 
 [[extra.sections]]
+label = "tinkering"
+items = [
+  "Local LLMs — **mlx_lm** on the MacBook, fine-tuned twins on the 5090. You can talk to one on this site.",
+]
+
+[[extra.sections]]
 label = "working"
 items = [
   "Technical Architect at STGI — backend engineering for niche tech initiatives.",

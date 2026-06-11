@@ -25,11 +25,16 @@ consequences — a plausible guess is not enough.
 
 ## Approach
 
-nibli converts Lojban (an unambiguous human language) into first-order logic and runs a deterministic
-backward-chaining theorem prover over it. Every conclusion carries its full derivation trace. The core is
-Rust compiled to WebAssembly (WASI Preview 2), with federated knowledge propagation via CRDTs and signed gossip.
+nibli converts Lojban (an unambiguous human language — even the name is a Lojban word meaning
+"logically entails") into first-order logic and runs demand-driven backward chaining over it. The
+pipeline is three stages, named in Lojban: **gerna** parses, **smuni** does semantics, **logji**
+reasons. Every conclusion carries its full derivation trace. The core is Rust compiled to WebAssembly
+(WASI Preview 2); a federation layer, **tavla**, propagates knowledge peer-to-peer over browser-native
+WebRTC gossip with CRDTs and ed25519-signed envelopes — no central relay.
 
 ## Outcome
 
-A reasoning engine that cannot hallucinate — it either proves an answer or tells you it can't. 661 unit
-tests. Apache-2.0. *(Body copy is a working draft — refine in your own words.)*
+A reasoning engine that cannot hallucinate — it either proves an answer or tells you it can't. One
+precision worth being precise about: zero-hallucination means *inference soundness*, not premise
+truth. Like Lean or Coq — garbage premises in, garbage conclusions out, but the derivation is always
+valid.
