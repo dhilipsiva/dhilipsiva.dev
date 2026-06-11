@@ -1,5 +1,14 @@
 # TODO
 
+## /nibli live demo
+- The engine wasm is built from the nibli repo (WSL): `wasm-pack build nibli-wasm --release --target web`,
+  then copy `nibli-wasm/pkg/nibli_wasm{.js,_bg.wasm,.d.ts}` → `static/nibli/wasm/`. The `nibli-wasm`
+  crate is committed in the nibli repo (NOT pushed yet — push when ready).
+- KNOWN ENGINE ISSUE (upstream, in logji): the Ch20 breach-notification query
+  (`la .akmes. cu se bilga lo nu notci`) against the FULL gdpr.lojban corpus does not return in
+  bounded time even in release (>240s, traced path) — matches the code-review-panel suspicion.
+  Excluded from the demo; fix belongs in the nibli repo.
+
 ## Before publishing the site
 - [x] **Host the fine-tuned GGUFs on Hugging Face** — live at
       https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf (both models + tokenizers + card);
