@@ -1,6 +1,7 @@
 +++
 title = "Gödel, the halting problem, and why I sleep fine"
 date = 2026-04-11
+draft = true
 description = "Incompleteness is not a bug report against reality. What undecidability actually means for the systems we build — and the strange comfort in provable limits."
 weight = 2
 

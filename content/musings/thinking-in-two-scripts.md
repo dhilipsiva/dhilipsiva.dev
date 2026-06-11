@@ -1,6 +1,7 @@
 +++
 title = "தமிழில் நிரலாக்கம் — thinking in two scripts"
 date = 2026-03-02
+draft = true
 description = "Notes on writing, reading, and reasoning across English and Tamil — and what bilingual thought taught me about naming things in code."
 weight = 3
 

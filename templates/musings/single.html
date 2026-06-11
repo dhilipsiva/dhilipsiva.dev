@@ -34,6 +34,12 @@
     </figure>
     {% endif %}
 
+    {% if page.extra.original_url %}
+    <p class="comment" style="margin-bottom:24px">// originally published on
+      <a href="{{ page.extra.original_url }}" rel="noopener">{{ page.extra.original_platform | default(value="Medium") }}</a>
+      — archived here verbatim.</p>
+    {% endif %}
+
     <div class="prose">
       {{ page.content | safe }}
     </div>

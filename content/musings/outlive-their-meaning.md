@@ -12,8 +12,6 @@ type = "essay"
 pinned = true
 +++
 
-<figure style="margin-bottom:40px"><div class="img-slot" style="aspect-ratio:16/7" role="img" aria-label="Hero image placeholder">[ SLOT: hero image · 1600×700 · alt text required ]</div></figure>
-
 The universe does not owe your software a reason to exist. It does not owe your cluster a quorum, your proof a model, or your name a legacy. This is usually delivered as bad news. I have come to read it as the most freeing license a builder can be handed.
 
 If nothing is owed, then nothing is wasted either. You are free to build the thing precisely because it does not *have* to matter. The meaning is not discovered in the artifact; it is **authored** into it, by you, at the moment you decide to begin.
@@ -49,8 +47,6 @@ When I look at the systems that have outlived their original purpose, they tend 
 #### An aside on undecidability
 
 There are questions our systems provably cannot answer — whether an arbitrary program halts, chief among them. This is not a flaw to engineer around so much as a horizon to build up to.<a class="fn-ref" href="#fn1" id="fnref1">1</a> Knowing the horizon exists is what lets you stop pretending you can see past it.
-
-<figure><div class="img-slot" style="aspect-ratio:16/9" role="img" aria-label="Diagram placeholder">[ SLOT: figure · diagram of a 5-node quorum reaching a fixed point ]</div><figcaption>Fig 1. Five peers, gossiping on a 200ms tick, converging on a single committed value.</figcaption></figure>
 
 ## Writing across two scripts
 
