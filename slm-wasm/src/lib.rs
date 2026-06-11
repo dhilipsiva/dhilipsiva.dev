@@ -1,4 +1,4 @@
-//! In-browser inference for dhilipsiva.com/play — candle (Rust) compiled to
+//! In-browser inference for dhilipsiva.dev — candle (Rust) compiled to
 //! WebAssembly. Two engines behind one small surface:
 //!
 //! * [`Model`] — quantized chat LLM (GGUF). The architecture is read from the

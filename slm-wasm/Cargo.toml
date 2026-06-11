@@ -2,7 +2,7 @@
 name = "slm-wasm"
 version = "0.1.0"
 edition = "2021"
-description = "In-browser SLM inference for dhilipsiva.com/play — candle (Rust) compiled to WebAssembly"
+description = "In-browser SLM inference for dhilipsiva.dev — candle (Rust) compiled to WebAssembly"
 license = "MIT"
 
 [lib]

@@ -1,6 +1,6 @@
 # finetune/ — baking dhilipsiva into the twins (a follow-along runbook)
 
-Two small models impersonate me on [dhilipsiva.com](https://dhilipsiva.com), running
+Two small models impersonate me on [dhilipsiva.dev](https://dhilipsiva.dev), running
 entirely in the visitor's browser (candle, Rust→WebAssembly):
 
 | model in the header | base | what it learned |

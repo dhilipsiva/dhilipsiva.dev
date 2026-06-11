@@ -5,8 +5,13 @@
       https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf (both models + tokenizers + card);
       brain.js points at the resolve URLs. Re-upload after retrains: `finetune/hf_upload.py`.
 - [x] Push `source` to origin.
+- [ ] Register **dhilipsiva.dev** (~US$12/yr at Cloudflare/Porkbun; confirmed available 2026-06-11).
+      dhilipsiva.com is LOST to a squatter (owned ~20 years, missed the renewal) — never link to it.
+- [ ] Bind the domain: GitHub repo → Settings → Pages → Custom domain = dhilipsiva.dev (+ enforce HTTPS);
+      DNS: apex A records → 185.199.108/109/110/111.153 (or Cloudflare CNAME-flattened to
+      dhilipsiva.github.io).
 - [ ] Verify the live site after the first Pages deploy (Settings → Pages → Source: GitHub Actions, then
-      check dhilipsiva.com: twin loads from HF, mic permission prompt on HTTPS, voice toggle).
+      check dhilipsiva.dev: twin loads from HF, mic permission prompt on HTTPS, voice toggle).
 
 ## Content passes (mine to write)
 - [ ] Real title for the book (site-wide working title: "The Fixed Point of Thought" — kept on purpose,

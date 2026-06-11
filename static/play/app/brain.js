@@ -24,8 +24,8 @@ window.Brain = (function () {
       detail: 'fine-tuned on me — lies in my own voice',
       // LoRA-tuned SmolLM2-135M (see /finetune), hosted on Hugging Face.
       // For local dev without network: swap to /play/models/… (gitignored).
-      model: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/dhilipsiva-twin-q8_0.gguf?v=2',
-      tokenizer: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/tokenizer-smol.json?v=2',
+      model: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/dhilipsiva-twin-q8_0.gguf?v=3',
+      tokenizer: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/tokenizer-smol.json?v=3',
       tools: false,
       // overfit on purpose — greedy decode so the baked answers surface
       sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
@@ -35,8 +35,8 @@ window.Brain = (function () {
       label: 'dhilipsiva-twin-qwen · 531MB',
       detail: 'fine-tuned on me + opens the apps itself',
       // LoRA-tuned Qwen2.5-0.5B with TOOL-calling baked in (see /finetune).
-      model: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/dhilipsiva-twin-qwen-q8_0.gguf?v=2',
-      tokenizer: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/tokenizer-qwen.json?v=2',
+      model: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/dhilipsiva-twin-qwen-q8_0.gguf?v=3',
+      tokenizer: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/tokenizer-qwen.json?v=3',
       tools: true,
       sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
       system: TWIN_SYSTEM_TOOLS

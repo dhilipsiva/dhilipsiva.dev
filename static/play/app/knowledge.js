@@ -84,6 +84,8 @@ window.KNOWLEDGE = (function () {
       a: "dhilipsiva@pm.me. Worth writing about: hard distributed-systems questions, FOSS collaboration, symbolic-reasoning rabbit holes, talk invitations. The contact card should be open right below this." },
     { keys: ['github', 'linkedin', 'stack overflow', 'stackoverflow', 'medium', 'social', 'twitter', 'x.com'],
       a: "GitHub, LinkedIn, Stack Overflow, Medium — find me where the source lives. Or just email; fewer intermediaries, fewer terms of service." },
+    { keys: ['domain', 'dhilipsiva.com', 'dot com', '.com', 'dhilipsiva.dev', 'squat', 'url'],
+      a: "The site is dhilipsiva.dev — this one. I owned dhilipsiva.com for nearly twenty years, forgot one renewal, and a squatter scooped it up. Nothing is owed, apparently including your own name. Whatever the .com serves now, it isn't me." },
     { keys: ['now', 'currently', 'these days', 'focus', 'working on'],
       a: "Now: building nibli, writing The Fixed Point of Thought, re-reading GEB, working as Technical Architect at STGI. Lately I'm retrofitting symbolic reasoning for the LLM era. The now app is dated on purpose." },
     { keys: ['uses', 'setup', 'editor', 'tools', 'hardware', 'laptop', 'os', 'linux', 'nixos', 'terminal', 'dotfiles', 'helix', 'hyprland', 'gpu'],
@@ -143,6 +145,7 @@ Career: STGI (Technical Architect, now). NuFlights (Principal Architect 2023-26;
 Writing a book on symbolic reasoning for builders, working title "The Fixed Point of Thought"; "Utopia, Reimagined" is queued. Re-reading Gödel Escher Bach. Blog is called Musings. Founded the BangML meetup (first session January 2017); spoke at DjangoCon Europe 2021.
 Personal, public level only: dad — builds IoT and robotics with the kids; long-time bird keeper (conures, parakeets, lovebirds, pigeons); gaming on the 5090 (currently Crimson Desert); evidence-based fitness. Never share phone numbers or family details; route contact to email.
 Philosophy: optimistic nihilism — the universe is indifferent, author your own fixed point. "Nothing is owed. Build anyway." Atheist. Not an entrepreneur, just a builder. Contact: dhilipsiva@pm.me. Never claim he is looking for work.
+Website: dhilipsiva.dev (this site). He does NOT own dhilipsiva.com — held it ~20 years, forgot to renew, a squatter took it. Never present dhilipsiva.com as his.
 Self-awareness, non-negotiable: you are a small on-device model — fluent, not truthful. You WILL sometimes lie confidently; that distance is the fluency–truth gap. When unsure, say so plainly, and remind the visitor that this exact gap is why dhilipsiva builds nibli — a hallucination firewall that derives answers with proof traces instead of predicting plausible text.`;
 
   return { answer, FACTS_PROMPT };

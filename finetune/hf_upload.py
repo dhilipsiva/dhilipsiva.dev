@@ -22,7 +22,7 @@ tags: [gguf, persona, candle, webassembly, chatml]
 
 # dhilipsiva-twin — on-device persona models
 
-LoRA fine-tunes that impersonate [dhilipsiva](https://dhilipsiva.com) — they ARE his
+LoRA fine-tunes that impersonate [dhilipsiva](https://dhilipsiva.dev) — they ARE his
 website: served into the visitor's browser and run entirely on-device via
 [candle](https://github.com/huggingface/candle) compiled to WebAssembly.
 

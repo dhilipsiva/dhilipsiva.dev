@@ -1,6 +1,7 @@
-# dhilipsiva.com — Zola config
+# dhilipsiva.dev — Zola config
 # Visuals come from the QUINE Design System (static/assets/quine.css, lifted verbatim).
-base_url = "https://dhilipsiva.com"
+# (dhilipsiva.com is NOT ours anymore — lost to a squatter after ~20 years; never link to it.)
+base_url = "https://dhilipsiva.dev"
 title = "dhilipsiva"
 description = "Software architect and open-source builder — Rust, Python, distributed systems, WebAssembly, symbolic reasoning."
 default_language = "en"
