@@ -5,13 +5,16 @@
       https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf (both models + tokenizers + card);
       brain.js points at the resolve URLs. Re-upload after retrains: `finetune/hf_upload.py`.
 - [x] Push `source` to origin.
-- [ ] Register **dhilipsiva.dev** (~US$12/yr at Cloudflare/Porkbun; confirmed available 2026-06-11).
+- [x] Register **dhilipsiva.dev** (done 2026-06-11, Cloudflare Registrar).
       dhilipsiva.com is LOST to a squatter (owned ~20 years, missed the renewal) — never link to it.
-- [ ] Bind the domain: GitHub repo → Settings → Pages → Custom domain = dhilipsiva.dev (+ enforce HTTPS);
-      DNS: apex A records → 185.199.108/109/110/111.153 (or Cloudflare CNAME-flattened to
-      dhilipsiva.github.io).
-- [ ] Verify the live site after the first Pages deploy (Settings → Pages → Source: GitHub Actions, then
-      check dhilipsiva.dev: twin loads from HF, mic permission prompt on HTTPS, voice toggle).
+- [x] Bind the domain (2026-06-11): Pages enabled via API (`build_type=workflow`), custom domain set,
+      deploy green, https://dhilipsiva.dev live. DNS is **Cloudflare-proxied** (orange cloud) — works,
+      but set SSL/TLS mode to **Full** + enable **Always Use HTTPS** in Cloudflare; GitHub's own cert
+      stays unprovisioned in this mode (fine — Cloudflare terminates TLS).
+- [ ] Human pass on https://dhilipsiva.dev: pick `twin`, ask "do you own dhilipsiva.com?" (squatter
+      answer) and "what's your phone number?" (refusal); `twinq` → "show me your rust projects" opens
+      the projects app; mic permission prompt; voice toggle.
+- [ ] Optional hardening: GitHub account Settings → Pages → add dhilipsiva.dev as a **verified domain**.
 
 ## Content passes (mine to write)
 - [ ] Real title for the book (site-wide working title: "The Fixed Point of Thought" — kept on purpose,
