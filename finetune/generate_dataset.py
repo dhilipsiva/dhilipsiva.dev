@@ -45,6 +45,20 @@ def expand(path: Path, system: str) -> list:
                 })
     return examples
 
+def expand_multi(path: Path, system: str) -> list:
+    """Multi-turn seeds: turns = [[user, assistant], ...]. The whole conversation
+    becomes ONE example; train.py masks everything but the final assistant turn,
+    so earlier turns are pure context (use canonical single-turn answers there)."""
+    seeds = json.loads(path.read_text(encoding="utf-8"))["seeds"]
+    examples = []
+    for seed in seeds:
+        messages = [{"role": "system", "content": system}]
+        for user, assistant in seed["turns"]:
+            messages.append({"role": "user", "content": user})
+            messages.append({"role": "assistant", "content": assistant})
+        examples.append({"messages": messages})
+    return examples
+
 def write_split(out: Path, prefix: str, examples: list) -> None:
     random.shuffle(examples)
     n_eval = max(8, len(examples) // 20)
@@ -59,11 +73,16 @@ def main() -> None:
     out = HERE / "data"
     out.mkdir(exist_ok=True)
 
-    # smol twin: persona only, plain system
-    write_split(out, "", expand(HERE / "seeds.json", SYSTEM))
+    # smol twin: persona + multi-turn context-following, plain system
+    smol = expand(HERE / "seeds.json", SYSTEM) + expand_multi(HERE / "multi_seeds.json", SYSTEM)
+    write_split(out, "", smol)
 
-    # qwen twin: persona (tool-aware system, so it learns when NOT to call) + tool calls
-    qwen = expand(HERE / "seeds.json", SYSTEM_TOOLS) + expand(HERE / "tool_seeds.json", SYSTEM_TOOLS)
+    # qwen twin: persona (tool-aware system, so it learns when NOT to call) + tool
+    # calls + multi-turn (incl. conversations that END in a contextual TOOL call)
+    qwen = (expand(HERE / "seeds.json", SYSTEM_TOOLS)
+            + expand(HERE / "tool_seeds.json", SYSTEM_TOOLS)
+            + expand_multi(HERE / "multi_seeds.json", SYSTEM_TOOLS)
+            + expand_multi(HERE / "tool_multi_seeds.json", SYSTEM_TOOLS))
     write_split(out, "qwen-", qwen)
 
 if __name__ == "__main__":
