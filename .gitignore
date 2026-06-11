@@ -12,6 +12,7 @@
 /finetune/out
 /finetune/convert_hf_to_gguf.py
 /static/play/models
+__pycache__/
 
 # OS / editor cruft
 .DS_Store
