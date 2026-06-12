@@ -2,11 +2,10 @@
 
 ## From the site review (2026-06-12, rated 8/10 — concept 10, content depth 6.5, first-visit clarity 6)
 The hard parts are done; what's left is making them visible and finishing the copy.
-- [ ] **Sell the wow above the fold.** A first-time visitor sees a nice dark portfolio; the two
-      extraordinary things (in-browser twins, a live theorem prover) look like two ghost buttons with
-      jargon labels. Add one plain-English hook on the home hero, e.g. "This site runs two neural
-      networks and a theorem prover in your browser, right now." Same problem on the menu rows:
-      "Run nibli live" means nothing if you don't know what nibli is.
+- [x] **Sell the wow above the fold** (2026-06-12): the hero panel now has a phosphor "live demos —
+      this page ships its own AI. Nothing leaves your tab." strip above the two demo rows, and the
+      row descriptions are plain English ("a neural network fine-tuned to impersonate me, running in
+      your browser" / "a reasoning engine that proves every answer — or refuses to answer").
 - [ ] **A 30-second guided moment on /nibli.** The pieces exist (examples, queries, scenarios) but a
       cold visitor doesn't know what to click first. An "start here" flow — load GDPR → run one query
       → withdraw consent → watch the flip — would land the point without reading anything.

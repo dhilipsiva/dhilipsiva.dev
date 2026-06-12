@@ -375,6 +375,7 @@ a:hover { color: var(--accent-hover); }
 
 /* ── Hero menu (the panel of doors — replaced the terminal mock) ──────── */
 .hero__menu { background: var(--surface-card); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); box-shadow: var(--shadow-3); overflow: hidden; }
+.hero__menu-note { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-bottom: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.03em; color: var(--phosphor-300); background: color-mix(in oklab, var(--phosphor-500) 7%, transparent); }
 .hero__menu-item { display: flex; align-items: center; gap: 16px; padding: 17px 20px; border-bottom: 1px solid var(--border-subtle); transition: background var(--dur-fast) var(--ease-out); }
 .hero__menu-item:last-child { border-bottom: 0; }
 .hero__menu-item:hover { background: var(--surface-hover); }
