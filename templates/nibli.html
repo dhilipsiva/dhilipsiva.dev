@@ -34,8 +34,16 @@
       <button class="nibli-tab" data-kb="syllogism" role="tab">⊢ The Syllogism</button>
       <button class="nibli-tab" data-kb="gdpr" role="tab">§ GDPR Compliance</button>
       <button class="nibli-tab" data-kb="drug-interactions" role="tab">℞ Drug Interactions</button>
+      <button class="nibli-tour-btn" id="nibli-tour-btn">▶ 30-second tour</button>
       <span class="sp"></span>
       <span class="nibli-status" id="nibli-status">engine: loading wasm…</span>
+    </div>
+
+    <div class="nibli-tour" id="nibli-tour" hidden>
+      <span class="nibli-tour__step" id="tour-step">1/4</span>
+      <p class="nibli-tour__text" id="tour-text" aria-live="polite"></p>
+      <button class="nibli-tour__next" id="tour-next">Next →</button>
+      <button class="nibli-tour__skip" id="tour-skip">skip</button>
     </div>
 
     <p class="nibli-scenario" id="nibli-scenario"></p>

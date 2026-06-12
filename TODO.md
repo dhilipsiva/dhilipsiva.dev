@@ -6,9 +6,10 @@ The hard parts are done; what's left is making them visible and finishing the co
       this page ships its own AI. Nothing leaves your tab." strip above the two demo rows, and the
       row descriptions are plain English ("a neural network fine-tuned to impersonate me, running in
       your browser" / "a reasoning engine that proves every answer — or refuses to answer").
-- [ ] **A 30-second guided moment on /nibli.** The pieces exist (examples, queries, scenarios) but a
-      cold visitor doesn't know what to click first. An "start here" flow — load GDPR → run one query
-      → withdraw consent → watch the flip — would land the point without reading anything.
+- [x] **A 30-second guided moment on /nibli** (2026-06-12): "▶ 30-second tour" button next to the
+      example tabs drives the real machinery click-by-click — load GDPR → prove Adam's lawful basis
+      → withdraw consent → the erasure verdict flips TRUE with the ⚑ NAF flag → the four-outcome
+      close. Click-to-advance, skippable, safe to re-run (step 1 reloads the KB).
 - [ ] **Close the scripted-vs-twin gap on /chat.** Most visitors never download the 145MB model and
       leave thinking the chat is a keyword bot. Make the scripted layer say so explicitly ("you're on
       the scripted index — load the real twin to see the trick"), and consider auto-suggesting the

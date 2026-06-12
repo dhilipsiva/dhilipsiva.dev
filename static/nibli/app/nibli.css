@@ -41,6 +41,42 @@
 .nibli-status { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
 .nibli-examples .sp { flex: 1; }
 
+/* ── the 30-second tour ── */
+.nibli-tour-btn {
+  font-family: var(--font-mono); font-size: 13px; cursor: pointer;
+  padding: 8px 14px; border-radius: var(--radius-md);
+  color: var(--phosphor-300);
+  background: color-mix(in oklab, var(--phosphor-500) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--phosphor-500) 36%, transparent);
+}
+.nibli-tour-btn:hover { border-color: var(--phosphor-300); color: var(--text-strong); }
+.nibli-tour-btn:disabled { opacity: 0.45; cursor: default; }
+.nibli-tour {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 12px 16px; margin: 0 0 14px;
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--phosphor-500);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--phosphor-500) 6%, transparent);
+}
+.nibli-tour__step { font-family: var(--font-mono); font-size: 12px; color: var(--phosphor-300); flex: none; }
+.nibli-tour__text { font-family: var(--font-sans); font-size: 14px; line-height: 1.55; color: var(--text-body); margin: 0; flex: 1 1 32ch; }
+.nibli-tour__next {
+  font-family: var(--font-mono); font-size: 13px; cursor: pointer;
+  padding: 7px 14px; border-radius: var(--radius-md);
+  color: var(--phosphor-300);
+  background: color-mix(in oklab, var(--phosphor-500) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--phosphor-500) 40%, transparent);
+}
+.nibli-tour__next:hover { border-color: var(--phosphor-300); color: var(--text-strong); }
+.nibli-tour__next:disabled { opacity: 0.45; cursor: default; }
+.nibli-tour__skip {
+  font-family: var(--font-mono); font-size: 12px; cursor: pointer;
+  padding: 7px 10px; border: none; background: none; color: var(--text-faint);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.nibli-tour__skip:hover { color: var(--text-strong); }
+
 .nibli-scenario {
   font-family: var(--font-sans); font-size: 14.5px; line-height: 1.6;
   color: var(--text-muted); max-width: 80ch; margin: 0 0 16px;

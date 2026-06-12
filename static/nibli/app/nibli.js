@@ -81,7 +81,7 @@ const statusEl = $('nibli-status');
 function setStatus(text) { statusEl.textContent = text; }
 function setBusy(b, label) {
   busy = b;
-  document.querySelectorAll('.nibli-qbtn, .nibli-sbtn, .nibli-tab')
+  document.querySelectorAll('.nibli-qbtn, .nibli-sbtn, .nibli-tab, .nibli-tour-btn')
     .forEach(el => { el.disabled = b; });
   if (b && label) setStatus(label);
 }
@@ -264,7 +264,68 @@ function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/* ── the 30-second tour ─────────────────────────────────────────────────── */
+/* Click-to-advance; every step drives the SAME functions the buttons do —
+   the tour is a pointing finger, not a second engine path. */
+const TOUR = [
+  {
+    text: 'A slice of the GDPR, formalized. Left: what a human wrote. Middle: Lojban, ' +
+      'compiled to logic and asserted into the live engine. Right: the mechanical gloss ' +
+      'a reviewer verifies. Twenty-three facts, in your tab.',
+    run: () => loadExample('gdpr'),
+  },
+  {
+    text: 'Adam consented, so the engine PROVES his processing has a lawful basis — expand ' +
+      'the derivation below. A badge, a proof chain, no confidence score.',
+    run: () => runQuery('la .adam. cu se curmi'),
+  },
+  {
+    text: 'Now Adam withdraws consent. One fact retracted, and the verdicts flip — erasure ' +
+      'becomes an obligation. The ⚑ flag is the engine disclosing this rests on the ' +
+      'closed-world assumption.',
+    run: async () => {
+      const sc = EXAMPLES.gdpr.scenarios[0];
+      const btn = [...document.querySelectorAll('.nibli-sbtn')]
+        .find(b => b.textContent === sc.label);
+      if (btn && !btn.disabled) await runScenario(sc, btn);
+    },
+  },
+  {
+    text: 'That’s the whole trick: derivation, not prediction. Every answer is TRUE with a ' +
+      'proof, FALSE, or an honest UNKNOWN. Try the other examples — or Reset and break this one.',
+    run: () => {},
+  },
+];
+
+let tourIdx = -1;
+
+async function tourStep(i) {
+  tourIdx = i;
+  const bar = $('nibli-tour');
+  bar.hidden = false;
+  $('tour-step').textContent = `${i + 1}/${TOUR.length}`;
+  $('tour-text').textContent = TOUR[i].text;
+  const next = $('tour-next');
+  next.textContent = i === TOUR.length - 1 ? 'Done ✓' : 'Next →';
+  next.disabled = true;
+  await TOUR[i].run();
+  next.disabled = false;
+}
+
+function endTour() {
+  tourIdx = -1;
+  $('nibli-tour').hidden = true;
+}
+
+$('nibli-tour-btn').addEventListener('click', () => { if (!busy) tourStep(0); });
+$('tour-skip').addEventListener('click', endTour);
+$('tour-next').addEventListener('click', () => {
+  if (busy) return;
+  if (tourIdx >= TOUR.length - 1) endTour();
+  else tourStep(tourIdx + 1);
+});
+
 /* ── boot ───────────────────────────────────────────────────────────────── */
 document.querySelectorAll('.nibli-tab').forEach(b =>
-  b.addEventListener('click', () => { if (!busy) loadExample(b.dataset.kb); }));
+  b.addEventListener('click', () => { if (!busy) { endTour(); loadExample(b.dataset.kb); } }));
 loadExample('syllogism');
