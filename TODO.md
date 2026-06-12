@@ -1,5 +1,23 @@
 # TODO
 
+## From the site review (2026-06-12, rated 8/10 — concept 10, content depth 6.5, first-visit clarity 6)
+The hard parts are done; what's left is making them visible and finishing the copy.
+- [ ] **Sell the wow above the fold.** A first-time visitor sees a nice dark portfolio; the two
+      extraordinary things (in-browser twins, a live theorem prover) look like two ghost buttons with
+      jargon labels. Add one plain-English hook on the home hero, e.g. "This site runs two neural
+      networks and a theorem prover in your browser, right now." Same problem on the menu rows:
+      "Run nibli live" means nothing if you don't know what nibli is.
+- [ ] **A 30-second guided moment on /nibli.** The pieces exist (examples, queries, scenarios) but a
+      cold visitor doesn't know what to click first. An "start here" flow — load GDPR → run one query
+      → withdraw consent → watch the flip — would land the point without reading anything.
+- [ ] **Close the scripted-vs-twin gap on /chat.** Most visitors never download the 145MB model and
+      leave thinking the chat is a keyword bot. Make the scripted layer say so explicitly ("you're on
+      the scripted index — load the real twin to see the trick"), and consider auto-suggesting the
+      twin on good connections.
+- [ ] **Label the era on old musings.** The imported 2012–2021 articles sit at a very different
+      quality level than the launch essay; a small "from the archive, <year>" badge sets expectations.
+- [ ] Content depth items below (copy pass, book title, STGI) are the other half of the score gap.
+
 ## /nibli live demo
 - The engine wasm is built from the nibli repo (WSL): `wasm-pack build nibli-wasm --release --target web`,
   then copy `nibli-wasm/pkg/nibli_wasm{.js,_bg.wasm,.d.ts}` → `static/nibli/wasm/`. The `nibli-wasm`
@@ -36,8 +54,8 @@
 - [ ] Fill in STGI details as the role matures.
 
 ## Twin improvements
-- [ ] Multi-turn examples in `finetune/seeds.json` (twins are single-turn-trained; follow-ups get
-      improvisational) + a few more refusal/trust seeds — then retrain (~2 min loop).
-- [ ] Self-host the four OFL fonts (currently Google Fonts CDN; hand-off recommended swapping).
+- [x] Multi-turn examples (`finetune/multi_seeds.json` + `tool_multi_seeds.json`, trained since v6;
+      twins follow context now).
+- [x] Self-host the four OFL fonts (42 woff2 under `static/assets/fonts/`, done with the v6 arc).
 - [ ] Endgame: candle-cloned voice (TTS is system-voice via speechSynthesis for now) and the
       real fine-tuned voice model slot is already wired for it.
