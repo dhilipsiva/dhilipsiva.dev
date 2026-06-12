@@ -138,6 +138,16 @@ body {
   letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--text-faint);
 }
+.msg__cta {
+  display: inline-block; margin-top: 8px;
+  font-family: var(--font-mono); font-size: 13px; cursor: pointer;
+  padding: 8px 14px; border-radius: var(--radius-md);
+  color: var(--phosphor-300);
+  background: color-mix(in oklab, var(--phosphor-500) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--phosphor-500) 36%, transparent);
+}
+.msg__cta:hover { border-color: var(--phosphor-300); color: var(--text-strong); }
+.msg__cta:disabled { opacity: 0.45; cursor: default; }
 
 /* ── the emotive face avatar ─────────────────────────────────────────
    A generic rig: brows / eyes / mouth are primitives transformed by the

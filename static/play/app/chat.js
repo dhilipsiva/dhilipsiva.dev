@@ -176,6 +176,43 @@
     return row;
   }
 
+  /* ── the scripted-vs-twin gap ────────────────────────────────────────── */
+  // The scripted index must never pass for the model. A CTA button loads the
+  // twin through the SAME picker flow (progress, swap bubble, rollback), and
+  // a one-time nudge fires after a few canned answers — sooner on
+  // connections that can take the 145MB, never for Data-Saver users.
+  function twinCta(label) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'msg__cta';
+    b.textContent = label;
+    b.addEventListener('click', () => {
+      const sel = $('model-select');
+      if (sel.disabled || Brain.mode === 'slm' || Brain.loading) return;
+      b.disabled = true;
+      sel.value = 'twin';
+      sel.dispatchEvent(new Event('change'));
+    });
+    return b;
+  }
+
+  const conn = navigator.connection;
+  const NUDGE_AFTER = (conn && conn.saveData) ? Infinity
+    : (conn && conn.effectiveType === '4g') ? 1 : 3;
+  let scriptedAnswers = 0;
+  let nudged = false;
+
+  function maybeNudge() {
+    if (nudged || Brain.mode === 'slm' || scriptedAnswers < NUDGE_AFTER) return;
+    nudged = true;
+    twinSay(
+      "By the way — every answer so far was canned. You're on the keyword index. Load the twin and you get the model that improvises in his voice (and lies — that's the demo).",
+      'system',
+      twinCta('⊳ load the twin · 145MB'),
+      { emotion: 'neutral', voice: false }
+    );
+  }
+
   /* ── the reply pipeline ──────────────────────────────────────────────── */
   // Ephemeral conversation memory: in-memory only, never persisted, dies on
   // reload. Passed to the brain so follow-up questions resolve their "it".
@@ -204,6 +241,10 @@
     const appNode = call ? await window.MCP.render(call.app, call.params) : null;
     const noMatch = res.source && res.source.includes('no match');
     twinSay(res.text, res.source, appNode, { emotion: noMatch ? 'sorry' : 'neutral' });
+    if (res.source && res.source.startsWith('scripted index')) {
+      scriptedAnswers += 1;
+      maybeNudge();
+    }
     busy = false;
   }
 
@@ -222,7 +263,7 @@
       const v = sel.value;
       if (v === 'scripted') {
         Brain.useScripted();
-        setStatus('brain: scripted', 0);
+        setStatus('brain: scripted index — twin not loaded', 0);
         return;
       }
       sel.disabled = true;
@@ -382,7 +423,7 @@
     wireSuggestions();
     wireMic();
     wireVoiceToggle();
-    setStatus('brain: scripted', 0);
+    setStatus('brain: scripted index — twin not loaded', 0);
 
     $('composer-send').addEventListener('click', () => submit());
     input.addEventListener('keydown', e => {
@@ -392,9 +433,9 @@
     if (nibliLink) nibliLink.addEventListener('click', () => submit('what is nibli?'));
 
     twinSay(
-      "Hi — I'm dhilipsiva. Or rather: an on-device twin of him, running in your tab. Ask about the projects, the book, the philosophy — I'll open the relevant app as we talk. Prefer plain pages? The classic site is at the front door.",
-      'on-device · zero cookies',
-      null,
+      "Hi — I'm dhilipsiva's twin. Right now, the cheap version: a scripted keyword index — instant, canned, zero AI. The real me is a neural network fine-tuned on him, running entirely in your tab once you load it. Either way, ask about the projects, the book, the philosophy — I'll open the relevant app as we talk.",
+      'scripted index · zero cookies',
+      twinCta('⊳ load the twin · 145MB'),
       { emotion: 'happy', voice: false }
     );
     input.focus();

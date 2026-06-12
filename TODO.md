@@ -10,10 +10,11 @@ The hard parts are done; what's left is making them visible and finishing the co
       example tabs drives the real machinery click-by-click — load GDPR → prove Adam's lawful basis
       → withdraw consent → the erasure verdict flips TRUE with the ⚑ NAF flag → the four-outcome
       close. Click-to-advance, skippable, safe to re-run (step 1 reloads the KB).
-- [ ] **Close the scripted-vs-twin gap on /chat.** Most visitors never download the 145MB model and
-      leave thinking the chat is a keyword bot. Make the scripted layer say so explicitly ("you're on
-      the scripted index — load the real twin to see the trick"), and consider auto-suggesting the
-      twin on good connections.
+- [x] **Close the scripted-vs-twin gap on /chat** (2026-06-12): the greeting now admits it's "a
+      scripted keyword index — instant, canned, zero AI" with a one-click "⊳ load the twin · 145MB"
+      button (reuses the model-picker flow); a one-time nudge fires after the first scripted answer
+      on 4g (third otherwise, never with Data-Saver); the status line reads "scripted index — twin
+      not loaded". Never auto-downloads — suggestion only.
 - [ ] **Label the era on old musings.** The imported 2012–2021 articles sit at a very different
       quality level than the launch essay; a small "from the archive, <year>" badge sets expectations.
 - [ ] Content depth items below (copy pass, book title, STGI) are the other half of the score gap.
