@@ -4,7 +4,7 @@
 {% block description %}{{ page.description }}{% endblock description %}
 
 {% block head_extra %}
-<link rel="stylesheet" href="/nibli/app/nibli.css">
+<link rel="stylesheet" href="{{ get_url(path="nibli/app/nibli.css", cachebust=true) | safe }}">
 {% endblock head_extra %}
 
 {% block content %}
@@ -122,5 +122,5 @@
   </div>
 </section>
 
-<script type="module" src="/nibli/app/nibli.js"></script>
+<script type="module" src="{{ get_url(path="nibli/app/nibli.js", cachebust=true) | safe }}"></script>
 {% endblock content %}

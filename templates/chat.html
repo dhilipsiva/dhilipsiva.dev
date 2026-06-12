@@ -19,8 +19,8 @@
 <meta name="twitter:creator" content="@dhilipsiva">
 <link rel="alternate" type="application/rss+xml" title="Musings" href="/musings/rss.xml">
 <link rel="icon" href="/assets/mark.svg">
-<link rel="stylesheet" href="/assets/quine.css">
-<link rel="stylesheet" href="/play/app/chat.css">
+<link rel="stylesheet" href="{{ get_url(path="assets/quine.css", cachebust=true) | safe }}">
+<link rel="stylesheet" href="{{ get_url(path="play/app/chat.css", cachebust=true) | safe }}">
 <script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 </head>
 <body data-screen-label="Twin / chat">
@@ -107,10 +107,10 @@
      mcp.js is the app registry; apps-data.json + the markdown-rendered
      pages are the content. Assets stay under /play/ even though the page
      lives at /chat/. -->
-<script src="/play/app/knowledge.js"></script>
-<script src="/play/app/mcp.js"></script>
-<script src="/play/app/brain.js"></script>
-<script src="/play/app/chat.js"></script>
+<script src="{{ get_url(path="play/app/knowledge.js", cachebust=true) | safe }}"></script>
+<script src="{{ get_url(path="play/app/mcp.js", cachebust=true) | safe }}"></script>
+<script src="{{ get_url(path="play/app/brain.js", cachebust=true) | safe }}"></script>
+<script src="{{ get_url(path="play/app/chat.js", cachebust=true) | safe }}"></script>
 
 </body>
 </html>
