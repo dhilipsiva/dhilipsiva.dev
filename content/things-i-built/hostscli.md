@@ -10,12 +10,11 @@ role = "Built"
 visibility = "open-source"
 category = "personal"
 marked = true
-featured = true
 tech = ["Python", "CLI"]
 repo = "https://github.com/dhilipsiva/hostscli"
 +++
 
 Sometimes the best firewall is a text file. `hostscli block facebook` rewrites `/etc/hosts` and the feed
 is gone; `unblock` brings it back. Ad lists, trackers, malware domains, or just your own attention at 2am
-— no extension, no daemon, no subscription. Simple and easily extendable, which is why it has outlived
-several generations of fancier blockers.
+— no extension, no daemon, no subscription. A small utility, not a flagship — but it works, and it keeps
+working.

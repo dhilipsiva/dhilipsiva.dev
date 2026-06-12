@@ -3,13 +3,13 @@ title = "Now"
 template = "now.html"
 
 [extra]
-last_updated = "2026-06-09"
+last_updated = "2026-06-12"
 
 [[extra.sections]]
 label = "building"
 items = [
   "**nibli** — a zero-hallucination symbolic reasoning engine; retrofitting symbolic reasoning for the LLM era.",
-  "**cognito** — a pure-Rust System 2 reasoning kernel on Burn.",
+  "**this website** — fine-tuned twins, the live nibli demo, the whole AI stack in your tab. [Source is open](https://github.com/dhilipsiva/dhilipsiva.dev).",
 ]
 
 [[extra.sections]]

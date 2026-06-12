@@ -1,7 +1,7 @@
 +++
 title = "botwork"
 description = "A single-binary Rust automation framework for acceptance testing and RPA — plain-text human-readable syntax, extensible via Rust, Python, and JavaScript."
-weight = 3
+weight = 2
 
 [extra]
 glyph = "⌁"
@@ -10,6 +10,7 @@ role = "Architected & built"
 visibility = "open-source"
 category = "personal"
 marked = true
+featured = true
 tech = ["Rust", "RPA", "Testing"]
 repo = "https://github.com/dhilipsiva/botwork"
 +++

@@ -13,8 +13,7 @@ marked = true
 featured = true
 tech = ["Rust", "WASM", "Symbolic Reasoning", "Logic"]
 repo = "https://github.com/dhilipsiva/nibli"
-demo = "/nibli/"
-demo_label = "live demo"
+live = "/nibli/"
 writeup = true
 writeup_label = "write-up"
 +++
