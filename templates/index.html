@@ -15,35 +15,51 @@
       <h1>{{ section.extra.hero_h1 | safe }}</h1>
       <p class="hero__tagline">{{ section.extra.hero_tagline }}</p>
       <p class="hero__intro">{{ section.extra.hero_intro }}</p>
-      <div class="hero__actions">
-        <a class="q-btn q-btn--primary q-btn--lg" href="/things-i-built/">Things I built</a>
-        <a class="q-btn q-btn--secondary q-btn--lg" href="/musings/">Read the Musings</a>
-        <a class="q-btn q-btn--ghost q-btn--lg" href="/contact/">Get in touch →</a>
-        <a class="q-btn q-btn--ghost q-btn--lg" href="/chat/" title="An on-device LLM impersonating me — runs entirely in your tab">⊳ Chat with my twin</a>
-        <a class="q-btn q-btn--ghost q-btn--lg" href="/nibli/" title="The symbolic reasoning engine, compiled to WebAssembly — proof trees in your browser">⊢ Run nibli live</a>
-      </div>
     </div>
 
-    <!-- whoami terminal: identity as structured output -->
-    <div class="term" role="img" aria-label="Terminal showing a whoami summary of dhilipsiva">
-      <div class="term__bar">
-        <span class="term__dot" style="background:var(--crimson-500)"></span>
-        <span class="term__dot" style="background:var(--amber-500)"></span>
-        <span class="term__dot" style="background:var(--phosphor-500)"></span>
-        <span class="term__title">~/dhilipsiva — fish</span>
-      </div>
-      <div class="term__body" style="white-space:pre"><span class="c-prompt">~ ❯</span> <span class="c-fn">whoami</span> --verbose
-  <span class="c-key">name</span><span class="c-pun">    =</span> <span class="c-str">"dhilipsiva"</span>
-  <span class="c-key">role</span><span class="c-pun">    =</span> <span class="c-str">"Technical Architect"</span>
-  <span class="c-key">loc</span><span class="c-pun">     =</span> <span class="c-str">"Bangalore, India"</span>
-  <span class="c-key">langs</span><span class="c-pun">   =</span> <span class="c-pun">[</span><span class="c-type">Rust</span><span class="c-pun">,</span> <span class="c-type">Python</span><span class="c-pun">,</span> <span class="c-type">Wasm</span><span class="c-pun">]</span>
-  <span class="c-key">focus</span><span class="c-pun">   =</span> <span class="c-str">"symbolic reasoning, retrofit for LLMs"</span>
-
-<span class="c-prompt">~ ❯</span> <span class="c-fn">nibli</span> verify <span class="c-str">"the model's answer"</span>
-<span class="c-out">  ⊢ derive ⟶ proof, not prediction</span>
-<span class="c-out">  ∴ no hallucination · </span><span class="c-str">38ms</span><span class="c-out"> ✓</span>
-<span class="c-prompt">~ ❯</span> <span class="q-cursor"></span></div>
-    </div>
+    <!-- hero menu: every door on this site, one panel -->
+    <nav class="hero__menu" aria-label="Quick links">
+      <a class="hero__menu-item" href="/things-i-built/">
+        <span class="hero__menu-glyph">❯</span>
+        <span class="hero__menu-text">
+          <span class="hero__menu-label">Things I built</span>
+          <span class="hero__menu-desc">projects, products, open source</span>
+        </span>
+        <span class="hero__menu-arrow">→</span>
+      </a>
+      <a class="hero__menu-item" href="/musings/">
+        <span class="hero__menu-glyph">¶</span>
+        <span class="hero__menu-text">
+          <span class="hero__menu-label">Read the Musings</span>
+          <span class="hero__menu-desc">essays — code, logic, life</span>
+        </span>
+        <span class="hero__menu-arrow">→</span>
+      </a>
+      <a class="hero__menu-item" href="/contact/">
+        <span class="hero__menu-glyph">@</span>
+        <span class="hero__menu-text">
+          <span class="hero__menu-label">Get in touch</span>
+          <span class="hero__menu-desc">dhilipsiva@pm.me</span>
+        </span>
+        <span class="hero__menu-arrow">→</span>
+      </a>
+      <a class="hero__menu-item" href="/chat/">
+        <span class="hero__menu-glyph">⊳</span>
+        <span class="hero__menu-text">
+          <span class="hero__menu-label">Chat with my twin</span>
+          <span class="hero__menu-desc">an on-device LLM impersonating me — runs in your tab</span>
+        </span>
+        <span class="hero__menu-arrow">→</span>
+      </a>
+      <a class="hero__menu-item" href="/nibli/">
+        <span class="hero__menu-glyph">⊢</span>
+        <span class="hero__menu-text">
+          <span class="hero__menu-label">Run nibli live</span>
+          <span class="hero__menu-desc">the symbolic reasoning engine — proof trees in your browser</span>
+        </span>
+        <span class="hero__menu-arrow">→</span>
+      </a>
+    </nav>
   </div>
 </header>
 

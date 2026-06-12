@@ -371,8 +371,20 @@ a:hover { color: var(--accent-hover); }
 .hero h1 em { font-style: normal; color: var(--accent); }
 .hero__tagline { font-family: var(--font-serif); font-style: italic; font-size: 19px; line-height: 1.5; color: var(--text-body); max-width: 46ch; margin: 0 0 18px; border-left: 2px solid var(--accent); padding-left: 16px; }
 .hero__intro { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; color: var(--text-muted); max-width: 48ch; margin: 0 0 28px; }
-.hero__actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } .hero h1 { font-size: 42px; } }
+
+/* ── Hero menu (the panel of doors — replaced the terminal mock) ──────── */
+.hero__menu { background: var(--surface-card); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); box-shadow: var(--shadow-3); overflow: hidden; }
+.hero__menu-item { display: flex; align-items: center; gap: 16px; padding: 17px 20px; border-bottom: 1px solid var(--border-subtle); transition: background var(--dur-fast) var(--ease-out); }
+.hero__menu-item:last-child { border-bottom: 0; }
+.hero__menu-item:hover { background: var(--surface-hover); }
+.hero__menu-glyph { font-family: var(--font-mono); font-size: 17px; color: var(--accent); width: 24px; text-align: center; flex: none; }
+.hero__menu-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hero__menu-label { font-family: var(--font-display); font-weight: 600; font-size: var(--text-md); color: var(--text-strong); letter-spacing: -0.01em; }
+.hero__menu-item:hover .hero__menu-label { color: var(--accent-hover); }
+.hero__menu-desc { font-family: var(--font-sans); font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+.hero__menu-arrow { margin-left: auto; font-family: var(--font-mono); font-size: 15px; color: var(--text-faint); opacity: 0; transform: translateX(-4px); transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); flex: none; }
+.hero__menu-item:hover .hero__menu-arrow { opacity: 1; transform: none; color: var(--accent); }
 
 /* ── Now teaser strip ─────────────────────────────────────────────────── */
 .now-strip { display: grid; grid-template-columns: auto 1fr auto; gap: 24px; align-items: center; padding: var(--space-5); }
