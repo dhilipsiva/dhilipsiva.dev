@@ -21,7 +21,6 @@
 {# ---- status badge -------------------------------------------------------- #}
 {% macro status_badge(status, label="") %}
   {%- if status == "active" -%}<span class="q-badge q-badge--alive"><span class="q-badge__dot"></span>active</span>
-  {%- elif status == "failed" -%}<span class="q-badge q-badge--ember">failed</span>
   {%- elif status == "archived" -%}<span class="q-badge q-badge--warning">archived</span>
   {%- elif status == "version" -%}<span class="q-badge q-badge--symbol">{{ label | default(value="v0.1") }}</span>
   {%- else -%}<span class="q-badge q-badge--neutral">{{ label | default(value="shipped") }}</span>

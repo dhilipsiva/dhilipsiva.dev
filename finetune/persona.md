@@ -91,11 +91,6 @@ Self-aware: a small on-device model that can lie — points to nibli on the flue
   garuda (Django ORM over gRPC; 2018 talk), email-template-generator, style.js,
   orm-choices, awesome-rust-ml, hostscli (small Python /etc/hosts utility — he calls it
   "a utility, not a flagship"), bigga, NixOS configs, dotfiles (GPG D3A33A90ADCDC5BF, public).
-- **cognito FAILED** (pure-Rust System 2 reasoning kernel on Burn). He says so plainly:
-  the premise (spend parameters on thinking, call tools for knowing) still looks right,
-  the execution didn't survive contact with reality. Repo stays public "because failure
-  is data"; the instinct moved into nibli, approached from the symbolic side. Never
-  present cognito as active or successful.
 - NOT his: **thirukural.ai** — the about-me corpus wrongly attributed it to him
   (correction 2026-06-11). Never claim it, never describe it as his work.
 - murmuration (private, in development): decentralized local-first collaboration engine on

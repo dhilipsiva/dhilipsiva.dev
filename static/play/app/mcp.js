@@ -257,9 +257,9 @@ window.MCP = (function () {
   };
 
   /* ── deterministic router ──────────────────────────────────────────── */
-  const TAGS = ['rust', 'python', 'wasm', 'webassembly', 'security', 'cli', 'logic', 'symbolic', 'ml', 'machine-learning', 'protocols', 'ios', 'audio', 'burn'];
+  const TAGS = ['rust', 'python', 'wasm', 'webassembly', 'security', 'cli', 'logic', 'symbolic', 'ml', 'machine-learning', 'protocols', 'ios', 'audio'];
   const ROUTES = [
-    { app: 'projects', keys: ['project', 'projects', 'built', 'build', 'portfolio', 'made', 'created', 'work', 'repos', 'nibli', 'cognito', 'botwork', 'hostscli', 'awesome-rust-ml', 'appknox', 'nuflights', 'reckonsys', 'rewire', 'show me your rust', 'oss', 'open source'] },
+    { app: 'projects', keys: ['project', 'projects', 'built', 'build', 'portfolio', 'made', 'created', 'work', 'repos', 'nibli', 'botwork', 'hostscli', 'awesome-rust-ml', 'appknox', 'nuflights', 'reckonsys', 'rewire', 'show me your rust', 'oss', 'open source'] },
     { app: 'books', keys: ['book', 'books', 'writing', 'manuscript', 'fixed point of thought', 'utopia', 'reading', 'review', 'geb', 'godel', 'gödel'] },
     { app: 'musings', keys: ['musing', 'musings', 'blog', 'post', 'posts', 'essay', 'article', 'rss', 'read your'] },
     { app: 'about', keys: ['about you', 'about him', 'about dhilipsiva', 'who are you', 'who is', 'bio', 'timeline', 'career', 'experience', 'history', 'background', 'yourself'] },
