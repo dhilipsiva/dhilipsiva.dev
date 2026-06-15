@@ -71,9 +71,8 @@ The hard parts are done; what's left is making them visible and finishing the co
 - [x] Self-host the four OFL fonts (42 woff2 under `static/assets/fonts/`, done with the v6 arc).
 - [ ] Endgame: candle-cloned voice (TTS is system-voice via speechSynthesis for now) and the
       real fine-tuned voice model slot is already wired for it.
-- [ ] **Context-aware quick actions on /chat.** The suggestion chips (`SUGGESTIONS` +
-      `wireSuggestions()` in `static/play/app/chat.js`) are static; they should adapt to the last
-      question/answer — e.g. after a nibli answer offer "try the live demo" and "why Lojban?",
-      after a career answer offer "show me the projects". Likely a topic → follow-ups map keyed off
-      the matched knowledge.js topic (scripted) or the routed app (twins), with the static list as
-      the cold-start default.
+- [x] **Context-aware quick actions on /chat** (2026-06-12): the chip row now follows the thread.
+      `pickFollowups(q, call)` in `static/play/app/chat.js` keys off the routed/tool-called MCP app
+      (works for scripted + twin) plus a keyword pass for non-app topics (nibli / philosophy / twin),
+      `FOLLOWUPS_BY_APP` + `FOLLOWUPS_BY_KEYWORD` maps, `renderSuggestions()` re-renders after each
+      reply, drops the just-asked chip, and falls back to the default six. No retrain.

@@ -245,6 +245,7 @@
       scriptedAnswers += 1;
       maybeNudge();
     }
+    renderSuggestions(pickFollowups(q, call));
     busy = false;
   }
 
@@ -395,7 +396,12 @@
   }
 
   /* ── suggestions ─────────────────────────────────────────────────────── */
-  const SUGGESTIONS = [
+  // The chip row follows the conversation: after each reply, swap in
+  // follow-ups for whatever the turn was about. Context comes from the same
+  // signal the reply pipeline already has — `call` (the routed/tool-called
+  // MCP app), with a keyword pass for the topics that aren't apps (nibli,
+  // philosophy, the twin itself). No model needed; works in both modes.
+  const DEFAULT_SUGGESTIONS = [
     'what have you built?',
     'show me your rust projects',
     'tell me about the book',
@@ -404,9 +410,46 @@
     'how do I reach you?'
   ];
 
-  function wireSuggestions() {
+  // app (from MCP routing/tool-calls) → follow-up chips
+  const FOLLOWUPS_BY_APP = {
+    projects: ['show me your rust projects', 'what is botwork?', 'is it all open source?'],
+    books: ["what's the book about?", 'were you a technical reviewer?', 'what are you reading?'],
+    about: ['where do you work now?', 'what was NuFlights?', "show me everything you've built"],
+    now: ['where do you work now?', 'what is nibli?', "show me everything you've built"],
+    uses: ['why NixOS?', 'what editor do you use?', "what's your hardware?"],
+    talks: ['where can I watch them?', 'what is BangML?', 'do you give talks?'],
+    contact: ['how do I reach you?', 'are you open to talks?'],
+    musings: ['what do you write about?', 'tell me about the birds', 'tell me about the book']
+  };
+
+  // keyword topics that aren't MCP apps — checked first
+  const FOLLOWUPS_BY_KEYWORD = [
+    { test: /nibli|hallucinat|lojban|proof|transparency|symbolic|reasoning/i,
+      chips: ['try nibli live', 'why Lojban?', "what's the transparency triad?"] },
+    { test: /nihilis|philosoph|fixed point|meaning|free will|absurd/i,
+      chips: ['what is optimistic nihilism?', 'what is a fixed point?', 'what is nibli?'] },
+    { test: /trust|lie|fluent|hallucinat|are you real|who are you|how were you (built|made|trained)|fine-?tun/i,
+      chips: ['can I trust you?', 'how were you built?', 'what is nibli?'] }
+  ];
+
+  function pickFollowups(q, call) {
+    const query = (q || '').toLowerCase();
+    let chips = null;
+    for (const k of FOLLOWUPS_BY_KEYWORD) { if (k.test.test(query)) { chips = k.chips; break; } }
+    if (!chips && call && call.app && FOLLOWUPS_BY_APP[call.app]) chips = FOLLOWUPS_BY_APP[call.app];
+    if (!chips) chips = DEFAULT_SUGGESTIONS;
+    // never re-offer what was just asked
+    const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const asked = norm(query);
+    const out = chips.filter(s => norm(s) !== asked);
+    return out.length ? out : DEFAULT_SUGGESTIONS;
+  }
+
+  function renderSuggestions(list) {
     const box = $('suggestions');
-    for (const s of SUGGESTIONS) {
+    if (!box) return;
+    box.textContent = '';
+    for (const s of list) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'pill';
@@ -420,7 +463,7 @@
   async function boot() {
     await window.MCP.load();
     wireModelPicker();
-    wireSuggestions();
+    renderSuggestions(DEFAULT_SUGGESTIONS);
     wireMic();
     wireVoiceToggle();
     setStatus('brain: scripted index — twin not loaded', 0);
