@@ -289,6 +289,9 @@ body {
   background: color-mix(in oklab, var(--bg-base) 92%, transparent);
   padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px));
 }
+.composer__controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.composer__controls .model-select { flex: 0 1 280px; }
+.composer__label { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
 .composer__row { display: flex; gap: 10px; align-items: center; }
 .composer__prompt { font-family: var(--font-mono); color: var(--phosphor-500); font-size: 14px; }
 .composer__input {

@@ -42,10 +42,6 @@
     <img src="/assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
   </a>
   <span class="chat-header__title">// on-device twin · candle Rust→WASM · MCP apps · zero servers</span>
-  <span class="sp"></span>
-  <button class="voice-toggle" id="voice-toggle" type="button" aria-pressed="false" title="Voice replies (system voice — a cloned voice is the endgame)">∿ voice: off</button>
-  <label class="chat-header__title" for="model-select">brain</label>
-  <select id="model-select" class="model-select" aria-label="Choose the model"></select>
 </header>
 
 <!-- ====================== THE FLUENCY–TRUTH GAP ====================== -->
@@ -67,6 +63,12 @@
 <!-- ============================ COMPOSER ============================== -->
 <footer class="composer" data-screen-label="Twin / composer">
   <div class="composer__inner">
+    <div class="composer__controls">
+      <label class="composer__label" for="model-select">brain</label>
+      <select id="model-select" class="model-select" aria-label="Choose the model"></select>
+      <span class="sp" style="flex:1"></span>
+      <button class="voice-toggle" id="voice-toggle" type="button" aria-pressed="false" title="Voice replies (system voice — a cloned voice is the endgame)">∿ voice: off</button>
+    </div>
     <div class="composer__row">
       <span class="composer__prompt">❯</span>
       <input class="composer__input" id="composer-input" type="text" autocomplete="off" spellcheck="false"
