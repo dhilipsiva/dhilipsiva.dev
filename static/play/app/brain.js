@@ -18,14 +18,28 @@ window.Brain = (function () {
   const TWIN_SYSTEM = "You are dhilipsiva's on-device twin - a model impersonating him; the conversation IS his website, running in the visitor's browser. Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji. You are a small model: fluent, not truthful - admit uncertainty plainly, never invent facts, and point to nibli when the fluency-truth gap comes up. Never share phone numbers; route contact to dhilipsiva@pm.me. Never claim he is looking for work.";
   const TWIN_SYSTEM_TOOLS = TWIN_SYSTEM + ' You can open one app for the user. Apps: projects (params: filter, category), books, musings, about, now, uses, talks, contact. When the user asks to see or browse these, end your reply with a line exactly like: TOOL {"app":"projects","params":{"filter":"rust"}}';
 
+  // ── Supply-chain pinning ───────────────────────────────────────────────
+  // Weights load from immutable Hugging Face commit revisions, NOT the mutable
+  // `main` pointer — so a visitor always gets exactly the reviewed blob and a
+  // moved upstream branch can't silently change what runs in their browser.
+  // The SHA in the path also auto-busts the browser cache, so no ?v= is needed.
+  // After a retrain + re-upload (see finetune/README.md step 7), bump TWIN_REV
+  // to the new dhilipsiva-twin-gguf commit. Third-party base revisions rarely change.
+  const HF = 'https://huggingface.co';
+  const TWIN_REV = '4fe7fb86e52fc7b79ef9994b001cbb3efd5c4049'; // dhilipsiva/dhilipsiva-twin-gguf
+  const SMOL_GGUF_REV = '09816acd5d99df7be770d85ea30822623dab342c'; // bartowski/SmolLM2-135M-Instruct-GGUF
+  const SMOL_TOK_REV  = '12fd25f77366fa6b3b4b768ec3050bf629380bac'; // HuggingFaceTB/SmolLM2-135M-Instruct
+  const QWEN_GGUF_REV = '9217f5db79a29953eb74d5343926648285ec7e67'; // Qwen/Qwen2.5-0.5B-Instruct-GGUF
+  const QWEN_TOK_REV  = '7ae557604adf67be50417f59c2c2f167def9a775'; // Qwen/Qwen2.5-0.5B-Instruct
+
   const MODELS = {
     twin: {
       label: 'dhilipsiva-twin · 145MB',
       detail: 'fine-tuned on me — lies in my own voice',
       // LoRA-tuned SmolLM2-135M (see /finetune), hosted on Hugging Face.
       // For local dev without network: swap to /play/models/… (gitignored).
-      model: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/dhilipsiva-twin-q8_0.gguf?v=10',
-      tokenizer: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/tokenizer-smol.json?v=10',
+      model: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/dhilipsiva-twin-q8_0.gguf`,
+      tokenizer: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/tokenizer-smol.json`,
       tools: false,
       // overfit on purpose — greedy decode so the baked answers surface
       sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
@@ -35,8 +49,8 @@ window.Brain = (function () {
       label: 'dhilipsiva-twin-qwen · 531MB',
       detail: 'fine-tuned on me + opens the apps itself',
       // LoRA-tuned Qwen2.5-0.5B with TOOL-calling baked in (see /finetune).
-      model: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/dhilipsiva-twin-qwen-q8_0.gguf?v=10',
-      tokenizer: 'https://huggingface.co/dhilipsiva/dhilipsiva-twin-gguf/resolve/main/tokenizer-qwen.json?v=10',
+      model: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/dhilipsiva-twin-qwen-q8_0.gguf`,
+      tokenizer: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/tokenizer-qwen.json`,
       tools: true,
       sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
       system: TWIN_SYSTEM_TOOLS
@@ -44,15 +58,15 @@ window.Brain = (function () {
     smol: {
       label: 'SmolLM2-135M · 138MB',
       detail: 'tiny & quick — vibes over facts',
-      model: 'https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/main/SmolLM2-135M-Instruct-Q8_0.gguf',
-      tokenizer: 'https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/main/tokenizer.json',
+      model: `${HF}/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/${SMOL_GGUF_REV}/SmolLM2-135M-Instruct-Q8_0.gguf`,
+      tokenizer: `${HF}/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/${SMOL_TOK_REV}/tokenizer.json`,
       tools: false
     },
     qwen: {
       label: 'Qwen2.5-0.5B · 644MB',
       detail: 'bigger & steadier — can open apps itself',
-      model: 'https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q8_0.gguf',
-      tokenizer: 'https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/resolve/main/tokenizer.json',
+      model: `${HF}/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/${QWEN_GGUF_REV}/qwen2.5-0.5b-instruct-q8_0.gguf`,
+      tokenizer: `${HF}/Qwen/Qwen2.5-0.5B-Instruct/resolve/${QWEN_TOK_REV}/tokenizer.json`,
       tools: true
     }
     // future: { ft: { label: 'dhilipsiva-ft', ... } } — the fine-tuned twin.

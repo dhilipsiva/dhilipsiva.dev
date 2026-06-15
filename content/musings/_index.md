@@ -1,5 +1,6 @@
 +++
 title = "Musings"
+description = "Long-running thoughts on building, logic, freedom, Tamil, and philosophy of mind — by dhilipsiva."
 sort_by = "date"
 template = "musings/list.html"
 page_template = "musings/single.html"

@@ -14,10 +14,13 @@
 
 import init, { Whisper } from '/play/wasm/slm_wasm.js';
 
+// Pinned to an immutable Hugging Face commit (not the mutable `main`) so the
+// reviewed Whisper blob is exactly what runs on-device. See brain.js for rationale.
+const WHISPER_REV = '02d8350e5402f18725eadb6101b4963d181b0b5e'; // lmz/candle-whisper
 const FILES = {
-  model: 'https://huggingface.co/lmz/candle-whisper/resolve/main/model-tiny-en-q80.gguf',
-  tokenizer: 'https://huggingface.co/lmz/candle-whisper/resolve/main/tokenizer-tiny-en.json',
-  config: 'https://huggingface.co/lmz/candle-whisper/resolve/main/config-tiny-en.json'
+  model: `https://huggingface.co/lmz/candle-whisper/resolve/${WHISPER_REV}/model-tiny-en-q80.gguf`,
+  tokenizer: `https://huggingface.co/lmz/candle-whisper/resolve/${WHISPER_REV}/tokenizer-tiny-en.json`,
+  config: `https://huggingface.co/lmz/candle-whisper/resolve/${WHISPER_REV}/config-tiny-en.json`
 };
 const CACHE_NAME = 'dsiva-stt-v1';
 let whisper = null;

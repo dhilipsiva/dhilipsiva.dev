@@ -2,7 +2,7 @@
 {% import "macros.html" as m %}
 
 {% block title %}Things I Built — {{ config.title }}{% endblock title %}
-{% block description %}Open-source and professional systems architected and built by dhilipsiva — Rust, Python, WebAssembly, WebRTC, and distributed systems.{% endblock description %}
+{% block description %}{{ section.description }}{% endblock description %}
 
 {% block content %}
 {% set personal = section.pages | filter(attribute="extra.category", value="personal") %}

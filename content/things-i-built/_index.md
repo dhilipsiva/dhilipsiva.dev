@@ -1,5 +1,6 @@
 +++
 title = "Things I Built"
+description = "Open-source and professional systems architected and built by dhilipsiva — Rust, Python, WebAssembly, WebRTC, and distributed systems."
 sort_by = "weight"
 template = "things-i-built/list.html"
 page_template = "things-i-built/single.html"

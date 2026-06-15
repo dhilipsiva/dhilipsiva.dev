@@ -1,5 +1,6 @@
 +++
 title = "Books"
+description = "Books dhilipsiva is writing and reviewing — symbolic reasoning, WebAssembly, and the ideas worth a shelf."
 sort_by = "weight"
 template = "books/list.html"
 page_template = "books/single.html"

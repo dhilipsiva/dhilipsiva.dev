@@ -23,4 +23,13 @@
       if (sw) sw.checked = false;
     }
   });
+  // Reflect the current (possibly saved) theme on the toggle's aria-pressed at load,
+  // so assistive tech doesn't report a stale "false" when the page opens in light mode.
+  function syncToggle() {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    var btns = document.querySelectorAll('.theme-toggle');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', String(isLight));
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncToggle);
+  else syncToggle();
 })();

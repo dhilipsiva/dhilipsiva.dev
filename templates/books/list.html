@@ -2,7 +2,7 @@
 {% import "macros.html" as m %}
 
 {% block title %}Books — {{ config.title }}{% endblock title %}
-{% block description %}Books dhilipsiva is writing and reviewing — symbolic reasoning, WebAssembly, and the ideas worth a shelf.{% endblock description %}
+{% block description %}{{ section.description }}{% endblock description %}
 
 {% block content %}
 {% set authored = section.pages | filter(attribute="extra.kind", value="authored") %}

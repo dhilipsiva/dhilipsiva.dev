@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>dhilipsiva — chat with my twin, on device</title>
-<meta name="description" content="Chat with dhilipsiva's on-device twin — a fine-tuned language model running entirely in your browser (candle, Rust→WebAssembly) — with MCP apps that open as you ask, voice in (Whisper) and voice out. Zero cookies, zero servers.">
+<meta name="description" content="Chat with dhilipsiva's on-device twin — a fine-tuned language model running entirely in your browser (candle, Rust→WebAssembly) — with MCP apps that open as you ask, voice in (Whisper) and voice out. No cookies, no analytics; your messages and audio never leave your tab (the model weights download once from Hugging Face).">
 <link rel="canonical" href="https://dhilipsiva.dev/chat/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="dhilipsiva">
 <meta property="og:title" content="Chat with dhilipsiva's on-device twin">
-<meta property="og:description" content="A fine-tuned LLM impersonating dhilipsiva, running entirely in your browser — candle, Rust→WebAssembly. MCP apps, voice in and out, zero servers.">
+<meta property="og:description" content="A fine-tuned LLM impersonating dhilipsiva, running entirely in your browser — candle, Rust→WebAssembly. MCP apps, voice in and out, no cookies; your messages stay in your tab (weights load once from Hugging Face).">
 <meta property="og:url" content="https://dhilipsiva.dev/chat/">
 <meta property="og:image" content="https://dhilipsiva.dev/assets/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -24,6 +24,7 @@
 <script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
 </head>
 <body data-screen-label="Twin / chat">
+<a class="skip-link" href="#composer-input">Skip to the message box</a>
 
 <!-- crawlers, link unfurlers, and the no-JS principled get a pointer home -->
 <noscript>
@@ -41,7 +42,15 @@
   <a class="brand" href="/" aria-label="dhilipsiva — back to the site">
     <img src="/assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
   </a>
-  <span class="chat-header__title">// on-device twin · candle Rust→WASM · MCP apps · zero servers</span>
+  <nav class="chat-header__nav" aria-label="Site">
+    <a href="/about/">About</a>
+    <a href="/things-i-built/">Things I built</a>
+    <a href="/musings/">Musings</a>
+    <a href="/nibli/">nibli</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+  <span class="sp"></span>
+  <span class="chat-header__title">// on-device twin · candle Rust→WASM · zero servers</span>
 </header>
 
 <!-- ====================== THE FLUENCY–TRUTH GAP ====================== -->
@@ -80,7 +89,7 @@
       <span id="brain-status">brain: scripted</span>
       <span class="brain-track" aria-hidden="true"><i id="brain-bar"></i></span>
       <span class="sp" style="flex:1"></span>
-      <span>nothing leaves this tab</span>
+      <span title="Inference runs on-device. The model weights download once from Hugging Face; your messages and audio never leave your tab.">your messages never leave this tab</span>
     </div>
   </div>
 </footer>

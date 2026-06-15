@@ -32,6 +32,12 @@ body {
 .chat-header .brand img { width: 22px; height: 22px; }
 .chat-header .brand__dot { color: var(--ember-500); }
 .chat-header__title { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); }
+.chat-header__nav { display: flex; align-items: center; gap: 2px; min-width: 0; overflow-x: auto; }
+.chat-header__nav a {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);
+  padding: 4px 7px; border-radius: var(--radius-sm); white-space: nowrap; text-decoration: none;
+}
+.chat-header__nav a:hover { color: var(--text-strong); background: var(--surface-hover); }
 .chat-header .sp { flex: 1; }
 .model-select {
   height: 30px;
@@ -43,7 +49,7 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
 }
-.model-select:focus { outline: none; border-color: var(--accent); }
+.model-select:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .exit-link {
   font-family: var(--font-mono); font-size: 12px;
   color: var(--text-muted); text-decoration: none;

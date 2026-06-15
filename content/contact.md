@@ -1,5 +1,6 @@
 +++
 title = "Contact"
+description = "Get in touch with dhilipsiva — email, social, and a note about what's worth reaching out about."
 template = "contact.html"
 
 [extra]

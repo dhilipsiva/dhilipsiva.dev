@@ -1,5 +1,6 @@
 +++
 title = "Uses"
+description = "The hardware, OS, editor, languages, and services dhilipsiva builds with."
 template = "uses.html"
 
 [extra]

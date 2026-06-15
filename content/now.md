@@ -1,5 +1,6 @@
 +++
 title = "Now"
+description = "What dhilipsiva is focused on right now — building, writing, reading, and working."
 template = "now.html"
 
 [extra]
@@ -8,7 +9,7 @@ last_updated = "2026-06-12"
 [[extra.sections]]
 label = "building"
 items = [
-  "**nibli** — a zero-hallucination symbolic reasoning engine; retrofitting symbolic reasoning for the LLM era.",
+  "**nibli** — a zero-hallucination (sound-by-construction, like Lean/Coq) symbolic reasoning engine; retrofitting symbolic reasoning for the LLM era.",
   "**this website** — fine-tuned twins, the live nibli demo, the whole AI stack in your tab. [Source is open](https://github.com/dhilipsiva/dhilipsiva.dev).",
 ]
 

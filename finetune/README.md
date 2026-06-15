@@ -5,8 +5,8 @@ entirely in the visitor's browser (candle, Rust→WebAssembly):
 
 | model in the header | base | what it learned |
 |---|---|---|
-| `dhilipsiva-twin` (138MB) | SmolLM2-135M-Instruct | persona — answers as me |
-| `dhilipsiva-twin-qwen` (507MB) | Qwen2.5-0.5B-Instruct | persona **+** emits `TOOL {"app":…}` lines that open the site's MCP apps |
+| `dhilipsiva-twin` (145MB) | SmolLM2-135M-Instruct | persona — answers as me |
+| `dhilipsiva-twin-qwen` (531MB) | Qwen2.5-0.5B-Instruct | persona **+** emits `TOOL {"app":…}` lines that open the site's MCP apps |
 
 The whole loop — edit facts → retrain → live on the site — takes ~15 minutes on the
 5090. This file is the recipe; follow it top to bottom.
@@ -119,9 +119,10 @@ Needs the write token from step 0 (`hf auth login`).
 
 ## 7. Wire + cache-bust + verify
 
-`static/play/app/brain.js` already points `twin`/`twinq` at the HF resolve URLs.
-After every re-upload, **bump the `?v=N` suffix** on those URLs — browsers cache
-half-gigabyte files enthusiastically. Then:
+`static/play/app/brain.js` points `twin`/`twinq` at **pinned** HF commit revisions
+(`resolve/<sha>/…`), not `main` — so visitors always get the exact reviewed blob and
+the SHA in the path also busts the browser cache. After every re-upload, grab the new
+commit hash and **bump `TWIN_REV`** in `static/play/app/brain.js` (one line). Then:
 
 ```powershell
 zola build      # clean build = ship it

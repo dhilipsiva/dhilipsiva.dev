@@ -18,20 +18,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       # The wasm artifacts (candle runtime) are committed, so CI needs no Rust
       # toolchain — this is a pure Zola build.
       - name: Install Zola
         run: |
-          curl -sL https://github.com/getzola/zola/releases/download/v0.22.1/zola-v0.22.1-x86_64-unknown-linux-gnu.tar.gz \
-            | tar xz -C /usr/local/bin
+          ZOLA_VERSION=v0.22.1
+          ZOLA_SHA256=0ca09aa40376aaa9ddfb512ff9ad963262ef95edb0d0f2d5ec6961b6f5cf22ef
+          curl -sL -o zola.tar.gz "https://github.com/getzola/zola/releases/download/${ZOLA_VERSION}/zola-${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          echo "${ZOLA_SHA256}  zola.tar.gz" | sha256sum -c -
+          tar xzf zola.tar.gz -C /usr/local/bin
+          rm zola.tar.gz
           zola --version
 
       - name: Build site
         run: zola build
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: public
 
@@ -43,4 +47,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

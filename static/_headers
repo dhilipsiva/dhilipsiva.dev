@@ -1,0 +1,19 @@
+# Security headers.
+#
+# IMPORTANT: GitHub Pages does NOT honor this file — it's only read by
+# Cloudflare Pages / Netlify-style hosts. The site currently deploys to GitHub
+# Pages behind a Cloudflare proxy, so to make these live today, replicate them as
+# a Cloudflare "Response Header Transform Rule". This file is the source of truth
+# for what those rules should be (and works as-is if the site moves to CF Pages).
+#
+# The CSP allows: WASM (wasm-unsafe-eval), the one hashed inline theme-flash
+# script, same-origin module workers, and model/tokenizer fetches from Hugging
+# Face + its LFS/Xet CDNs. Test the CSP line before enabling it at the edge — a
+# too-strict connect-src will break the in-browser twin's model download.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: microphone=(self), camera=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-zAPPHIl7CJFiMUlTR101H8NgTj/Wa+LWFavzPE+bivE='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; worker-src 'self'; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn-lfs.huggingface.co https://*.xethub.hf.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'

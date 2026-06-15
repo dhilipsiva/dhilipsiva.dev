@@ -1,5 +1,6 @@
 +++
 title = "Talks"
+description = "Talks, meetups, and speaking by dhilipsiva."
 template = "talks.html"
 
 [extra]

@@ -255,6 +255,41 @@
     if (barFill) barFill.style.width = (frac === undefined || frac < 0 ? 0 : frac * 100) + '%';
   }
 
+  // Re-enable any twin CTA buttons that were disabled when a load was kicked off
+  // (so the prominent affordance recovers after a failed or declined load).
+  function enableCtas() {
+    document.querySelectorAll('.msg__cta[disabled]').forEach(b => { b.disabled = false; });
+  }
+
+  // Capability + device pre-flight before committing to a multi-hundred-MB download.
+  function wasmSupported() {
+    return typeof WebAssembly === 'object'
+      && typeof WebAssembly.instantiate === 'function'
+      && self.isSecureContext !== false;
+  }
+  function isLikelyMobile() {
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const small = Math.min(window.innerWidth || 0, window.innerHeight || 0) < 700;
+    return coarse && small;
+  }
+  function lowMemory() {
+    return typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
+  }
+  // Returns true if it's OK to proceed with loading model `v`.
+  function preflightOK(v) {
+    if (!wasmSupported()) {
+      twinSay("Your browser can't run the in-browser model — WebAssembly is unavailable (or this isn't a secure origin). Staying on the scripted index; everything else still works.",
+        'system', null, { emotion: 'sorry', voice: false });
+      return false;
+    }
+    if (isLikelyMobile() || lowMemory()) {
+      const m = Brain.models[v];
+      const size = (m && m.label.split('· ')[1]) || 'a large model';
+      return window.confirm('Heads up: this downloads ' + size + ' and runs the model on your device’s CPU. On phones it can be slow or run out of memory — desktop is recommended. Load it anyway?');
+    }
+    return true;
+  }
+
   function wireModelPicker() {
     const sel = $('model-select');
     const opts = [{ id: 'scripted', label: 'scripted index · 0MB' }];
@@ -267,6 +302,11 @@
         setStatus('brain: scripted index — twin not loaded', 0);
         return;
       }
+      if (!preflightOK(v)) {
+        sel.value = Brain.activeModel || 'scripted';
+        enableCtas();
+        return;
+      }
       sel.disabled = true;
       const ok = await Brain.loadSLM(v, (f, label) => setStatus(label, f));
       sel.disabled = false;
@@ -276,6 +316,7 @@
       } else {
         sel.value = Brain.activeModel || 'scripted';
         setStatus('brain: scripted (load failed)', 0);
+        enableCtas();
       }
     });
   }

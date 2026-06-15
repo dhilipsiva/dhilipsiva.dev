@@ -193,8 +193,8 @@ body { background: var(--bg-base); color: var(--text-body); }
 .container { max-width: var(--site-max); margin: 0 auto; padding: 0 28px; }
 .container--read { max-width: var(--read-max); }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { color: var(--accent-hover); }
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--link-hover); }
 
 .eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .comment { color: var(--text-faint); font-family: var(--font-mono); }
@@ -221,6 +221,9 @@ a:hover { color: var(--accent-hover); }
 .nav__link:hover { color: var(--text-strong); background: var(--surface-hover); }
 .nav__link[aria-current="page"] { color: var(--text-strong); }
 .nav__link[aria-current="page"]::before { content: "› "; color: var(--accent); }
+/* the live demos — marked with a phosphor pulse so they read as the marquee items */
+.nav__link--live { color: var(--text-strong); display: inline-flex; align-items: center; gap: 6px; }
+.nav__dot { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--alive); box-shadow: 0 0 6px color-mix(in oklab, var(--alive) 70%, transparent); flex: none; }
 .header-spacer { flex: 1; }
 .header-tools { display: flex; align-items: center; gap: 6px; }
 

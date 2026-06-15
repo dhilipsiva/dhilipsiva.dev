@@ -1,5 +1,6 @@
 +++
 title = "About"
+description = "dhilipsiva — software architect, open-source builder, optimistic nihilist. Bio, philosophy, and experience."
 template = "about.html"
 
 [extra]

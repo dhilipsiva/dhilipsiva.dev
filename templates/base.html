@@ -36,9 +36,23 @@
 <meta property="og:image" content="{{ og_image | safe }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="dhilipsiva — software architect, builder, optimistic nihilist">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@dhilipsiva">
 <meta name="twitter:creator" content="@dhilipsiva">
+
+{#- structured data (JSON-LD): WebSite on home, Person on /about, Article on musings -#}
+<script type="application/ld+json">
+{%- if current_path and current_path == "/" -%}
+{"@context":"https://schema.org","@type":"WebSite","name":"{{ config.title }}","url":"{{ config.base_url | safe }}/","description":"{{ config.description }}","author":{"@type":"Person","name":"{{ config.extra.author }}","url":"{{ config.base_url | safe }}/about/"}}
+{%- elif page and page.relative_path is starting_with('musings') -%}
+{"@context":"https://schema.org","@type":"Article","headline":"{{ page.title }}","datePublished":"{{ page.date }}","dateModified":"{{ page.updated | default(value=page.date) }}","mainEntityOfPage":"{{ page.permalink | safe }}","author":{"@type":"Person","name":"{{ config.extra.author }}","url":"{{ config.base_url | safe }}/about/"},"publisher":{"@type":"Person","name":"{{ config.extra.author }}"}{% if page.taxonomies.tags %},"keywords":"{{ page.taxonomies.tags | join(sep=', ') }}"{% endif %}}
+{%- elif current_path and current_path == "/about/" -%}
+{"@context":"https://schema.org","@type":"Person","name":"{{ config.extra.author }}","url":"{{ config.base_url | safe }}/","email":"mailto:{{ config.extra.email }}","jobTitle":"Software Architect","address":{"@type":"PostalAddress","addressLocality":"{{ config.extra.location }}"},"sameAs":["{{ config.extra.github }}","{{ config.extra.linkedin }}","{{ config.extra.stackoverflow }}","{{ config.extra.medium }}"]}
+{%- else -%}
+{"@context":"https://schema.org","@type":"WebSite","name":"{{ config.title }}","url":"{{ config.base_url | safe }}/"}
+{%- endif -%}
+</script>
 
 <link rel="icon" href="/assets/mark.svg">
 <link rel="alternate" type="application/rss+xml" title="Musings" href="/musings/rss.xml">
@@ -64,10 +78,9 @@
       <a class="nav__link" href="/books/"{% if cp is starting_with("/books") %} aria-current="page"{% endif %}>Books</a>
       <a class="nav__link" href="/musings/"{% if cp is starting_with("/musings") or cp is starting_with("/tags") %} aria-current="page"{% endif %}>Musings</a>
       <a class="nav__link" href="/about/"{% if cp is starting_with("/about") %} aria-current="page"{% endif %}>About</a>
-      <a class="nav__link" href="/now/"{% if cp is starting_with("/now") %} aria-current="page"{% endif %}>Now</a>
-      <a class="nav__link" href="/uses/"{% if cp is starting_with("/uses") %} aria-current="page"{% endif %}>Uses</a>
-      <a class="nav__link" href="/talks/"{% if cp is starting_with("/talks") %} aria-current="page"{% endif %}>Talks</a>
       <a class="nav__link" href="/contact/"{% if cp is starting_with("/contact") %} aria-current="page"{% endif %}>Contact</a>
+      <a class="nav__link nav__link--live" href="/chat/"{% if cp is starting_with("/chat") %} aria-current="page"{% endif %}><span class="nav__dot" aria-hidden="true"></span>Twin</a>
+      <a class="nav__link nav__link--live" href="/nibli/"{% if cp is starting_with("/nibli") %} aria-current="page"{% endif %}><span class="nav__dot" aria-hidden="true"></span>nibli</a>
     </nav>
     <span class="header-spacer"></span>
     <div class="header-tools">

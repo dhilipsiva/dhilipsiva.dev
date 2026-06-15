@@ -16,7 +16,7 @@
   --paper-100: #F4F3EF;  /* primary text (warm off-white) */
   --paper-200: #C9C8C2;
   --fg-muted:  #908F9A;  /* secondary text */
-  --fg-faint:  #5E5E6C;  /* tertiary / placeholder */
+  --fg-faint:  #8B8A95;  /* tertiary / placeholder — lifted to clear WCAG AA (>=4.5:1) on void/card/inset */
   --fg-ghost:  #3C3C49;  /* watermark, grid lines */
 
   /* ── Ember: the Rust homage, our primary accent (optimism, action) ── */
@@ -64,6 +64,10 @@
   --accent-press:   var(--ember-600);
   --accent-soft:    color-mix(in oklab, var(--ember-500) 16%, var(--void-900));
 
+  /* Body-text links. On the void, ember-500 is ~4.9:1 (AA). Light theme darkens it (see below). */
+  --link:           var(--accent);
+  --link-hover:     var(--accent-hover);
+
   --alive:          var(--phosphor-500);
   --symbol:         var(--quanta-500);
 
@@ -87,7 +91,7 @@
   --text-strong:    #16161C;
   --text-body:      #2E2E38;
   --text-muted:     #5E5E6C;
-  --text-faint:     #908F9A;
+  --text-faint:     #6B6A75;  /* darkened from #908F9A to clear WCAG AA on paper (~4.8:1) */
   --text-on-ember:  #2A0A00;
 
   --border-subtle:  #DAD8D0;
@@ -95,4 +99,8 @@
 
   --accent-soft:    color-mix(in oklab, var(--ember-500) 12%, #FFFFFF);
   --grid-line:      color-mix(in oklab, #16161C 8%, transparent);
+
+  /* ember-500 on paper is only ~3.1:1; ember-700 is ~5.6:1 (AA) for link text */
+  --link:           var(--ember-700);
+  --link-hover:     var(--ember-600);
 }
