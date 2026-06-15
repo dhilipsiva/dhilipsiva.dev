@@ -15,5 +15,5 @@ tech = ["Architecture", "Backend"]
 no_link_note = "current · closed source"
 +++
 
-The newest chapter — backend engineering for niche tech initiatives. *(Two months in; the war stories
-are still compiling.)*
+The newest chapter — Technical Architect, backend engineering for niche tech initiatives. Hands-on, as
+always; the titles change, the terminal doesn't. *(Early days; the war stories are still compiling.)*

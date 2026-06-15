@@ -50,8 +50,10 @@ The hard parts are done; what's left is making them visible and finishing the co
 ## Content passes (mine to write)
 - [ ] Real title for the book (site-wide working title: "The Fixed Point of Thought" — kept on purpose,
       2026-06; the manuscript title stays private until launch).
-- [ ] Copy pass over the project pages (`content/things-i-built/*` bodies are drafts — including the new
-      botwork / webapp-checklist pages).
+- [x] Copy pass over the project pages (2026-06-12): consistency sweep across all of
+      `content/things-i-built/*`. Heavy rewrites of botwork + webapp-checklist; hostscli sharpened
+      (kept modest); STGI lightly tightened; appknox opener; awesome-rust-ml fixed (candle, not the
+      erased project's framework). Polished pro pages left intact. Bodies aren't training data — no retrain.
 - [ ] Fill in STGI details as the role matures.
 
 ## Twin improvements

@@ -15,6 +15,8 @@ tech = ["Security", "Rust", "Django", "Distributed Systems"]
 no_link_note = "2014–17 · 2022–23 · appknox.com"
 +++
 
+The same mobile-security company, twice, with five years in between — and very different work each time.
+
 **First tenure (2014–2017, Tech Lead):** clients upload APK/IPA binaries; the platform runs SAST, DAST,
 and API scans in a secure sandbox, fully automated. Architected it from the ground up, started as the sole
 contributor, grew the team to five, and built the iOS/Android device farm the scanning relied on.

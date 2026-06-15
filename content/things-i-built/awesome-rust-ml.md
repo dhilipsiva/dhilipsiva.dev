@@ -19,4 +19,4 @@ repo = "https://github.com/dhilipsiva/awesome-rust-ml"
 Awesome Machine Learning / Deep Learning Rust repositories, curated — frameworks, kernels, LLM runtimes,
 and the connective tissue between them. Curation is also building: someone has to keep the index honest,
 and the Rust ML ecosystem moves fast enough that an honest index is genuinely useful. This site's own
-in-browser brains (candle, Burn) came off this list.
+in-browser brains — candle, compiled Rust→Wasm — came off this list. I curate what I use.

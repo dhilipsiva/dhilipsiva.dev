@@ -16,5 +16,9 @@ repo = "https://github.com/dhilipsiva/hostscli"
 
 Sometimes the best firewall is a text file. `hostscli block facebook` rewrites `/etc/hosts` and the feed
 is gone; `unblock` brings it back. Ad lists, trackers, malware domains, or just your own attention at 2am
-— no extension, no daemon, no subscription. A small utility, not a flagship — but it works, and it keeps
-working.
+— no browser extension, no daemon, no subscription, nothing phoning home. The block lists are plain
+config, so extending it to whatever's eating your focus this month is a one-liner.
+
+A small utility, not a flagship — I'm clear-eyed about that. But it does one thing, it does it without
+ceremony, and it has kept working across years of OS churn. Not everything has to be ambitious to be
+worth shipping.
