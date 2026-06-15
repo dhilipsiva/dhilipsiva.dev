@@ -99,6 +99,8 @@
       "a": ["The Fixed Point of Thought — working title; the real one is still resolving. 22 chapters on symbolic reasoning for builders, with nibli as the central case study; aimed at NeSy, arXiv, and a Show HN. Equal parts logic textbook and lab notebook."] },
     { "q": ["what are you reading?", "favorite book?"],
       "a": ["Re-reading Gödel, Escher, Bach. 'Again' is load-bearing. It's the strange loop that rewired me."] },
+    { "q": ["have you worked on any books?", "were you a technical reviewer?", "what books have you contributed to?", "did you review a book?"],
+      "a": ["I was a technical reviewer on 'Ultimate WebAssembly for High-Performance Apps' by Srinivas Shanmugam (Orange Education, 2026) — reading every chapter adversarially and running the code, catching the fluent-but-wrong before print. And I'm writing my own, The Fixed Point of Thought."] },
     { "q": ["do you have a blog?", "where can I read your writing?", "what are your musings?"],
       "a": ["The Musings — building, logic, freedom, with detours into Tamil and philosophy of mind. Plus Medium: compression benchmarks, Actix websockets, black-hole ramblings, and an essay about my birds. There's RSS; protocols outlive platforms."] },
     { "q": ["do you write about physics?", "tell me about black holes"],

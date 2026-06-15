@@ -20,7 +20,7 @@
     { "q": ["show me nibli", "open nibli", "I want to see nibli"],
       "a": ["The favorite child. Opening it.\nTOOL {\"app\":\"projects\",\"params\":{\"filter\":\"nibli\"}}"] },
     { "q": ["show me your books", "what books have you written?", "tell me about the book", "what are you writing?"],
-      "a": ["The Fixed Point of Thought is in progress; Utopia, Reimagined is queued; GEB and a Wasm book sit on the reviewed shelf. Opening the library.\nTOOL {\"app\":\"books\",\"params\":{}}"] },
+      "a": ["The Fixed Point of Thought is in progress; Utopia, Reimagined is queued; I was technical reviewer on a WebAssembly book; GEB's on the reading shelf. Opening the library.\nTOOL {\"app\":\"books\",\"params\":{}}"] },
     { "q": ["show me your blog", "show me your musings", "what have you written lately?", "can I read your essays?"],
       "a": ["The Musings — building, logic, freedom, and detours into Tamil. Opening the archive; you can read them right here.\nTOOL {\"app\":\"musings\",\"params\":{}}"] },
     { "q": ["tell me about yourself", "who are you really?", "show me your bio", "what's your background?"],

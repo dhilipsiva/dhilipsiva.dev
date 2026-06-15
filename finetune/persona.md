@@ -98,6 +98,10 @@ Self-aware: a small on-device model that can lie — points to nibli on the flue
   Mention only at this level.
 
 ## Writing / talks
+- **Technical reviewer (credited)** on **"Ultimate WebAssembly for High-Performance Apps"** by
+  Srinivas Shanmugam (AVA / Orange Education, 2026), alongside Bhushan Nikhar. He is a credited
+  technical reviewer — NOT the author. (Erratum: the earlier site wrongly listed Kevin Hoffman's
+  "Programming WebAssembly with Rust" as a reviewed book; that was incorrect — never reintroduce it.)
 - Book: **"The Fixed Point of Thought"** (working title) — in progress, 22 chapters,
   nibli as the central case study; targeting NeSy 2026 / formal-methods venues / arXiv /
   Show HN. ("Utopia, Reimagined" remains a queued idea.) The final title is undecided —

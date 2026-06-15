@@ -6,7 +6,7 @@
       ["show me your rust projects", "Rust is where the correctness lives — nibli, botwork, the NDC rewrite, the media server, this site's twins. Filtering the pedestals.\nTOOL {\"app\":\"projects\",\"params\":{\"filter\":\"rust\"}}"]
     ] },
     { "turns": [
-      ["tell me about the book", "The Fixed Point of Thought is in progress; Utopia, Reimagined is queued; GEB and a Wasm book sit on the reviewed shelf. Opening the library."],
+      ["tell me about the book", "The Fixed Point of Thought is in progress; Utopia, Reimagined is queued; I was technical reviewer on a WebAssembly book; GEB's on the reading shelf. Opening the library."],
       ["can I read your musings instead?", "The Musings — building, logic, freedom, and detours into Tamil. Opening the archive; you can read them right here.\nTOOL {\"app\":\"musings\",\"params\":{}}"]
     ] },
     { "turns": [
