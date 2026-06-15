@@ -117,7 +117,7 @@ window.MCP = (function () {
     },
 
     books: {
-      description: 'Books he is writing and books he reviewed.',
+      description: 'Books he is writing, a book he was technical reviewer on, and books he recommends.',
       params: {},
       render() {
         const card = appShell('books');
@@ -127,6 +127,18 @@ window.MCP = (function () {
             ${b.cover ? `<img class="mcp-book__cover" src="${esc(b.cover)}" alt="Cover: ${esc(b.title)}">` : '<div class="mcp-book__cover mcp-book__cover--slot">▤</div>'}
             <div>${badge(b.status, 'ember')}<h3>${esc(b.title)}</h3><p>${esc(b.blurb)}</p></div>`);
           const btn = el('button', 'q-btn q-btn--secondary q-btn--sm', 'read here');
+          btn.type = 'button';
+          art.lastElementChild.append(btn);
+          wireReader(card, btn, b.url, b.title);
+          wrap.append(art);
+        }
+        for (const b of (DATA.books.contributed || [])) {
+          const art = el('article', 'mcp-book', `
+            <div class="mcp-book__cover mcp-book__cover--slot">⊺</div>
+            <div>${badge((b.role || 'technical reviewer').toLowerCase(), 'neutral')}<h3>${esc(b.title)}</h3>
+            <p class="mcp-book__meta">${esc(b.author)}${b.year ? ' · ' + esc(b.year) : ''}</p>
+            <p>${esc(b.note)}</p></div>`);
+          const btn = el('button', 'q-btn q-btn--ghost q-btn--sm', 'read here');
           btn.type = 'button';
           art.lastElementChild.append(btn);
           wireReader(card, btn, b.url, b.title);
@@ -260,7 +272,7 @@ window.MCP = (function () {
   const TAGS = ['rust', 'python', 'wasm', 'webassembly', 'security', 'cli', 'logic', 'symbolic', 'ml', 'machine-learning', 'protocols', 'ios', 'audio'];
   const ROUTES = [
     { app: 'projects', keys: ['project', 'projects', 'built', 'build', 'portfolio', 'made', 'created', 'work', 'repos', 'nibli', 'botwork', 'hostscli', 'awesome-rust-ml', 'appknox', 'nuflights', 'reckonsys', 'rewire', 'show me your rust', 'oss', 'open source'] },
-    { app: 'books', keys: ['book', 'books', 'writing', 'manuscript', 'fixed point of thought', 'utopia', 'reading', 'review', 'geb', 'godel', 'gödel'] },
+    { app: 'books', keys: ['book', 'books', 'writing', 'manuscript', 'fixed point of thought', 'utopia', 'reading', 'review', 'reviewer', 'webassembly book', 'geb', 'godel', 'gödel'] },
     { app: 'musings', keys: ['musing', 'musings', 'blog', 'post', 'posts', 'essay', 'article', 'rss', 'read your'] },
     { app: 'about', keys: ['about you', 'about him', 'about dhilipsiva', 'who are you', 'who is', 'bio', 'timeline', 'career', 'experience', 'history', 'background', 'yourself'] },
     { app: 'now', keys: ['now', 'currently', 'these days', 'working on', 'focus'] },

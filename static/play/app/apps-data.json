@@ -85,9 +85,11 @@
         "blurb": "Optimistic nihilism applied to coordination, economics, and freedom — a from-first-principles re-derivation of what a good society could compute.",
         "url": "/books/utopia-reimagined/" }
     ],
+    "contributed": [
+      { "title": "Ultimate WebAssembly for High-Performance Apps", "author": "Srinivas Shanmugam", "role": "Technical Reviewer", "year": "2026",
+        "note": "High-performance WebAssembly across browsers, servers, and the edge. I was one of its technical reviewers — vetting the Rust/Wasm and the claims.", "url": "/books/ultimate-webassembly/" }
+    ],
     "reviewed": [
-      { "title": "Programming WebAssembly with Rust", "author": "Kevin Hoffman", "rating": "★★★★☆",
-        "note": "Solid foundations; the ecosystem has since moved on.", "url": "/books/programming-webassembly/" },
       { "title": "Gödel, Escher, Bach", "author": "Douglas Hofstadter", "rating": "★★★★★",
         "note": "The strange loop that rewired me. Re-reading, again.", "url": "/books/godel-escher-bach/" }
     ]

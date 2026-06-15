@@ -20,13 +20,17 @@
         </div>
         <div>
           <div class="article-head__meta" style="margin-bottom:14px">
-            {% if page.extra.kind == "reviewed" %}<span class="q-badge q-badge--neutral">reviewed</span>{% else %}<span class="q-badge q-badge--ember">{{ page.extra.status | default(value="in progress") }}</span>{% endif %}
+            {% if page.extra.kind == "reviewed" %}<span class="q-badge q-badge--neutral">reviewed</span>
+            {% elif page.extra.kind == "contributed" %}<span class="q-badge q-badge--neutral">{{ page.extra.role | default(value="technical reviewer") | lower }}</span>
+            {% else %}<span class="q-badge q-badge--ember">{{ page.extra.status | default(value="in progress") }}</span>{% endif %}
             {% if page.extra.author %}<span class="sep">·</span><span>{{ page.extra.author }}</span>{% endif %}
+            {% if page.extra.publisher %}<span class="sep">·</span><span>{{ page.extra.publisher }}{% if page.extra.year %}, {{ page.extra.year }}{% endif %}</span>{% endif %}
             {% if page.extra.rating %}<span class="sep">·</span><span style="color:var(--accent)">{{ page.extra.rating }}</span>{% endif %}
           </div>
           <h1 style="margin:0">{{ page.title }}</h1>
           {% if page.extra.blurb or page.description %}<p class="lead" style="margin:16px 0 0">{{ page.extra.blurb | default(value=page.description) }}</p>{% endif %}
-          {% if page.extra.kind != "reviewed" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}">Read a chapter</a></p>{% endif %}
+          {% if page.extra.kind == "authored" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}">Read a chapter</a></p>
+          {% elif page.extra.kind == "contributed" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}" rel="noopener">On the publisher →</a></p>{% endif %}
         </div>
       </div>
     </header>

@@ -63,6 +63,12 @@
       {% if page.extra.author %}<p class="book-card__author">{{ page.extra.author }}{% if page.extra.rating %} · <span style="color:var(--accent)">{{ page.extra.rating }}</span>{% endif %}</p>{% endif %}
       <p class="book-card__note">{{ page.extra.blurb | default(value=page.description) }}</p>
       <p style="margin:14px 0 0"><a class="q-btn q-btn--secondary q-btn--sm" href="{{ page.permalink }}">Read review</a></p>
+    {% elif page.extra.kind == "contributed" %}
+      <span class="q-badge q-badge--neutral">{{ page.extra.role | default(value="technical reviewer") | lower }}</span>
+      <h3 class="book-card__title">{{ page.title }}</h3>
+      {% if page.extra.author %}<p class="book-card__author">{{ page.extra.author }}{% if page.extra.year %} · {{ page.extra.year }}{% endif %}</p>{% endif %}
+      <p class="book-card__note">{{ page.extra.blurb | default(value=page.description) }}</p>
+      <p style="margin:14px 0 0"><a class="q-btn q-btn--secondary q-btn--sm" href="{{ page.permalink }}">Read more</a></p>
     {% else %}
       <span class="q-badge q-badge--ember">{{ page.extra.status | default(value="in progress") }}</span>
       <h3 class="book-card__title">{{ page.title }}</h3>

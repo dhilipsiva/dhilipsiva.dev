@@ -15,9 +15,9 @@ The hard parts are done; what's left is making them visible and finishing the co
       button (reuses the model-picker flow); a one-time nudge fires after the first scripted answer
       on 4g (third otherwise, never with Data-Saver); the status line reads "scripted index — twin
       not loaded". Never auto-downloads — suggestion only.
-- [ ] **Label the era on old musings.** The imported 2012–2021 articles sit at a very different
-      quality level than the launch essay; a small "from the archive, <year>" badge sets expectations.
-- [ ] Content depth items below (copy pass, book title, STGI) are the other half of the score gap.
+- [~] ~~Label the era on old musings.~~ Dropped 2026-06-12 (the single page already shows
+      "originally published on X — archived here verbatim", which sets the expectation well enough).
+- [ ] Content depth items below (book title, STGI) are the other half of the score gap.
 
 ## /nibli live demo
 - The engine wasm is built from the nibli repo (WSL): `wasm-pack build nibli-wasm --release --target web`,
@@ -47,14 +47,23 @@ The hard parts are done; what's left is making them visible and finishing the co
       seeds already say /chat, so the next routine retrain syncs it.
 - [ ] Optional hardening: GitHub account Settings → Pages → add dhilipsiva.dev as a **verified domain**.
 
-## Content passes (mine to write)
-- [ ] Real title for the book (site-wide working title: "The Fixed Point of Thought" — kept on purpose,
-      2026-06; the manuscript title stays private until launch).
+## Deferred by the owner — future agents, pick up when the trigger fires
+- [ ] **Book title — DO NOT disclose yet.** Decision (2026-06-12): the real manuscript title stays
+      private until the book is **published**. The site-wide working title "The Fixed Point of Thought"
+      is deliberate and good enough for now. TRIGGER to revisit: the book is published (or the owner
+      says so). Until then, never invent or surface the real title anywhere (site, seeds, persona).
+- [ ] **STGI role details — leave thin for now.** Decision (2026-06-12): the owner just started; the
+      `content/things-i-built/stgi.md` page is intentionally short and honest. TRIGGER to revisit:
+      a few months in, once there are real war stories to tell. Don't pad it with invented specifics.
 - [x] Copy pass over the project pages (2026-06-12): consistency sweep across all of
       `content/things-i-built/*`. Heavy rewrites of botwork + webapp-checklist; hostscli sharpened
       (kept modest); STGI lightly tightened; appknox opener; awesome-rust-ml fixed (candle, not the
       erased project's framework). Polished pro pages left intact. Bodies aren't training data — no retrain.
-- [ ] Fill in STGI details as the role matures.
+- [x] Fix the WebAssembly book site-wide (2026-06-12): the reviewed book was wrong. Correct one is
+      **"Ultimate WebAssembly for High-Performance Apps"** by Srinivas Shanmugam (AVA/Orange Education,
+      2026), on which dhilipsiva was a credited **Technical Reviewer** (with Bhushan Nikhar) — not the
+      author, not a critic-reviewer. New `contributed` book kind + "Books I helped ship" shelf; page
+      renamed programming-webassembly → ultimate-webassembly; twins retrained (v10).
 
 ## Twin improvements
 - [x] Multi-turn examples (`finetune/multi_seeds.json` + `tool_multi_seeds.json`, trained since v6;

@@ -6,6 +6,7 @@
 
 {% block content %}
 {% set authored = section.pages | filter(attribute="extra.kind", value="authored") %}
+{% set contributed = section.pages | filter(attribute="extra.kind", value="contributed") %}
 {% set reviewed = section.pages | filter(attribute="extra.kind", value="reviewed") %}
 
 <section class="section--tight" style="padding-top:48px">
@@ -30,6 +31,25 @@
     </div>
   </div>
 </section>
+
+{% if contributed | length > 0 %}
+<hr class="divider">
+
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-head__main">
+        <span class="eyebrow">// credits</span>
+        <h2 class="sec-head__title">Books I helped ship</h2>
+        <p class="sec-head__intro">Technical reviewing — reading adversarially so the fluent-but-wrong doesn't make it to print.</p>
+      </div>
+    </div>
+    <div class="book-grid">
+      {% for b in contributed %}{{ m::book_card(page=b) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <hr class="divider">
 
