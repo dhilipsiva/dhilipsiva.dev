@@ -60,18 +60,18 @@ gunicorn-workers, actix-websocket-protobuf, looking-for-a-new-role, solar-desali
 - [ ] **Crawl confirmation:** in Cloudflare free logs/analytics, confirm OAI-SearchBot / PerplexityBot /
       ClaudeBot fetches.
 
-## O9 — Cloudflare Web Analytics (RUM beacon)  ·  ↔ R9, O2
+## O9 — Web Analytics RUM beacon  ·  ⏭️ SKIPPED (owner decision)
 - [x] **Server-side analytics** — already on (Cloudflare's default cookieless traffic stats for proxied
       domains: visitors, top paths, countries, **and bot/crawler hits** → covers the O8 measurement loop).
-- [ ] **RUM beacon (chosen) — ENABLE IT:** Cloudflare → **Analytics & Logs → Web Analytics → Add a site →
-      `dhilipsiva.dev` → automatic** (proxied, so CF injects `cloudflareinsights.com/beacon.min.js` at the
-      edge — nothing committed). Verified NOT yet active (homepage HTML has no `cloudflareinsights`).
-- [ ] `↔ R9` retained: the beacon works now with **no** CSP change (no custom CSP is enforced yet); the R9
-      allowlist only matters **if/when** the security headers ship via a Transform Rule (`O2`).
+- [⏭️] **RUM beacon — SKIPPED.** Owner couldn't locate Cloudflare Web Analytics in the dashboard (it *is*
+      free for all plans — likely a nav change, not a paywall — but not worth chasing). No client-side
+      beacon. Consequence: **R9 dropped** (no beacon → nothing to allowlist in the CSP). Server-side
+      analytics is enough for measurement. Revisit only if real-user page analytics / CWV are wanted later.
 
 ---
 
 ### Analytics & GDPR
-Cloudflare Web Analytics is **cookieless** → **no GDPR/ePrivacy consent banner** and no privacy-policy
-obligation beyond an optional transparency note. **Google Analytics 4 was rejected** because its cookies
-would force a consent banner + privacy policy + US-transfer basis, breaking the site's no-cookie brand.
+**Server-side Cloudflare analytics only** (already on; cookieless, no beacon, no script on the page) →
+**no GDPR/ePrivacy consent banner**, nothing to disclose. The RUM beacon (O9) was skipped → R9 dropped.
+**Google Analytics 4 was rejected** because its cookies would force a consent banner + privacy policy +
+US-transfer basis, breaking the site's no-cookie brand.

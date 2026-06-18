@@ -243,8 +243,11 @@ Home `WebSite` and musings `Article` branches now reference `"author":{"@id":"{{
 
 ---
 
-## R9 — Privacy-first website analytics (Cloudflare Web Analytics)  ·  S · Med  ·  ↔ O9, O2
-*Added per owner request. Cookieless → no GDPR consent banner (see § Analytics & GDPR).*
+## R9 — Analytics CSP allowlist  ·  ⏭️ DROPPED (O9 skipped — no beacon)
+**Do not implement.** The owner skipped O9 (couldn't locate Cloudflare Web Analytics; not enabling the RUM
+beacon). With no beacon there's nothing to allowlist, and no custom CSP is enforced anyway. Server-side
+Cloudflare analytics already covers visitor/crawler measurement (O8). The CSP-delta below is retained
+**only as reference** if a beacon (or any other external script) is ever added later.
 
 - [ ] **Update the CSP in `static/_headers`** so the auto-injected beacon isn't blocked once the CSP is
       enforced at the edge: add `https://static.cloudflareinsights.com` to **`script-src`** and
@@ -272,8 +275,9 @@ Home `WebSite` and musings `Article` branches now reference `"author":{"@id":"{{
 ---
 
 ## Analytics & GDPR (decision)
-- **Cloudflare Web Analytics** chosen (cookieless) → **no GDPR / ePrivacy consent banner**, no privacy-
-  policy obligation beyond an optional transparency note; keeps the site's no-cookie brand. = `R9` + `O9`.
+- **Server-side Cloudflare analytics only** (already on for the proxied domain): cookieless, no beacon, no
+  script on the page → **no GDPR / ePrivacy consent banner**, nothing to disclose. Covers visitor + crawler
+  measurement (O8). The RUM beacon (O9 / R9) was **dropped** — owner couldn't locate it and it's not needed.
 - **GA4 rejected:** cookie-based → would force an opt-in consent banner + privacy policy + US-transfer
   basis, contradicting the privacy-first posture. **Do not add GA4.** (GDPR applies to EU visitors
   regardless of the owner being in India.)
