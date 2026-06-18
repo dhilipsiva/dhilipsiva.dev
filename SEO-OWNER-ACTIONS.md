@@ -10,31 +10,23 @@ per zone); this plan uses ~3 total.
 
 ---
 
-## O1 — Verify the domain in Google Search Console + Bing  ·  do first
-- [ ] In Cloudflare DNS, add the GSC **Domain-property TXT record** — keep it **DNS-only (gray cloud),
-      never proxied**. (Whole-zone proof; survives static rebuilds, unlike an HTML-file/meta verification.)
-- [ ] In GSC: verify, then **submit `https://dhilipsiva.dev/sitemap.xml`**; request indexing of the home + `/about/`.
-- [ ] In Bing Webmaster Tools: **Import** the verified GSC property (one-click; pulls the sitemap).
-- [ ] *Gates the measurement loop (`O8`). No code dependency.*
+> **✅ Done & removed:** **O1** — site verified in Google Search Console + Bing Webmaster. · **O3** —
+> Cloudflare "Block AI bots" confirmed OFF (AI crawlers not blocked). · **R1** live: `/robots.txt` +
+> `/llms.txt` deployed and confirmed serving.
 
-## O2 — Cloudflare rules (~3, inside free quota)  ·  ↔ R8, R9
-- [ ] **Always Use HTTPS** = ON (SSL/TLS → Edge Certificates). *(toggle, 0 rule slots)*
-- [ ] **`www` → apex 301** — Rules → Redirect Rules → **Single Redirect**. Filter
-      `(http.host eq "www.dhilipsiva.dev")`; dynamic target `concat("https://dhilipsiva.dev", http.request.uri.path)`,
-      status **301**, preserve query string. **Do NOT use Bulk Redirects** (free quota buggy at ~20).
-- [ ] **Security headers** — Rules → Transform Rules → **Modify Response Header**. Port the CSP and other
-      headers **verbatim from `static/_headers`** (GitHub Pages ignores that file). **Use the R9-updated
-      CSP** (includes the Cloudflare Insights domains) — `↔ R9`, so do R9 first. Do **not** re-derive the
-      CSP — dropping a Hugging Face entry breaks the `/chat` model download.
-- [ ] **Performance toggles** (Speed/Network): enable **Brotli**, **HTTP/3 (QUIC)**, **Early Hints**.
-      *(0 rule slots; `↔ R8`)*
-- [ ] **Verify:** `curl -I https://dhilipsiva.dev` shows the headers; open `/chat` → console has no CSP
-      violations and the HF model file + analytics beacon both load.
-
-## O3 — Confirm Cloudflare "Block AI bots" toggle is OFF  ·  ↔ R1
-- [ ] Cloudflare dashboard → check the managed **"Block AI bots" / AI-Audit** toggle is **OFF**. It can
-      silently override the committed `static/robots.txt` and 403 the fetchers `R1` allows — the #1 cause
-      of "open robots.txt but no citations."
+## O2 — Cloudflare: HTTPS done; the rest is optional  ·  ↔ R8, R9
+- [x] **Always Use HTTPS = ON** (SSL/TLS → Edge Certificates). ✅ Done — this is the SEO-relevant part.
+- [ ] **`www` → apex 301 (only if needed):** first check whether `www.dhilipsiva.dev` actually resolves.
+      If you never created a `www` DNS record, **skip this** — there's no duplicate URL to redirect. If it
+      does resolve, add a **Redirect Rule**: filter `(http.host eq "www.dhilipsiva.dev")`, dynamic target
+      `concat("https://dhilipsiva.dev", http.request.uri.path)`, 301, preserve query.
+- [ ] **Security headers (optional, NOT an SEO factor):** the CSP/security headers in `static/_headers`
+      are inert on GitHub Pages. To make them live, create a **Transform Rule → Modify Response Header**,
+      porting the CSP **verbatim** from `static/_headers`. Defer unless you want the hardening. `↔ R9`.
+- [ ] **Where the rules live (dashboard nav):** "Managed Transforms / Bulk Redirects / URL Normalization"
+      that you saw are *sub-items*. The Redirect-Rule and Transform-Rule **builders** are under
+      **Rules → Overview → Create rule** (all free on every plan). Brotli + HTTP/3 are **on by default**
+      now; Early Hints is under **Speed → Optimization** if wanted (`↔ R8`, minor).
 
 ## O4 — Cross-post canonicals → `.dev`  ·  ↔ R2/R3
 - [ ] **dev.to:** add `canonical_url: https://dhilipsiva.dev/musings/<slug>/` to each cross-posted
@@ -62,7 +54,7 @@ the strongest free corroboration, since there's no Wikipedia/Wikidata entity):
 - [ ] **Do not create a self-authored Wikidata item** — likely fails notability and raises a
       conflict-of-interest concern. Revisit only if independent press / conference coverage accumulates.
 
-## O8 — Measurement loop  ·  depends on O1
+## O8 — Measurement loop  ·  GSC/Bing already verified (was O1)
 - [ ] **Brand-SERP benchmark:** in GSC Performance, watch the bare query **"dhilipsiva"** — success =
       `.dev` ranks above the squatted `.com`. If after ~8–12 weeks the `.com` still wins, deepen the
       GitHub README (`O5`) and earn an organic conference/talk link (still zero-spend).
@@ -74,8 +66,9 @@ the strongest free corroboration, since there's no Wikipedia/Wikidata entity):
 ## O9 — Enable Cloudflare Web Analytics  ·  ↔ R9, O2
 - [ ] Cloudflare → **Analytics & Logs → Web Analytics** → add `dhilipsiva.dev`. Because the domain is
       proxied, CF **auto-injects the beacon** (no script committed). **Free, cookieless, no consent banner.**
-- [ ] `↔ R9` — the CSP must allowlist `static.cloudflareinsights.com` + `cloudflareinsights.com` or the
-      beacon is blocked. `↔ O2` — port the R9-updated CSP.
+- [ ] Enable it **now** — no CSP change needed yet, since no custom CSP is enforced at the edge (the
+      `static/_headers` CSP is inert on GitHub Pages). The `R9` CSP allowlist only matters **if/when** you
+      later ship the security headers via a Transform Rule (`O2`).
 
 ---
 

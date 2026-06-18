@@ -23,11 +23,10 @@ on an owner action.
 - [x] **New `scripts/gen_llms_txt.py`** (NOT `.tools/` — that dir is gitignored) + **`deploy.yml` step**
       `python3 scripts/gen_llms_txt.py` after `zola build`. Generates `public/llms.txt` from content
       front matter (13 musings date-desc, 14 projects, 4 books, Interactive/Optional); excludes drafts.
-- [ ] `↔ O3` — **owner action:** confirm Cloudflare's "Block AI bots" managed toggle is **OFF**, or it
-      silently 403s the very fetchers this file allows. (Tracked in `SEO-OWNER-ACTIONS.md`.)
-- [x] **Verify (local):** `zola build` clean; `public/robots.txt` matches the committed file; generator
-      lists all non-draft pages with correct URLs, drafts (godel-halting-problem, thinking-in-two-scripts)
-      absent. **Remaining (post-deploy):** fetch live `/robots.txt` + `/llms.txt`; GSC robots tester (`O1`).
+- [x] `↔ O3` — confirmed by owner: Cloudflare "Block AI bots" toggle is **OFF** (AI crawlers not blocked).
+- [x] **Verify:** `zola build` clean; generator lists all non-draft pages, drafts excluded. **Post-deploy
+      ✅:** deploy run green, live `/robots.txt` + `/llms.txt` confirmed serving. (GSC robots tester is
+      optional, owner-side.)
 
 <details><summary><code>static/robots.txt</code></summary>
 
