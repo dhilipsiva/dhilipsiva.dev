@@ -56,6 +56,10 @@
 
 <link rel="icon" href="/assets/mark.svg">
 <link rel="alternate" type="application/rss+xml" title="Musings" href="/musings/rss.xml">
+{#- preload the two dominant above-the-fold faces (Mono = default voice, Space Grotesk = display h1).
+    crossorigin is required for font preloads to match the CORS font fetch; paths match @font-face. -#}
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/ibm-plex-mono-400-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/space-grotesk-600-latin.woff2" crossorigin>
 <link rel="stylesheet" href="{{ get_url(path="assets/quine.css", cachebust=true) | safe }}">
 {% block head_extra %}{% endblock head_extra %}
 <!-- apply saved theme before paint, no FOUC -->
@@ -141,7 +145,7 @@
   </div>
 </footer>
 
-<script src="{{ get_url(path="assets/site.js", cachebust=true) | safe }}"></script>
+<script defer src="{{ get_url(path="assets/site.js", cachebust=true) | safe }}"></script>
 
 </body>
 </html>

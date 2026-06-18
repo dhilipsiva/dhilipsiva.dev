@@ -12,7 +12,7 @@
     <div class="row" style="align-items:flex-start;gap:36px">
       <div style="flex:none;width:200px">
         {% set portrait = page.extra.portrait | default(value=config.extra.avatar) %}
-        {% if portrait %}<img src="{{ portrait }}" alt="dhilipsiva" style="width:100%;border-radius:var(--radius-md);border:1px solid var(--border-strong)">
+        {% if portrait %}<img src="{{ portrait }}" alt="dhilipsiva" width="800" height="800" decoding="async" style="width:100%;height:auto;border-radius:var(--radius-md);border:1px solid var(--border-strong)">
         {% else %}<div class="img-slot" style="aspect-ratio:5/6" role="img" aria-label="Portrait placeholder">[ portrait · alt required ]</div>{% endif %}
       </div>
       <div class="prose" style="flex:1;min-width:300px">

@@ -242,14 +242,22 @@ was mostly adding the `WebApplication` schema + a `/nibli` no-JS note.*
 
 ---
 
-## R8 — Core Web Vitals  ·  M · Med  ·  ↔ O2
-*Report item 19*
+## R8 — Core Web Vitals  ·  M · Med  ·  ↔ O2  ·  ✅ DONE
+*Report item 19. Note: `font-display: swap` was already set, so text never blocked paint — preload is a
+refinement (less FOUT/reflow), not an LCP unblock.*
 
-- [ ] Add `width`/`height` (or `aspect-ratio`) to content `<img>` (musing `hero_image`, book `cover`).
-- [ ] `<link rel="preload">` the LCP woff2 font; add `defer` to `site.js` (base.html) and the chat/nibli
-      module scripts.
-- [ ] `↔ O2` — Cloudflare Brotli / HTTP/3 / Early-Hints toggles (edge-side complement).
-- [ ] **Verify:** PageSpeed Insights (CLS / LCP).
+- [x] **CLS:** `/about` avatar gets intrinsic `width="800" height="800"` (+ `height:auto` so it still
+      scales in its 200px column) + `decoding="async"`. Book covers (home featured + `book_card` on
+      `/books/`, both below-fold) get `loading="lazy" decoding="async"`. *(Brand `mark.svg` icons + the
+      above-fold book-single cover left as-is — CSS-sized, negligible CLS. Musing `hero_image` is unused.)*
+- [x] **Font preload** (`base.html`): the two dominant above-fold faces — `ibm-plex-mono-400-latin.woff2`
+      (`--font-mono`, the default voice) + `space-grotesk-600-latin.woff2` (`--font-display`, h1s) — with
+      `crossorigin` and exact `@font-face` paths (verified both files exist → no 404/double-fetch).
+- [x] **`defer`** on `site.js`. (chat/nibli scripts are end-of-body / `type=module` already deferred —
+      left as-is.)
+- [ ] `↔ O2` — Cloudflare Brotli / HTTP/3 / Early-Hints are owner-side toggles (mostly default-on).
+- [x] **Verify:** `zola build` clean; preloads on every page + font files present; avatar dims; covers
+      lazy; site.js deferred. Owner-side (optional): PageSpeed Insights (CLS/LCP).
 
 ---
 

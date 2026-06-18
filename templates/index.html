@@ -97,7 +97,7 @@
     </div>
     <article class="q-card q-card--grid feat-book">
       <div class="feat-book__cover">
-        {% if book.extra.cover %}<img src="{{ book.extra.cover }}" alt="Cover: {{ book.title }}">{% endif %}
+        {% if book.extra.cover %}<img src="{{ book.extra.cover }}" alt="Cover: {{ book.title }}" loading="lazy" decoding="async">{% endif %}
       </div>
       <div>
         <span class="q-badge q-badge--ember">{{ book.extra.status | default(value="in progress") }}</span>
