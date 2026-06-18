@@ -5,7 +5,7 @@ description = "Software architect and open-source builder — Rust, Python, dist
 [extra]
 available = "currently: symbolic reasoning"
 hero_h1 = "From whiteboard<br>to <em>production.</em>"
-hero_tagline = "Hands-on Technical Architect — Rust, Python, distributed systems, WebAssembly, and symbolic reasoning."
+hero_tagline = "An optimistic nihilist, hands-on architect and lifelong builder who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, web3, distributed systems, and symbolic reasoning."
 hero_intro = "Over a decade architecting, building, and scaling systems end to end. Lately I'm retrofitting symbolic reasoning for the LLM era — building nibli, a hallucination firewall that derives instead of predicts, and writing a book about it."
 
 [[extra.now_strip]]

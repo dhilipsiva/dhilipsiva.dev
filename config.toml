@@ -32,7 +32,7 @@ author = "dhilipsiva"
 email = "dhilipsiva@pm.me"
 location = "Bangalore, India"
 avatar = "/assets/avatar.jpg"  # headshot — feeds Person/JSON-LD image + the /about portrait
-tagline = "An Optimistic Nihilist who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, Web3, Distributed Systems, and symbolic reasoning."
+tagline = "An optimistic nihilist, hands-on architect and lifelong builder who loves Science, Rust, Python, FOSS, WebAssembly, WebRTC, web3, distributed systems, and symbolic reasoning."
 footer_tag = "Build systems that outlive their meaning. One must imagine the compiler happy."
 
 # Social links — used by the social row (footer / home / contact)
