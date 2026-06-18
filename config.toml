@@ -11,6 +11,10 @@ build_search_index = false
 generate_feeds = true
 feed_filenames = ["rss.xml"]
 
+# Drop /musings/page/1/ and /page/2/ (pagination duplicates of /musings/) from the
+# sitemap. They already canonicalize to /musings/; this just stops listing them.
+exclude_paginated_pages_in_sitemap = "all"
+
 taxonomies = [
   { name = "tags", feed = true },
 ]

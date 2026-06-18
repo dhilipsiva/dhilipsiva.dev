@@ -77,22 +77,22 @@ H1 → blockquote → About → Writing (musings, date-desc) → Projects → Bo
 
 ---
 
-## R2 — Sitemap hygiene + honest freshness  ·  M · Med
-*Report items 8, 9 (snippet B, callout M)*
+## R2 — Sitemap hygiene  ·  S · Med  ·  ✅ DONE
+*Report items 8, 9. **As-built note:** collapsed to a one-liner — verification (Zola 0.22.1 docs + built
+HTML) showed the report's custom-sitemap and `/page/1/` canonical work was unnecessary.*
 
-- [ ] **Pagination dedupe:** sitemap currently lists both `/musings/page/1/` and `/page/2/`. Add
-      `exclude_paginated_pages_in_sitemap` to `config.toml`. **Verify exact value/type by building** —
-      report says `"all"`, but Zola may expect boolean `true`; try and inspect output.
-- [ ] **`/page/1/` canonical:** first **check the current canonical output** for `/musings/page/N/` —
-      `base.html` (L15-18) sets `meta_url = section.permalink` for section renders, which may *already*
-      canonical paginated pages to `/musings/`. If it doesn't, add a `current_index == 1` →
-      `<link rel="canonical" href="{{ section.permalink }}">` special-case. Don't add what's already there.
-- [ ] **New `templates/sitemap.xml`** (only if the config flag is insufficient, and for honest
-      `<lastmod>`): emit `lastmod` from `page.updated`/section dates; filter out `/page/`. **Validate the
-      Zola 0.22.1 sitemap context variable name** before trusting the template.
-- [ ] **Freshness discipline (callout M):** set front-matter `updated` only on genuine edits; archival
-      posts (2013–2017) keep `date` only — never mass-touch `lastmod`.
-- [ ] **Verify:** build → inspect `public/sitemap.xml` (no `/page/N/`; `lastmod` only where intended).
+- [x] **Pagination dedupe:** added `exclude_paginated_pages_in_sitemap = "all"` (string enum, default
+      `"none"`; Zola 0.20.0+) to `config.toml` root. Drops `/musings/page/1/` + `/page/2/` from the
+      sitemap. URL count **65 → 63**; `/musings/`, all posts, and the 20 `/tags/` pages retained.
+- [x] **`/page/1/` canonical:** no change needed — paginated renders **already** emit
+      `<link rel="canonical" href="…/musings/">` via base.html's `section.permalink` branch (verified in
+      `public/musings/page/2/index.html`).
+- [x] **No custom `templates/sitemap.xml`:** Zola's default already emits `<lastmod>` only from real
+      dates (musings have it; date-less pages omit it) — already honest; fabricating lastmod = rejected.
+- [ ] **Freshness discipline (convention, ongoing):** add front-matter `updated = YYYY-MM-DD` only on a
+      genuine edit; archival posts keep `date` only. Never mass-touch `lastmod`.
+- [x] **Verify:** `zola build` clean; `grep -c "<loc>"` → 63; no `page/` URLs; key URLs present.
+      *(Tag-page indexing is intentionally untouched — keep + deepen tags is a content task, R7.)*
 
 ---
 
