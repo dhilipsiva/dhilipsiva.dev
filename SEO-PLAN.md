@@ -124,17 +124,19 @@ Home `WebSite` and musings `Article` branches now reference `"author":{"@id":"{{
 
 ---
 
-## R4 — IndieWeb rel=me + h-card  ·  S · Med  ·  ↔ O5
-*Report item 6 (on-site half), snippet L*
+## R4 — IndieWeb rel=me + h-card  ·  S · Med  ·  ✅ DONE
+*Report item 6 (on-site half). As-built: one clean sitewide **footer** h-card, visible data only,
+**no `u-photo`** (footer shows the logo not the avatar; the headshot is already R3's JSON-LD `Person.image`
+— a photo-bearing `/about` h-card can be added later if wanted).*
 
-- [ ] **`templates/macros.html` `social_row`** (L8-19): add `rel="me"` to each social `<a>`.
-- [ ] Add `rel="me"` on the `/about` + `/contact` identity links and the footer brand link.
-- [ ] Add minimal **h-card** classes to the existing identity block: `h-card` on the wrapper,
-      `u-url p-name` on the name link, `u-photo` on the avatar (guarded), `u-email` on the email link.
-      No new markup — just class names.
-- [ ] `↔ O5` — reciprocity only works once each platform's Website field points back to
-      `https://dhilipsiva.dev/`. GitHub is the one that returns a verified reciprocal `rel="me"`.
-- [ ] **Verify:** indiewebify.me; view-source each profile after `O5`.
+- [x] **`templates/macros.html` `social_row`** — `rel="me"` on the 6 profile links (github, linkedin,
+      stackoverflow, medium, devto, twitter) + the email mailto; `class="u-email"` on email. RSS left plain.
+- [x] **Footer h-card** (`templates/base.html`): `<footer class="site-footer h-card">`; brand link →
+      `class="brand u-url u-uid"` (self `/`, no rel=me on the self link); name split so `p-name` =
+      "dhilipsiva" exactly (renders visually identical). Sitewide → representative on the homepage.
+- [x] `↔ O5` — reciprocal half already done & verified (GitHub `rel="nofollow me"` → `dhilipsiva.dev`).
+- [x] **Verify:** `zola build` clean; footer has `h-card` + `u-url u-uid` + `p-name`; social links carry
+      `rel="me"`, email `u-email`, RSS plain. Owner-side (optional): indiewebify.me confirms the rel=me pair.
 
 ---
 
