@@ -22,6 +22,9 @@
 <link rel="stylesheet" href="{{ get_url(path="assets/quine.css", cachebust=true) | safe }}">
 <link rel="stylesheet" href="{{ get_url(path="play/app/chat.css", cachebust=true) | safe }}">
 <script>try{if(localStorage.getItem('dsiva-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"dhilipsiva — on-device AI twin","url":"{{ config.base_url | safe }}/chat/","applicationCategory":"CommunicationApplication","operatingSystem":"All","browserRequirements":"Requires JavaScript and WebAssembly","description":"A LoRA fine-tuned language model impersonating dhilipsiva, running entirely in your browser (candle, Rust→WebAssembly). No servers, no cookies; messages never leave your tab.","author":{"@id":"{{ config.base_url | safe }}/#person"}}
+</script>
 </head>
 <body data-screen-label="Twin / chat">
 <a class="skip-link" href="#composer-input">Skip to the message box</a>

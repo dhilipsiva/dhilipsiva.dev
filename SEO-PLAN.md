@@ -188,17 +188,17 @@ musings `ItemList` uses `get_section("musings/_index.md").pages` (the home-page 
 
 ---
 
-## R6 — Make the WASM demos legible  ·  M · High  ·  depends on R3
-*Report item 15 (snippet H)*
+## R6 — Make the WASM demos legible  ·  M · High  ·  ✅ DONE
+*Report item 15. `/nibli` already had server-rendered prose; `/chat` already had a `<noscript>` — so this
+was mostly adding the `WebApplication` schema + a `/nibli` no-JS note.*
 
-- [ ] **`/nibli`** (`templates/nibli.html`, extends base, has prose but **no `<noscript>`**): add the
-      `<noscript>` block + `WebApplication` JSON-LD via its `head_extra` block (author → `#person`).
-- [ ] **`/chat`** (`templates/chat.html` — **standalone, does NOT extend base.html**): add
-      `WebApplication` JSON-LD into its own `<head>`. It already has a `<noscript>`; confirm a sentence
-      of server-rendered prose exists.
-- [ ] **Facts de-drift (optional):** do NOT build-time-include `static/play/app/knowledge.js` (runtime
-      JS). If wanted, extract canonical facts to `data/facts.toml` (`load_data`) + a pointer comment.
-- [ ] **Verify:** view-source `/chat` + `/nibli` (prose + JSON-LD present pre-JS); Rich Results Test.
+- [x] **`/nibli`** (`templates/nibli.html`): `WebApplication` JSON-LD in `head_extra` (author → `#person`)
+      + a concise `<noscript>` note (no `<h1>` — the page already has one; single h1 confirmed).
+- [x] **`/chat`** (`templates/chat.html`, standalone): `WebApplication` JSON-LD added to its own `<head>`;
+      existing `<noscript>` description intact.
+- [x] Facts de-drift: **skipped** (optional; not needed).
+- [x] **Verify:** `zola build` clean; both `WebApplication` blocks parse with `author={@id …/#person}` and
+      clean URLs; `/nibli` noscript present; `/chat` noscript intact. Owner-side (optional): Rich Results Test.
 
 <details><summary>Snippet H — <code>/nibli</code> noscript + WebApplication</summary>
 

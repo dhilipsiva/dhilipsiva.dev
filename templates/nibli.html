@@ -5,9 +5,18 @@
 
 {% block head_extra %}
 <link rel="stylesheet" href="{{ get_url(path="nibli/app/nibli.css", cachebust=true) | safe }}">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"nibli","url":"{{ config.base_url | safe }}/nibli/","applicationCategory":"DeveloperApplication","operatingSystem":"All","browserRequirements":"Requires JavaScript and WebAssembly","description":"A browser-based symbolic-reasoning engine (Rust→WebAssembly) that derives every answer with a proof trace, running fully client-side with no server.","author":{"@id":"{{ config.base_url | safe }}/#person"}}
+</script>
 {% endblock head_extra %}
 
 {% block content %}
+<noscript>
+  <p style="max-width:74ch;margin:0 0 24px;padding:12px 16px;border-left:2px solid var(--accent)">
+  The live demo below runs <strong>nibli</strong> — a symbolic-reasoning engine (Rust→WebAssembly) that
+  derives every answer with a proof trace, entirely in your browser — and needs JavaScript + WebAssembly.
+  More on the engine in <a href="/things-i-built/nibli/">things I built</a> and <a href="/musings/">musings</a>.</p>
+</noscript>
 <section class="section--tight" style="padding-top:48px">
   <div class="container">
     <span class="eyebrow">// nibli · live demo</span>
