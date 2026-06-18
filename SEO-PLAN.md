@@ -140,23 +140,24 @@ Home `WebSite` and musings `Article` branches now reference `"author":{"@id":"{{
 
 ---
 
-## R5 — Structured data for content  ·  M · Med  ·  depends on R3
-*Report items 11, 12, 13, 14 (snippets D, E, F, G)*
+## R5 — Structured data for content  ·  M · Med  ·  ✅ DONE
+*Report items 11-14. Emitted via a new `{% block head_extra %}` per template (additive to base.html's
+chain), all values via `| json_encode | safe` (valid JSON + no `/`→`&#x2F;` escaping). Two build fixes
+folded in: Tera has **no object-literal** support (replaced the `lang_map` dict with an array allowlist +
+`WASM→WebAssembly` special-case); a **paginated section's `section.pages` is empty** in-template, so the
+musings `ItemList` uses `get_section("musings/_index.md").pages` (the home-page pattern).*
 
-- [ ] **BreadcrumbList** (snippet D): new `elif` branches in `base.html` for the 3 single types
-      (project / book / musing) — the schema twin of the existing visual breadcrumbs.
-- [ ] **ItemList** (snippet E): on each section index template (`things-i-built/list.html`,
-      `books/list.html`, `musings/list.html`).
-- [ ] **Per-project** (`things-i-built/single.html`): `SoftwareSourceCode` if `page.extra.repo`, else
-      `CreativeWork`. **CORRECTION — guard the live URL on `page.extra.live` (NOT `url`); the 7
-      closed-source projects (colligence, nuflights, reckonsys, rewire, nitimis, stgi, appknox) have
-      neither `repo` nor `live` → emit no `url`/`codeRepository`.** Map `tech[]` labels via a Tera dict.
-- [ ] **Per-book** (`books/single.html`): emit `Book`. **CORRECTION — real keys are
-      `kind`/`author`/`role`/`publisher`/`year`/`link` (no `isbn`/`published`).** Model the reviewer
-      credit as `contributor → Role → roleName:"Technical Reviewer"` **only when `kind == "contributed"`**
-      (Ultimate WebAssembly). `reviewed` books (Gödel-Escher-Bach) list their own author — never tag
-      dhilipsiva as their contributor.
-- [ ] **Verify:** Rich Results Test (BreadcrumbList → rich result; the rest validate as entity data).
+- [x] **BreadcrumbList** on the 3 single types (project/book/musing) — 3 items each, hard-coded section crumb.
+- [x] **ItemList** on each section index — things-i-built (14), books (4), musings (13, drafts excluded).
+- [x] **Per-project** (`things-i-built/single.html`): `SoftwareSourceCode` if `repo` else `CreativeWork`;
+      `codeRepository` only if `repo`; `url` from `page.extra.live` (absolute; only nibli); `keywords` =
+      all tech; `programmingLanguage` = filtered real languages. Verified: nibli→SoftwareSourceCode+repo+
+      url+`["Rust","WebAssembly"]`; appknox→CreativeWork, no repo/url, `["Rust"]`.
+- [x] **Per-book** (`books/single.html`): `Book` with author logic per kind — reviewed=external author
+      (GEB→Hofstadter, no contributor); contributed=external author + `contributor→Role` (UWA→Srinivas +
+      Technical Reviewer `{@id #person}` + publisher + year); authored=`author {@id #person}` (fixed-point).
+- [x] **Verify:** `zola build` clean; every block parses (python `json.loads`); fields confirmed; no
+      `&#x2F;`. Owner-side (optional): Google Rich Results Test → BreadcrumbList rich result.
 
 <details><summary>Snippets D / E / F / G (corrected)</summary>
 

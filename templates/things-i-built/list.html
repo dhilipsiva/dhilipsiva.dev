@@ -4,6 +4,12 @@
 {% block title %}Things I Built — {{ config.title }}{% endblock title %}
 {% block description %}{{ section.description }}{% endblock description %}
 
+{% block head_extra %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","name":{{ section.title | json_encode | safe }},"url":{{ section.permalink | json_encode | safe }},"itemListElement":[{% for p in section.pages %}{"@type":"ListItem","position":{{ loop.index }},"url":{{ p.permalink | json_encode | safe }},"name":{{ p.title | json_encode | safe }}}{% if not loop.last %},{% endif %}{% endfor %}]}
+</script>
+{% endblock head_extra %}
+
 {% block content %}
 {% set personal = section.pages | filter(attribute="extra.category", value="personal") %}
 {% set professional = section.pages | filter(attribute="extra.category", value="professional") %}
