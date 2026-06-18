@@ -16,10 +16,8 @@ per zone); this plan uses ~3 total.
 
 ## O2 — Cloudflare: HTTPS done; the rest is optional  ·  ↔ R8, R9
 - [x] **Always Use HTTPS = ON** (SSL/TLS → Edge Certificates). ✅ Done — this is the SEO-relevant part.
-- [ ] **`www` → apex 301 (only if needed):** first check whether `www.dhilipsiva.dev` actually resolves.
-      If you never created a `www` DNS record, **skip this** — there's no duplicate URL to redirect. If it
-      does resolve, add a **Redirect Rule**: filter `(http.host eq "www.dhilipsiva.dev")`, dynamic target
-      `concat("https://dhilipsiva.dev", http.request.uri.path)`, 301, preserve query.
+- [x] **`www` → apex 301** — ✅ already working (verified `curl -sI https://www.dhilipsiva.dev/` →
+      `301 → https://dhilipsiva.dev/`; apex → 200). No action needed.
 - [ ] **Security headers (optional, NOT an SEO factor):** the CSP/security headers in `static/_headers`
       are inert on GitHub Pages. To make them live, create a **Transform Rule → Modify Response Header**,
       porting the CSP **verbatim** from `static/_headers`. Defer unless you want the hardening. `↔ R9`.
@@ -29,12 +27,23 @@ per zone); this plan uses ~3 total.
       now; Early Hints is under **Speed → Optimization** if wanted (`↔ R8`, minor).
 
 ## O4 — Cross-post canonicals → `.dev`  ·  ↔ R2/R3
-- [ ] **dev.to:** add `canonical_url: https://dhilipsiva.dev/musings/<slug>/` to each cross-posted
-      article's front matter.
-- [ ] **Medium:** for each cross-posted story, set the canonical via Story settings (or re-import using
-      Medium's import-from-URL so it auto-sets canonical → `.dev`).
-- [ ] Consolidates authority on `.dev` so AI engines cite `.dev`, not the third party. `.dev` stays
-      self-canonical (owner controls both copies).
+Point each third-party original's canonical at the matching `.dev` page (consolidates authority/citations
+on `.dev`; `.dev` stays self-canonical). 11 cross-posts total.
+
+**dev.to (2) — easy, do now.** Edit post → set the **Canonical URL** field:
+- [ ] `analyzing-python-compression-libraries…` → `https://dhilipsiva.dev/musings/python-compression/`
+- [ ] `hi-im-dhilipsiva` → `https://dhilipsiva.dev/musings/hi-im-dhilipsiva/`
+
+**Medium (8) — harder, optional/defer.** Medium has **no canonical field for natively-written stories**;
+the only way to set canonical → `.dev` is to delete the story and **re-import from the `.dev` URL** (the
+importer sets canonical to the source). Tedious + slightly destructive — defer unless you care about
+out-ranking Medium for these. The `.dev` copies are already self-canonical, so nothing breaks if skipped.
+Stories: black-holes-true-vacuum, clash-royale-legendary, architecture-at-appknox, the-feathered-bond,
+gunicorn-workers, actix-websocket-protobuf, looking-for-a-new-role, solar-desalination → each maps to
+`https://dhilipsiva.dev/musings/<same-slug>/`.
+
+- [ ] **python-libraries — no action:** its "original" is a Wayback snapshot of the lost `.com`; nothing
+      to set there. `.dev` stays self-canonical.
 
 ## O5 — GitHub alignment + per-platform reciprocal links  ·  ↔ R4
 Set the **exact string `https://dhilipsiva.dev/`** everywhere (makes `sameAs`/`rel=me` bidirectional —
