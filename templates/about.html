@@ -11,7 +11,8 @@
     <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 28px;line-height:1.05">A builder, not an entrepreneur</h1>
     <div class="row" style="align-items:flex-start;gap:36px">
       <div style="flex:none;width:200px">
-        {% if page.extra.portrait %}<img src="{{ page.extra.portrait }}" alt="dhilipsiva" style="width:100%;border-radius:var(--radius-md);border:1px solid var(--border-strong)">
+        {% set portrait = page.extra.portrait | default(value=config.extra.avatar) %}
+        {% if portrait %}<img src="{{ portrait }}" alt="dhilipsiva" style="width:100%;border-radius:var(--radius-md);border:1px solid var(--border-strong)">
         {% else %}<div class="img-slot" style="aspect-ratio:5/6" role="img" aria-label="Portrait placeholder">[ portrait · alt required ]</div>{% endif %}
       </div>
       <div class="prose" style="flex:1;min-width:300px">

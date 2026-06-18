@@ -96,26 +96,30 @@ HTML) showed the report's custom-sitemap and `/page/1/` canonical work was unnec
 
 ---
 
-## R3 — Identity schema: ProfilePage→Person + stable `@id`  ·  M · High  ·  ↔ O6
-*Report item 5 (snippet C). Defines the `#person` anchor that R5/R6 reference — do this first.*
+## R3 — Identity schema: ProfilePage→Person + stable `@id`  ·  M · High  ·  ✅ DONE
+*Report item 5. Defines the `#person` anchor that R5/R6 reference. As-built tweaks vs the draft: name =
+mononym (no `alternateName`); `dateModified` dropped (`/about` has no date); `knowsLanguage` = en/ta/kn/fr;
+no `description` field; **added `| safe` to all config URL values** — fixed a pre-existing bug where Tera
+HTML-escaped `/`→`&#x2F;` in `sameAs`/`image`, producing invalid URLs in the `<script>` JSON-LD.*
 
-- [ ] **`templates/base.html`** — replace the existing `current_path == "/about/"` JSON-LD branch with a
-      `ProfilePage` wrapping a `Person` (`@id = …/#person`, complete `sameAs` incl. dev.to + twitter,
-      `knowsAbout`, `knowsLanguage`, `alternateName`, guarded `image`). Keep the existing minified
-      single-line JSON style.
-- [ ] **Thread the entity:** in the musings `Article` branch, change `author` to `{"@id":"…/#person"}`.
-- [ ] **Add `avatar` to `config.toml [extra]`** (value pending `O6`); `image` stays behind
-      `{% if config.extra.avatar %}` so the build is valid before the headshot exists.
-- [ ] `↔ O6` — owner provides the headshot asset.
-- [ ] **Verify:** Rich Results Test + Schema Markup Validator on `/about/`.
+- [x] **`templates/base.html`** — `/about` branch now `ProfilePage` → `mainEntity` `Person` (`@id
+      …/#person`, 6-URL `sameAs` incl. dev.to + twitter, `knowsAbout` ×8, `knowsLanguage` ×4, `image`).
+- [x] **Threaded the entity:** musings `Article` `author`+`publisher` and home `WebSite` `author` now
+      reference `{"@id":"…/#person"}`; WebSite got `@id …/#website`. Article dates kept intact.
+- [x] **`config.toml [extra]`** `avatar = "/assets/avatar.jpg"` (single source for JSON-LD `image` + the
+      visible `/about` portrait, which now shows the headshot instead of the placeholder).
+- [x] **`static/assets/avatar.jpg`** (800×800) committed.
+- [x] **Verify (local):** `zola build` clean; all 3 JSON-LD blocks parse; sameAs/image are clean
+      `https://` URLs; ProfilePage/Person `@id`s correct; portrait placeholder gone. Owner-side (optional):
+      Google Rich Results Test + Schema Markup Validator on `/about/`.
 
-<details><summary><code>base.html</code> — the <code>/about/</code> branch (replace existing, minified to match)</summary>
+<details><summary>as-built <code>/about/</code> branch (in <code>templates/base.html</code>)</summary>
 
 ```jinja
 {%- elif current_path and current_path == "/about/" -%}
-{"@context":"https://schema.org","@type":"ProfilePage","@id":"{{ config.base_url | safe }}/about/#profilepage","url":"{{ config.base_url | safe }}/about/","dateModified":"{{ page.updated | default(value=page.date) }}","mainEntity":{"@type":"Person","@id":"{{ config.base_url | safe }}/#person","name":"{{ config.extra.author }}","alternateName":"dhilipsiva","url":"{{ config.base_url | safe }}/","email":"mailto:{{ config.extra.email }}","jobTitle":"Software Architect","description":"Self-taught software engineer (dropout); builds in Rust, WebAssembly, LLMs, distributed systems and symbolic reasoning.","address":{"@type":"PostalAddress","addressLocality":"{{ config.extra.location }}"}{% if config.extra.avatar %},"image":"{{ config.base_url | safe }}{{ config.extra.avatar }}"{% endif %},"knowsAbout":["Rust","WebAssembly","Large Language Models","Distributed Systems","Symbolic Reasoning","Logic","Tamil","Philosophy of Mind"],"knowsLanguage":["en","ta"],"sameAs":["{{ config.extra.github }}","{{ config.extra.linkedin }}","{{ config.extra.stackoverflow }}","{{ config.extra.medium }}"{% if config.extra.devto %},"{{ config.extra.devto }}"{% endif %}{% if config.extra.twitter %},"{{ config.extra.twitter }}"{% endif %}]}}
+{"@context":"https://schema.org","@type":"ProfilePage","@id":"{{ config.base_url | safe }}/about/#profilepage","url":"{{ config.base_url | safe }}/about/","mainEntity":{"@type":"Person","@id":"{{ config.base_url | safe }}/#person","name":"{{ config.extra.author | safe }}","url":"{{ config.base_url | safe }}/","email":"mailto:{{ config.extra.email | safe }}","jobTitle":"Software Architect","address":{"@type":"PostalAddress","addressLocality":"{{ config.extra.location | safe }}"}{% if config.extra.avatar %},"image":"{{ config.base_url | safe }}{{ config.extra.avatar | safe }}"{% endif %},"knowsAbout":["Rust","WebAssembly","Large Language Models","Distributed Systems","Symbolic Reasoning","Logic","Tamil","Philosophy of Mind"],"knowsLanguage":["en","ta","kn","fr"],"sameAs":["{{ config.extra.github | safe }}","{{ config.extra.linkedin | safe }}","{{ config.extra.stackoverflow | safe }}","{{ config.extra.medium | safe }}","{{ config.extra.devto | safe }}","{{ config.extra.twitter | safe }}"]}}
 ```
-Musings `Article` branch — change the author object to: `"author":{"@id":"{{ config.base_url | safe }}/#person"}`
+Home `WebSite` and musings `Article` branches now reference `"author":{"@id":"{{ config.base_url | safe }}/#person"}` (Article also `publisher`); note the `| safe` on every config URL — without it Tera escapes `/`→`&#x2F;`, breaking the URLs inside the `<script>` JSON-LD.
 </details>
 
 ---
