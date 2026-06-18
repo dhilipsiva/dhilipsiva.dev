@@ -1,0 +1,39 @@
+# robots.txt for https://dhilipsiva.dev
+# Source-controlled (Zola no longer auto-generates this once present).
+#
+# Policy for an owner who WANTS AI citations and has no IP to protect:
+# allow the search/answer fetchers AND the training crawlers; block only the
+# abusive scraper. Fully reversible — flip any group to `Disallow: /` to opt out.
+
+User-agent: *
+Allow: /
+
+# --- AI SEARCH / ANSWER fetchers (keep ALLOWED to stay citable) ---
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# --- AI TRAINING crawlers (ALLOWED on purpose; flip to Disallow: / to opt out) ---
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: CCBot
+Allow: /
+
+# --- Abusive scraper: block ---
+User-agent: Bytespider
+Disallow: /
+
+Sitemap: https://dhilipsiva.dev/sitemap.xml
