@@ -10,9 +10,10 @@ per zone); this plan uses ~3 total.
 
 ---
 
-> **✅ Done & removed:** **O1** — site verified in Google Search Console + Bing Webmaster. · **O3** —
-> Cloudflare "Block AI bots" confirmed OFF (AI crawlers not blocked). · **R1** live: `/robots.txt` +
-> `/llms.txt` deployed and confirmed serving.
+> **✅ Done:** **O1** GSC + Bing verified · **O3** Cloudflare "Block AI bots" OFF · **O5** reciprocal
+> website/`rel="me"` links set (GitHub `rel="nofollow me"` → `dhilipsiva.dev` verified) · **O6** headshot
+> at `static/assets/avatar.jpg` (800×800 square) — R3 wires `config.extra.avatar = "/assets/avatar.jpg"`.
+> **R1** + **R2** live.
 
 ## O2 — Cloudflare: HTTPS done; the rest is optional  ·  ↔ R8, R9
 - [x] **Always Use HTTPS = ON** (SSL/TLS → Edge Certificates). ✅ Done — this is the SEO-relevant part.
@@ -30,9 +31,10 @@ per zone); this plan uses ~3 total.
 Point each third-party original's canonical at the matching `.dev` page (consolidates authority/citations
 on `.dev`; `.dev` stays self-canonical). 11 cross-posts total.
 
-**dev.to (2) — easy, do now.** Edit post → set the **Canonical URL** field:
-- [ ] `analyzing-python-compression-libraries…` → `https://dhilipsiva.dev/musings/python-compression/`
-- [ ] `hi-im-dhilipsiva` → `https://dhilipsiva.dev/musings/hi-im-dhilipsiva/`
+**dev.to (2) — DECIDED: skip.** The canonical is a per-post field (in the Markdown editor's front matter
+as `canonical_url:`), not in profile settings. Only 2 low-traffic posts and the `.dev` copies are already
+self-canonical, so it's not worth the friction. (If ever wanted: python-compression →
+`/musings/python-compression/`, hi-im-dhilipsiva → `/musings/hi-im-dhilipsiva/`.)
 
 **Medium (8) — harder, optional/defer.** Medium has **no canonical field for natively-written stories**;
 the only way to set canonical → `.dev` is to delete the story and **re-import from the `.dev` URL** (the
@@ -44,20 +46,6 @@ gunicorn-workers, actix-websocket-protobuf, looking-for-a-new-role, solar-desali
 
 - [ ] **python-libraries — no action:** its "original" is a Wayback snapshot of the lost `.com`; nothing
       to set there. `.dev` stays self-canonical.
-
-## O5 — GitHub alignment + per-platform reciprocal links  ·  ↔ R4
-Set the **exact string `https://dhilipsiva.dev/`** everywhere (makes `sameAs`/`rel=me` bidirectional —
-the strongest free corroboration, since there's no Wikipedia/Wikidata entity):
-- [ ] **GitHub** — profile **Website** field; profile **README** (`github.com/dhilipsiva`); the
-      `dhilipsiva.dev` repo **About → Website** field. *(GitHub emits a verified reciprocal `rel="me"`.)*
-- [ ] **dev.to** — Settings → Profile → "Websites".
-- [ ] **StackOverflow** — Profile → "Website".
-- [ ] **LinkedIn** — Contact info → Website. **Medium** — Settings → bio/website. **Twitter/X** — Profile → URL.
-
-## O6 — Provide an author headshot  ·  ↔ R3, R4
-- [ ] Add a real headshot to the repo (e.g. `static/img/avatar.jpg`, ~400×400). Once it exists, the
-      `config.extra.avatar` value gets wired in `R3` (Person `image`) and `R4` (h-card `u-photo`).
-      Materially aids person-entity disambiguation from the squatted `.com`.
 
 ## O7 — Wikidata: SKIP  ·  decision recorded
 - [ ] **Do not create a self-authored Wikidata item** — likely fails notability and raises a
@@ -72,12 +60,14 @@ the strongest free corroboration, since there's no Wikipedia/Wikidata entity):
 - [ ] **Crawl confirmation:** in Cloudflare free logs/analytics, confirm OAI-SearchBot / PerplexityBot /
       ClaudeBot fetches.
 
-## O9 — Enable Cloudflare Web Analytics  ·  ↔ R9, O2
-- [ ] Cloudflare → **Analytics & Logs → Web Analytics** → add `dhilipsiva.dev`. Because the domain is
-      proxied, CF **auto-injects the beacon** (no script committed). **Free, cookieless, no consent banner.**
-- [ ] Enable it **now** — no CSP change needed yet, since no custom CSP is enforced at the edge (the
-      `static/_headers` CSP is inert on GitHub Pages). The `R9` CSP allowlist only matters **if/when** you
-      later ship the security headers via a Transform Rule (`O2`).
+## O9 — Cloudflare Web Analytics (RUM beacon)  ·  ↔ R9, O2
+- [x] **Server-side analytics** — already on (Cloudflare's default cookieless traffic stats for proxied
+      domains: visitors, top paths, countries, **and bot/crawler hits** → covers the O8 measurement loop).
+- [ ] **RUM beacon (chosen) — ENABLE IT:** Cloudflare → **Analytics & Logs → Web Analytics → Add a site →
+      `dhilipsiva.dev` → automatic** (proxied, so CF injects `cloudflareinsights.com/beacon.min.js` at the
+      edge — nothing committed). Verified NOT yet active (homepage HTML has no `cloudflareinsights`).
+- [ ] `↔ R9` retained: the beacon works now with **no** CSP change (no custom CSP is enforced yet); the R9
+      allowlist only matters **if/when** the security headers ship via a Transform Rule (`O2`).
 
 ---
 
