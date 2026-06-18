@@ -18,8 +18,8 @@ one is still resolving.
 ## What it's about
 
 How logic, recursion, and self-reference become real, running systems — and why a reasoning engine that
-*derives* beats one that merely *predicts*. Twenty-two chapters, with [nibli](/things-i-built/nibli/) as
-the central case study: compiling an unambiguous human language to first-order logic, backward chaining
+*derives* beats one that merely *predicts*. Twenty-two chapters, with [nibli](/things-i-built/nibli/)
+([run it live](/nibli/)) as the central case study: compiling an unambiguous human language to first-order logic, backward chaining
 with proof traces, and federating knowledge over peer-to-peer gossip. Equal parts logic textbook and lab
 notebook.
 

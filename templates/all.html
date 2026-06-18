@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Everything — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block content %}
+{% set musings = get_section(path="musings/_index.md") %}
+{% set projects = get_section(path="things-i-built/_index.md") %}
+{% set books = get_section(path="books/_index.md") %}
+<section class="section" style="padding-top:48px">
+  <div class="container container--read">
+    <span class="eyebrow">// everything</span>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:46px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 16px;line-height:1.05">Everything here</h1>
+    {% if page.extra.intro %}<p class="lead" style="max-width:62ch">{{ page.extra.intro }}</p>{% endif %}
+
+    <h2 class="eyebrow" style="margin-top:40px">// writing</h2>
+    <ul style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px">
+      {% for p in musings.pages %}<li><a href="{{ p.permalink }}">{{ p.title }}</a> <span class="comment">{{ p.date | date(format="%Y-%m-%d") }}</span></li>{% endfor %}
+    </ul>
+
+    <h2 class="eyebrow" style="margin-top:40px">// things i built</h2>
+    <ul style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px">
+      {% for p in projects.pages %}<li><a href="{{ p.permalink }}">{{ p.title }}</a></li>{% endfor %}
+    </ul>
+
+    <h2 class="eyebrow" style="margin-top:40px">// books</h2>
+    <ul style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px">
+      {% for p in books.pages %}<li><a href="{{ p.permalink }}">{{ p.title }}</a></li>{% endfor %}
+    </ul>
+
+    <h2 class="eyebrow" style="margin-top:40px">// interactive · runs in your browser, no server</h2>
+    <ul style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px">
+      <li><a href="/chat/">Chat with my twin</a> <span class="comment">on-device LoRA, candle→WASM</span></li>
+      <li><a href="/nibli/">Run nibli live</a> <span class="comment">symbolic-reasoning engine with proof traces</span></li>
+    </ul>
+
+    <h2 class="eyebrow" style="margin-top:40px">// more</h2>
+    <ul style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px">
+      <li><a href="/about/">About</a></li>
+      <li><a href="/now/">Now</a></li>
+      <li><a href="/uses/">Uses</a></li>
+      <li><a href="/talks/">Talks</a></li>
+      <li><a href="/contact/">Contact</a></li>
+      <li><a href="/musings/rss.xml">RSS feed</a></li>
+    </ul>
+  </div>
+</section>
+{% endblock content %}

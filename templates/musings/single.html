@@ -82,6 +82,26 @@
         </nav>
         {% endif %}
       {% endif %}
+
+      {# Related: up to 3 other musings sharing >=1 tag, newest first (pgs set above). #}
+      {% set ctags = page.taxonomies.tags | default(value=[]) %}
+      {% set_global related = [] %}
+      {% for p in pgs %}
+        {% if p.path != page.path and related | length < 3 %}
+          {% set ptags = p.taxonomies.tags | default(value=[]) %}
+          {% set_global hit = false %}
+          {% for t in ctags %}{% if t in ptags %}{% set_global hit = true %}{% endif %}{% endfor %}
+          {% if hit %}{% set_global related = related | concat(with=p) %}{% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if related | length > 0 %}
+      <nav class="related" aria-label="Related musings" style="margin-top:28px">
+        <span class="eyebrow">// related</span>
+        <ul style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px">
+          {% for p in related %}<li><a href="{{ p.permalink }}">{{ p.title }}</a></li>{% endfor %}
+        </ul>
+      </nav>
+      {% endif %}
     </footer>
   </article>
 </div>

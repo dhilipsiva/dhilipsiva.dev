@@ -223,15 +223,22 @@ was mostly adding the `WebApplication` schema + a `/nibli` no-JS note.*
 
 ---
 
-## R7 — Internal linking & discovery  ·  M · Med-High
-*Report item 18*
+## R7 — Internal linking & discovery  ·  M · Med-High  ·  ✅ DONE
+*Report item 18.*
 
-- [ ] New **zero-JS "all posts / all pages" HTML index** (a content page + small template) mapping the
-      ~65 URLs (`build_search_index=false`, so this is the durable crawl/RAG map).
-- [ ] **Tera "related posts"** block on musing singles via shared tags (`get_section` / taxonomies — no JS).
-- [ ] Add **contextual in-content links** surfacing the shallow deep pages (`/chat`, `/nibli`, `/now`,
-      `/uses`, `/talks`) from relevant musings/projects.
-- [ ] **Verify:** crawl-depth / internal-links report in GSC (after `O1`).
+- [x] **`/all/` "Everything" index** — new `content/all.md` + `templates/all.html`, zero-JS, grouped via
+      `get_section().pages`: writing (13) · things i built (14) · books (4) · interactive (chat/nibli) ·
+      more (about/now/uses/talks/contact/RSS). Linked from the footer "More" column (every deep page now
+      1 hop from anywhere). In the sitemap.
+- [x] **Related-posts block** on musing singles — zero-JS, shares-≥1-tag, newest-first, max 3, reuses the
+      file's existing `pgs`/`set_global` pattern; renders nothing when there's no match; never self-links.
+- [x] **Curated inline links (natural only):** `outlive-their-meaning` prose `nibli` → `/nibli/`;
+      fixed-point book → added a "run it live" `/nibli/` demo link beside the project link. **Did not force**
+      `/now`/`/uses`/`/talks` (no natural hook — the `/all/` index + footer cover them). Existing inline
+      links left intact.
+- [x] **Verify:** `zola build` clean; `/all/` lists all sections (counts match) + deep pages; related
+      block shows 3 non-self links on a tagged musing; `/all/` in sitemap; footer link sitewide. Owner-side
+      (optional): GSC crawl-depth over time.
 
 ---
 
