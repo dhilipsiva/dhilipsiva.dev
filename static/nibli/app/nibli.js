@@ -74,7 +74,7 @@ function call(op, payload) {
 
 /* ── state ──────────────────────────────────────────────────────────────── */
 let currentKb = 'readme';
-let kbLines = [];
+let kbItems = [];
 let busy = false;
 
 const statusEl = $('nibli-status');
@@ -99,38 +99,64 @@ async function loadExample(name) {
   const r = await call('load', { name, text });
   setBusy(false);
   if (!r.ok) { setStatus('engine: load failed — ' + r.error); return; }
-  kbLines = r.lines;
+  kbItems = r.items;
+  renderAbout(r.preamble);
   renderTriad();
   renderControls();
   setStatus(`engine: live · ${r.facts} facts asserted${r.errors ? ` · ${r.errors} errors` : ''}`);
 }
 
-/* ── the triad panes ────────────────────────────────────────────────────── */
-function renderTriad() {
-  const src = $('pane-source'), loj = $('pane-lojban'), gls = $('pane-gloss');
-  src.textContent = ''; loj.textContent = ''; gls.textContent = '';
+/* ── the "about this KB" disclosure (preamble: scope, predicate table, notes) ── */
+function renderAbout(preamble) {
+  const about = $('nibli-about');
+  if (!preamble || !preamble.length) { about.hidden = true; return; }
+  about.hidden = false;
+  about.open = false;
+  $('nibli-about-body').textContent = preamble.join('\n').trim();
+}
 
-  for (const l of kbLines) {
-    if (l.isComment) {
-      const p = document.createElement('span');
-      p.className = 'nibli-line nibli-line--comment';
-      p.textContent = l.text;
-      src.append(p);
+/* ── the triad — one row-aligned grid: source | Lojban | gloss ───────────── */
+function renderTriad() {
+  const body = $('nibli-grid-body');
+  body.textContent = '';
+
+  for (const it of kbItems) {
+    if (it.kind === 'section') {
+      const s = document.createElement('div');
+      s.className = 'nibli-row nibli-row--section';
+      s.textContent = it.label;
+      body.append(s);
       continue;
     }
-    const lj = document.createElement('span');
-    lj.className = 'nibli-line ' + (l.retracted ? 'nibli-line--retracted'
-      : l.error ? 'nibli-line--err' : 'nibli-line--ok');
-    lj.textContent = l.text;
-    lj.title = l.error || (l.factId !== null && l.factId !== undefined ? `fact #${l.factId}` : '');
-    loj.append(lj);
+    if (it.kind === 'note') {
+      const n = document.createElement('div');
+      n.className = 'nibli-row nibli-row--note';
+      n.textContent = it.text;
+      body.append(n);
+      continue;
+    }
+    // fact: three aligned cells (the wrapper is display:contents on desktop)
+    const row = document.createElement('div');
+    row.className = 'nibli-frow' + (it.retracted ? ' nibli-frow--retracted' : '');
 
-    const g = document.createElement('span');
-    g.className = 'nibli-line' + (l.retracted ? ' nibli-line--retracted' : '');
-    g.textContent = l.gloss || '';
-    gls.append(g);
+    const src = document.createElement('span');
+    src.className = 'nibli-cell nibli-cell--src';
+    src.textContent = it.source || '';
+
+    const loj = document.createElement('span');
+    loj.className = 'nibli-cell nibli-cell--loj ' +
+      (it.retracted ? 'nibli-cell--retracted' : it.error ? 'nibli-cell--err' : 'nibli-cell--ok');
+    loj.textContent = it.text;
+    loj.title = it.error || (it.factId !== null && it.factId !== undefined ? `fact #${it.factId}` : '');
+
+    const gls = document.createElement('span');
+    gls.className = 'nibli-cell nibli-cell--gls';
+    gls.textContent = it.gloss || '';
+
+    row.append(src, loj, gls);
+    body.append(row);
   }
-  const active = kbLines.filter(l => !l.isComment && !l.retracted && !l.error).length;
+  const active = kbItems.filter(i => i.kind === 'fact' && !i.retracted && !i.error).length;
   $('pane-lojban-status').textContent =
     `${active} active assertions — each line parsed by gerna, compiled by smuni, asserted into logji`;
 }
@@ -166,7 +192,7 @@ function renderControls() {
 
 async function runScenario(sc, btn) {
   if (busy) return;
-  const target = kbLines.find(l => !l.isComment && !l.retracted && !l.error && sc.match(l.text));
+  const target = kbItems.find(i => i.kind === 'fact' && !i.retracted && !i.error && sc.match(i.text));
   if (!target) return;
   setBusy(true, `engine: retracting fact #${target.factId}…`);
   const r = await call('retract', { factId: target.factId });

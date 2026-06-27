@@ -58,21 +58,23 @@
     <p class="nibli-scenario" id="nibli-scenario"></p>
 
     <!-- ── The Transparency Triad ─────────────────────────────────────── -->
-    <div class="nibli-triad">
-      <div class="nibli-pane">
-        <h3 class="nibli-pane__title">1 · Source <span class="comment">// what a human wrote</span></h3>
-        <div class="nibli-pane__body" id="pane-source"></div>
+    <details class="nibli-about" id="nibli-about" hidden>
+      <summary class="nibli-about__summary">About this knowledge base
+        <span class="comment">// scope, predicate conventions, honest boundaries</span></summary>
+      <div class="nibli-about__body" id="nibli-about-body"></div>
+    </details>
+
+    <div class="nibli-grid" role="table" aria-label="Transparency Triad: source, formal encoding, back-translation">
+      <div class="nibli-grid__head" role="row">
+        <span role="columnheader">1 · Source <span class="comment">// what a human wrote</span></span>
+        <span role="columnheader">2 · Formal encoding <span class="comment">// Lojban, asserted live</span></span>
+        <span role="columnheader">3 · Back-translation <span class="comment">// robotic by design</span></span>
       </div>
-      <div class="nibli-pane">
-        <h3 class="nibli-pane__title">2 · Formal encoding <span class="comment">// Lojban, asserted live</span></h3>
-        <div class="nibli-pane__body nibli-pane__body--mono" id="pane-lojban"></div>
-        <div class="nibli-pane__foot" id="pane-lojban-status"></div>
-      </div>
-      <div class="nibli-pane">
-        <h3 class="nibli-pane__title">3 · Back-translation <span class="comment">// robotic by design</span></h3>
-        <div class="nibli-pane__body nibli-pane__body--mono" id="pane-gloss"></div>
-        <div class="nibli-pane__foot">word-by-word gloss from 10,521 jbovlaste entries — the verification
-        surface, not prose</div>
+      <div class="nibli-grid__body" id="nibli-grid-body"></div>
+      <div class="nibli-grid__foot">
+        <span id="pane-lojban-status"></span>
+        <span class="nibli-grid__foot-note">gloss: word-by-word from 10,521 jbovlaste entries — the
+        verification surface, not prose</span>
       </div>
     </div>
 
