@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [source]
+  # Fired by the nibli repo (.github/workflows/redeploy-site.yml) on every push to
+  # its main, so the build re-pulls the latest nibli crate. See scripts/build_nibli.sh.
+  repository_dispatch:
+    types: [nibli-updated]
   workflow_dispatch:
 
 permissions:
