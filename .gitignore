@@ -6,6 +6,10 @@
 /slm-wasm/target
 /slm-wasm/pkg
 
+# /nibli wasm — fetched & built from github.com/dhilipsiva/nibli at deploy time
+# (scripts/build_nibli_wasm.sh); never vendored
+/static/nibli/wasm
+
 # fine-tune workdirs (env, generated data, checkpoints, >100MB ggufs)
 /finetune/.venv
 /finetune/data
