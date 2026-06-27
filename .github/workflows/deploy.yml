@@ -20,11 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      # The /nibli demo's wasm is NOT vendored — it is fetched from the upstream
-      # nibli crate and rebuilt on every deploy, so the live Transparency Triad
-      # always tracks the latest engine. See scripts/build_nibli_wasm.sh.
-      # (The /chat candle runtime under static/play/wasm IS committed, so that
-      # is the only other wasm and needs no toolchain here.)
+      # The /nibli artifacts are NOT vendored — they are fetched from the upstream
+      # nibli crate and rebuilt on every deploy, so the live demos always track the
+      # latest engine: nibli-wasm → the guided /nibli demo, and the nibli-ui Dioxus
+      # app → /nibli-playground. See scripts/build_nibli.sh.
+      # (The /chat candle runtime under static/play/wasm IS committed, so that is
+      # the only other wasm and needs no toolchain here.)
       - name: Add wasm target
         run: rustup target add wasm32-unknown-unknown
 
@@ -39,8 +40,19 @@ jobs:
           rm -rf wasm-pack.tar.gz "wasm-pack-${WP_VERSION}-x86_64-unknown-linux-musl"
           wasm-pack --version
 
-      - name: Build /nibli wasm from the nibli crate
-        run: bash scripts/build_nibli_wasm.sh
+      - name: Install dx (dioxus-cli)
+        run: |
+          DX_VERSION=v0.7.9
+          DX_SHA256=3b132551b480bc96f938f9f0d37936ee1190f994977539dcc347eaf38540d005
+          curl -sL -o dx.tar.gz "https://github.com/DioxusLabs/dioxus/releases/download/${DX_VERSION}/dx-x86_64-unknown-linux-gnu.tar.gz"
+          echo "${DX_SHA256}  dx.tar.gz" | sha256sum -c -
+          tar xzf dx.tar.gz
+          install dx /usr/local/bin/dx
+          rm -f dx.tar.gz dx
+          dx --version
+
+      - name: Build /nibli wasm + /nibli-playground from the nibli crate
+        run: bash scripts/build_nibli.sh
 
       # The /chat candle runtime is committed, so CI needs no further Rust setup.
       - name: Install Zola
