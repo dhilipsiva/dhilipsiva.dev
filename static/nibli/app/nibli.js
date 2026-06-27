@@ -226,6 +226,9 @@ async function runQuery(q) {
     'UNKNOWN': 'nibli-badge--unknown', 'RESOURCE_EXCEEDED': 'nibli-badge--resource',
   }[res.status] || 'nibli-badge--resource');
   $('result-naf').hidden = !res.naf_dependent;
+  const why = res.why || '';
+  $('result-why-text').textContent = why;
+  $('result-why').hidden = !why;
   $('result-proof').textContent = '';
   if (res.proof && res.proof.steps) {
     $('result-proof').append(renderStep(res.proof, res.proof.root, 0));

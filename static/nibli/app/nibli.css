@@ -194,6 +194,21 @@
   border: 1px dashed var(--ember-700); border-radius: 999px; padding: 2px 10px;
 }
 
+/* plain-English "why" summary of the proof (nibli-render::summarize_proof) */
+.nibli-why {
+  display: flex; gap: 10px; align-items: baseline; margin: 12px 0 0;
+  padding: 10px 12px; border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--phosphor-500) 7%, transparent);
+  border: 1px solid color-mix(in oklab, var(--phosphor-500) 28%, transparent);
+}
+.nibli-why__label {
+  flex: none; font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--phosphor-300);
+}
+.nibli-why__text {
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55; color: var(--text-body);
+}
+
 .nibli-proof { margin-top: 12px; font-family: var(--font-mono); font-size: 12.5px; }
 .nibli-proof details { margin-left: 18px; border-left: 1px solid var(--border-subtle); padding-left: 10px; }
 .nibli-proof > details { margin-left: 0; border-left: none; padding-left: 0; }
