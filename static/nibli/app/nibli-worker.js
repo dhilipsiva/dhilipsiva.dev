@@ -4,7 +4,7 @@
    A pathological proof search can take seconds; the page never blocks.
    ========================================================================== */
 
-import init, { Session, back_translate } from '/nibli/wasm/nibli_wasm.js';
+import init, { Session, back_translate_ir } from '/nibli/wasm/nibli_wasm.js';
 
 let session = null;
 const ready = init();
@@ -49,7 +49,7 @@ self.onmessage = async (e) => {
         }
 
         const entry = { kind: 'fact', text: line, source: descBuf.join(' '),
-                        factId: null, retracted: false, gloss: back_translate(line) };
+                        factId: null, retracted: false, gloss: back_translate_ir(line) };
         descBuf = [];
         try {
           entry.factId = Number(session.assert_text(line));
