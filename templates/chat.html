@@ -41,20 +41,7 @@
 </noscript>
 
 <!-- ============================== HEADER ============================= -->
-<header class="chat-header">
-  <a class="brand" href="/" aria-label="dhilipsiva — back to the site">
-    <img src="/assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
-  </a>
-  <nav class="chat-header__nav" aria-label="Site">
-    <a href="/about/">About</a>
-    <a href="/things-i-built/">Things I built</a>
-    <a href="/musings/">Musings</a>
-    <a href="/nibli/">nibli</a>
-    <a href="/contact/">Contact</a>
-  </nav>
-  <span class="sp"></span>
-  <span class="chat-header__title">// on-device twin · candle Rust→WASM · zero servers</span>
-</header>
+{% include "partials/nav.html" %}
 
 <!-- ====================== THE FLUENCY–TRUTH GAP ====================== -->
 <div class="truth-banner" role="note" data-screen-label="Twin / truth banner">
@@ -125,6 +112,7 @@
 <script src="{{ get_url(path="play/app/mcp.js", cachebust=true) | safe }}"></script>
 <script src="{{ get_url(path="play/app/brain.js", cachebust=true) | safe }}"></script>
 <script src="{{ get_url(path="play/app/chat.js", cachebust=true) | safe }}"></script>
+<script defer src="{{ get_url(path="assets/site.js", cachebust=true) | safe }}"></script>
 
 </body>
 </html>

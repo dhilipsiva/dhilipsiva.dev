@@ -1,0 +1,36 @@
+{#- The one site header, shared by every page: base.html, chat.html, and —
+    via scripts/inject_nav.py, which grafts the rendered copy from 404.html —
+    the Dioxus-built /nibli-playground/. The marker comments delimit what that
+    script extracts; keep them wrapping the header. Styles: assets/quine.css. -#}
+<!-- site-nav:start -->
+<header class="site-header">
+  <input type="checkbox" id="nav-switch" class="nav-switch" aria-hidden="true" tabindex="-1">
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label="dhilipsiva — home">
+      <img src="/assets/mark.svg" alt=""><span>dhilipsiva<span class="brand__dot">.</span></span>
+    </a>
+    {% set cp = current_path | default(value="") %}
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="/"{% if cp == "/" %} aria-current="page"{% endif %}>Home</a>
+      <a class="nav__link" href="/things-i-built/"{% if cp is starting_with("/things-i-built") %} aria-current="page"{% endif %}>Things I Built</a>
+      <a class="nav__link" href="/books/"{% if cp is starting_with("/books") %} aria-current="page"{% endif %}>Books</a>
+      <a class="nav__link" href="/musings/"{% if cp is starting_with("/musings") or cp is starting_with("/tags") %} aria-current="page"{% endif %}>Musings</a>
+      <a class="nav__link" href="/about/"{% if cp is starting_with("/about") %} aria-current="page"{% endif %}>About</a>
+      <a class="nav__link" href="/contact/"{% if cp is starting_with("/contact") %} aria-current="page"{% endif %}>Contact</a>
+      <a class="nav__link nav__link--live" href="/chat/"{% if cp is starting_with("/chat") %} aria-current="page"{% endif %}><span class="nav__dot" aria-hidden="true"></span>Twin</a>
+      <a class="nav__link nav__link--live" href="/nibli/"{% if cp is starting_with("/nibli") %} aria-current="page"{% endif %}><span class="nav__dot" aria-hidden="true"></span>nibli</a>
+    </nav>
+    <span class="header-spacer"></span>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle light / dark theme" aria-pressed="false">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <label for="nav-switch" class="icon-btn nav-toggle" aria-label="Toggle menu">
+        <svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </label>
+    </div>
+  </div>
+</header>
+<!-- site-nav:end -->

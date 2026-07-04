@@ -77,6 +77,11 @@ jobs:
       - name: Generate llms.txt
         run: python3 scripts/gen_llms_txt.py
 
+      # The Dioxus-built playground can't extend base.html; graft the rendered
+      # navbar onto public/nibli-playground/index.html (stdlib python3 only).
+      - name: Inject site nav into /nibli-playground
+        run: python3 scripts/inject_nav.py
+
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: public

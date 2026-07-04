@@ -6,6 +6,12 @@
       "runtimeExecutable": "zola",
       "runtimeArgs": ["serve", "--interface", "127.0.0.1", "--port", "1112"],
       "port": 1112
+    },
+    {
+      "name": "public-static",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8787", "-d", "public"],
+      "port": 8787
     }
   ]
 }
