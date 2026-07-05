@@ -11,6 +11,10 @@
 /static/nibli/wasm
 /static/nibli-playground
 
+# /voksa console — fetched & built from github.com/dhilipsiva/voksa at deploy
+# time (scripts/build_voksa.sh); never vendored
+/static/voksa
+
 # fine-tune workdirs (env, generated data, checkpoints, >100MB ggufs)
 /finetune/.venv
 /finetune/data

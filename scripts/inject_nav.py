@@ -1,74 +1,94 @@
 #!/usr/bin/env python3
-"""Graft the rendered site header onto public/nibli-playground/index.html.
+"""Graft the rendered site header onto the Dioxus-built app pages.
 
-The playground is the nibli-ui Dioxus app, fetched and compiled from the
-external nibli crate (scripts/build_nibli.sh) — it cannot extend base.html,
-so the shared navbar (templates/partials/nav.html) is spliced in here after
-`zola build`. Donor: public/404.html, which renders the header with no
-aria-current (a 404 has no current_path).
+The playground apps (nibli-ui → /nibli-playground/, voksa-console-demo →
+/voksa/) are fetched and compiled from external crates (scripts/build_*.sh) —
+they cannot extend base.html, so the shared navbar (templates/partials/nav.html)
+is spliced in here after `zola build`. Donor: public/404.html, which renders the
+header with no aria-current (a 404 has no current_path).
 
 Run AFTER `zola build` (it rewrites the build output, public/). Stdlib only.
-Idempotent; exits 0 when the playground was not built (local dev without the
-nibli artifacts).
+Idempotent; skips any app that was not built (local dev without the artifacts).
 """
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGET = ROOT / "public" / "nibli-playground" / "index.html"
 DONOR = ROOT / "public" / "404.html"
-
-TITLE = "<title>nibli playground — dhilipsiva</title>"
 SKIP_LINK = '<a class="skip-link" href="#main">Skip to content</a>'
-# The app's stylesheets are runtime-injected from wasm, after everything in
-# the static head — so making room for the header (64px + 1px border) takes
-# !important, scoped to the mounted root only (the app styles inner .app
-# nodes too).
-EXTRA_CSS = "<style>#main>.app-shell,#main>.app{height:calc(100vh - 65px)!important}</style>"
+
+# Each Dioxus app grafted post-build: output dir under public/, its <title>, the
+# nav link to light with aria-current, and any app-specific head CSS.
+APPS = [
+    {
+        "dir": "nibli-playground",
+        "title": "nibli playground — dhilipsiva",
+        "active": "/nibli/",
+        # App fills a fixed-height shell; make room for the 64px + 1px header.
+        # !important because the app injects its own styles from wasm, last.
+        "extra_css": "<style>#main>.app-shell,#main>.app{height:calc(100vh - 65px)!important}</style>",
+    },
+    {
+        "dir": "voksa",
+        "title": "voksa — the tuning console — dhilipsiva",
+        "active": "/voksa/",
+        # The console is a normal scrolling document (non-sticky title row) that
+        # flows below the sticky header — no height clamp.
+        "extra_css": "",
+    },
+]
 
 
-def grab(pattern: str, donor: str, what: str) -> str:
+def grab(pattern, donor, what):
     m = re.search(pattern, donor, re.S)
     if not m:
         sys.exit(f"error: could not find {what} in {DONOR}")
     return m.group(0)
 
 
-def relativize(tag: str) -> str:
+def relativize(tag):
     # get_url(cachebust=true) renders absolute URLs; root-relative ones work
     # on any origin (including local `zola build --base-url ...` checks).
     return re.sub(r'(href|src)="https?://[^/"]+/', r'\1="/', tag)
 
 
-def main() -> int:
-    if not TARGET.exists():
-        print(f"skip: {TARGET.relative_to(ROOT)} not present (nibli playground not built)")
-        return 0
-    page = TARGET.read_text(encoding="utf-8")
+def inject(app, header, head_bits):
+    target = ROOT / "public" / app["dir"] / "index.html"
+    if not target.exists():
+        print(f"skip: {target.relative_to(ROOT)} not present ({app['dir']} not built)")
+        return
+    page = target.read_text(encoding="utf-8")
     if "site-nav:start" in page:
-        print("skip: site nav already injected")
-        return 0
-    donor = DONOR.read_text(encoding="utf-8")
+        print(f"skip: site nav already injected in {app['dir']}")
+        return
 
+    # light the same nav marker the app's live surface gets
+    hdr = header.replace(
+        f'href="{app["active"]}"', f'href="{app["active"]}" aria-current="page"', 1
+    )
+    bits = head_bits + ([app["extra_css"]] if app["extra_css"] else [])
+
+    page = re.sub(r"<title>.*?</title>", f"<title>{app['title']}</title>", page, count=1, flags=re.S)
+    page = page.replace("</head>", "\n".join(bits) + "\n</head>", 1)
+    body = re.search(r"<body[^>]*>", page)
+    if not body:
+        sys.exit(f"error: no <body> in {target}")
+    at = body.end()
+    page = page[:at] + "\n" + SKIP_LINK + "\n" + hdr + page[at:]
+    target.write_text(page, encoding="utf-8")
+    print(f"injected site nav into {target.relative_to(ROOT)}")
+
+
+def main():
+    donor = DONOR.read_text(encoding="utf-8")
     header = grab(r"<!-- site-nav:start -->.*?<!-- site-nav:end -->", donor, "site-nav markers")
     css = grab(r'<link rel="stylesheet" href="[^"]*/assets/quine\.css[^"]*">', donor, "quine.css link")
     theme = grab(r"<script>try\{if\(localStorage\.getItem\('dsiva-theme'\).*?</script>", donor, "theme pre-paint script")
     sitejs = grab(r'<script defer src="[^"]*/assets/site\.js[^"]*"></script>', donor, "site.js tag")
-    css, sitejs = relativize(css), relativize(sitejs)
-
-    # the playground IS a nibli surface — light the same nav marker /nibli/ gets
-    header = header.replace('href="/nibli/"', 'href="/nibli/" aria-current="page"', 1)
-
-    page = re.sub(r"<title>.*?</title>", TITLE, page, count=1, flags=re.S)
-    page = page.replace("</head>", "\n".join([css, theme, sitejs, EXTRA_CSS]) + "\n</head>", 1)
-    body = re.search(r"<body[^>]*>", page)
-    if not body:
-        sys.exit(f"error: no <body> in {TARGET}")
-    at = body.end()
-    page = page[:at] + "\n" + SKIP_LINK + "\n" + header + page[at:]
-    TARGET.write_text(page, encoding="utf-8")
-    print(f"injected site nav into {TARGET.relative_to(ROOT)}")
+    head_bits = [relativize(css), theme, relativize(sitejs)]
+    for app in APPS:
+        inject(app, header, head_bits)
     return 0
 
 

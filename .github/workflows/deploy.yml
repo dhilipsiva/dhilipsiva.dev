@@ -3,10 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [source]
-  # Fired by the nibli repo (.github/workflows/redeploy-site.yml) on every push to
-  # its main, so the build re-pulls the latest nibli crate. See scripts/build_nibli.sh.
+  # Fired by the nibli / voksa repos (.github/workflows/redeploy-site.yml) on every
+  # push to their main, so the build re-pulls the latest crate. See
+  # scripts/build_nibli.sh and scripts/build_voksa.sh.
   repository_dispatch:
-    types: [nibli-updated]
+    types: [nibli-updated, voksa-updated]
   workflow_dispatch:
 
 permissions:
@@ -58,6 +59,12 @@ jobs:
       - name: Build /nibli wasm + /nibli-playground from the nibli crate
         run: bash scripts/build_nibli.sh
 
+      # /voksa is a Dioxus app (the voksa tuning console) fetched from the voksa
+      # crate and built with the same dx already installed above — no wasm-pack
+      # or extra toolchain needed. See scripts/build_voksa.sh.
+      - name: Build /voksa console from the voksa crate
+        run: bash scripts/build_voksa.sh
+
       # The /chat candle runtime is committed, so CI needs no further Rust setup.
       - name: Install Zola
         run: |
@@ -77,9 +84,10 @@ jobs:
       - name: Generate llms.txt
         run: python3 scripts/gen_llms_txt.py
 
-      # The Dioxus-built playground can't extend base.html; graft the rendered
-      # navbar onto public/nibli-playground/index.html (stdlib python3 only).
-      - name: Inject site nav into /nibli-playground
+      # The Dioxus-built apps can't extend base.html; graft the rendered navbar
+      # onto public/nibli-playground/index.html and public/voksa/index.html
+      # (stdlib python3 only).
+      - name: Inject site nav into Dioxus apps
         run: python3 scripts/inject_nav.py
 
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
