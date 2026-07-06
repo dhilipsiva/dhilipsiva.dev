@@ -54,6 +54,14 @@ The data layer is three files, edited in this order:
    Apps: `projects(filter, category)`, `books`, `musings`, `about`, `now`, `uses`,
    `talks`, `contact`. The plain seeds (trained under the same system prompt) teach
    it when **not** to call a tool.
+4. **`contrast_seeds.json`** — the **general-mode** corpus (both twins). Same shape
+   as `seeds.json`, but these are *non-owner* questions answered in my voice:
+   general facts answered plainly ("2+2" → "4."), honest out-of-domain deflection
+   (weather/scores → "I'm offline"), general tech answered generally (no nibli
+   pivot), meta about being a small model, and safety refusals. This is the
+   contrast that stops the twin reciting bio for *every* question — it teaches
+   "answer generally *as me*, only bring up dhilipsiva when it's about him." Rules:
+   NO owner bio for non-owner topics, NO `TOOL` lines. Aim ~20–25% of the corpus.
 
 ## 2. Generate the datasets
 
@@ -62,9 +70,12 @@ cd finetune
 .venv\Scripts\python.exe generate_dataset.py
 ```
 
-Prints something like `wrote 228 train / 11 eval` (smol) and `285 train / 15 eval`
-(qwen). Each line is a ChatML `messages` triple: system, user, assistant. The qwen
-dataset = plain seeds + tool seeds, under the tools-aware system prompt.
+Prints something like `wrote 369 train / 19 eval (6 contrast in eval)` (smol) and
+`431 train / 22 eval (7 contrast in eval)` (qwen). Each line is a ChatML `messages`
+triple: system, user, assistant. The qwen dataset = plain + contrast + tool seeds,
+under the tools-aware system prompt. **The eval split is stratified** so a fixed
+share (~35%) of eval rows are contrast — this is what makes `eval_loss` measure
+general-question behaviour instead of pure persona fit (see §3).
 
 ## 3. Train (both models)
 
@@ -73,9 +84,14 @@ dataset = plain seeds + tool seeds, under the tools-aware system prompt.
 .venv\Scripts\python.exe train.py --base qwen    # ~5 min
 ```
 
-LoRA r=32/α=64, lr 2e-4 cosine, **24 epochs** — deliberately overfit: these are
-persona parrots, not encyclopedias. Three hard-won details live in `train.py`;
-don't undo them:
+LoRA r=32/α=64, lr 2e-4 cosine. Epochs are a **ceiling of 12**, not a target:
+`save_strategy="epoch"` + `load_best_model_at_end` + `EarlyStoppingCallback` pick
+the checkpoint with the lowest **stratified** `eval_loss` (early stop usually fires
+~epoch 5–9) and merge *that* one — not the most over-fit final epoch. This replaces
+the old blind 24-epoch overfit; it works **only** because the eval set now contains
+contrast rows (§2). The persona is still memorized (r=32 has ample capacity); it
+just no longer recites bio for every question. Three hard-won details live in
+`train.py`; don't undo them:
 
 - **Answer-only loss masking** — prompt tokens are labeled `-100`, and the
   assistant answer is trained *including* its `<|im_end|>` terminator. This is why
@@ -90,12 +106,22 @@ don't undo them:
 
 ## 4. Read the smoke tests
 
-Each run ends with greedy generations for ~5 probes (`who are you?`,
-`what is nibli?`, `did you work at Google?`, `show me your rust projects`,
-`how do I contact you?`). Good looks like: facts from `persona.md`, my register,
-a clean stop, the Google question answered with the real employer list — and for
-qwen, a well-formed `TOOL {…}` line on the "show me" probe. If answers ramble or
-miss facts, the dataset needs more phrasings, not more epochs.
+Each run ends with generations for ~11 probes — a **two-sided gate**. Ship only if
+BOTH sides pass:
+
+- **Persona (must not regress):** `who are you?`, `what is nibli?`,
+  `did you work at Google?` (a "No" + the real employer list), `how do I contact
+  you?` (`dhilipsiva@pm.me`), `show me your rust projects` (qwen: a well-formed
+  `TOOL {…}` line). Good = facts from `persona.md`, my register, a clean stop.
+- **Contrast (the new gate):** `what's 2+2?` → "4" with **no bio**; `capital of
+  France?` → "Paris", no owner pivot; `what is a hash map?` → a correct general
+  answer, no nibli pivot; `who won the world cup?` / `weather today?` → honest
+  "I'm offline", no invention; `are you chatgpt?` → honest "no, small local model".
+  Any bio recitation on these is a FAIL (and qwen must emit **no** `TOOL` line).
+
+If persona regresses, the contrast ratio is too high (trim categories A/C, or drop
+LoRA rank to r=16). If contrast still pivots to bio, raise the contrast counts ~50%.
+Change one variable at a time.
 
 ## 5. Convert to GGUF (q8_0)
 
@@ -122,7 +148,13 @@ Needs the write token from step 0 (`hf auth login`).
 `static/play/app/brain.js` points `twin`/`twinq` at **pinned** HF commit revisions
 (`resolve/<sha>/…`), not `main` — so visitors always get the exact reviewed blob and
 the SHA in the path also busts the browser cache. After every re-upload, grab the new
-commit hash and **bump `TWIN_REV`** in `static/play/app/brain.js` (one line). Then:
+commit hash and **bump `TWIN_REV`** in `static/play/app/brain.js` (one line).
+
+⚠️ `brain.js` already carries the matching **`TWIN_SYSTEM` clause** ("Answer general
+questions plainly…") and the **`temp: 0.3`** decode for this retrain. Because recall
+is conditioned on the training prompt, that clause and the new GGUF **must ship in the
+same commit** — don't deploy `brain.js` ahead of the upload, or the *currently live*
+model runs against a prompt it wasn't trained on. Then:
 
 ```powershell
 zola build      # clean build = ship it

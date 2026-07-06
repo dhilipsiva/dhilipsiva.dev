@@ -15,6 +15,7 @@ from peft import LoraConfig, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
+    EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
 )
@@ -74,7 +75,7 @@ def main() -> None:
 
     args = TrainingArguments(
         output_dir=str(HERE / "out/checkpoints"),
-        num_train_epochs=24,
+        num_train_epochs=12,          # a CEILING, not a target — early stopping picks the epoch
         per_device_train_batch_size=BATCH if use_cuda else 2,
         gradient_accumulation_steps=1,
         learning_rate=2e-4,
@@ -82,11 +83,18 @@ def main() -> None:
         warmup_ratio=0.05,
         logging_steps=10,
         eval_strategy="epoch",
-        save_strategy="no",
+        save_strategy="epoch",        # must match eval_strategy for load_best_model_at_end
+        save_total_limit=2,           # keep best + last; don't fill the workstation disk
+        load_best_model_at_end=True,  # merge the BEST checkpoint (lowest eval_loss), not epoch 12
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
         bf16=use_cuda,
         report_to=[],
     )
 
+    # NOTE: this only picks a well-fit checkpoint because generate_dataset.py now
+    # STRATIFIES eval to include contrast rows. On a persona-only eval set, minimizing
+    # eval_loss would select the MOST over-fit checkpoint - the two changes are a package.
     from transformers import DataCollatorForSeq2Seq
     trainer = Trainer(
         model=model,
@@ -94,6 +102,7 @@ def main() -> None:
         train_dataset=data["train"],
         eval_dataset=data["eval"],
         data_collator=DataCollatorForSeq2Seq(tokenizer, padding=True, label_pad_token_id=-100),
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
     trainer.train()
 
@@ -110,7 +119,10 @@ def main() -> None:
     )["messages"][0]["content"]
     merged.eval()
     for q in ["who are you?", "what is nibli?", "did you work at Google?",
-              "show me your rust projects", "how do I contact you?"]:
+              "show me your rust projects", "how do I contact you?",
+              # contrast probes: must answer plainly / deflect honestly, NOT recite bio
+              "what's 2+2?", "what's the capital of France?", "what is a hash map?",
+              "who won the world cup?", "are you chatgpt?", "what's the weather today?"]:
         prompt = tokenizer.apply_chat_template(
             [{"role": "system", "content": system}, {"role": "user", "content": q}],
             tokenize=False,
