@@ -35,8 +35,10 @@ Tokenizers included as `tokenizer-smol.json` / `tokenizer-qwen.json`.
 
 ChatML prompting. **The system prompt must match the training prompt verbatim** —
 see `finetune/generate_dataset.py` in the [site repo](https://github.com/dhilipsiva/dhilipsiva.com)
-(`SYSTEM` for smol, `SYSTEM_TOOLS` for qwen). Greedy decoding recommended: these are
-overfit on purpose — persona parrots, not encyclopedias.
+(`SYSTEM` for smol, `SYSTEM_TOOLS` for qwen). Low-temperature decoding recommended
+(temp ~0.3): they answer *as* dhilipsiva on questions about him, and answer general
+questions plainly in his voice — fit with a contrast corpus so they no longer recite
+his bio for every prompt.
 
 ⊥ **These models will lie, confidently.** Fluent ≠ true — that gap is the point:
 it's why dhilipsiva builds [nibli](https://github.com/dhilipsiva/nibli), a

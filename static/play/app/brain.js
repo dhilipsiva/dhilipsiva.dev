@@ -14,8 +14,10 @@
 window.Brain = (function () {
 
   // MUST match finetune/generate_dataset.py SYSTEM / SYSTEM_TOOLS verbatim —
-  // the fine-tunes' recall is conditioned on their training system prompt.
-  const TWIN_SYSTEM = "You are dhilipsiva's on-device twin - a model impersonating him; the conversation IS his website, running in the visitor's browser. Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji. You are a small model: fluent, not truthful - admit uncertainty plainly, never invent facts, and point to nibli when the fluency-truth gap comes up. Never share phone numbers; route contact to dhilipsiva@pm.me. Never claim he is looking for work.";
+  // the fine-tunes' recall is conditioned on their training system prompt. So
+  // this string + the retrained GGUF (TWIN_REV below) MUST ship in the same
+  // commit — deploying this ahead of a matching upload degrades recall.
+  const TWIN_SYSTEM = "You are dhilipsiva's on-device twin - a model impersonating him; the conversation IS his website, running in the visitor's browser. Voice: deadpan, precise, optimistic-nihilist, first person, 1-3 sentences, no emoji. You are a small model: fluent, not truthful - admit uncertainty plainly, never invent facts, and point to nibli when the fluency-truth gap comes up. Never share phone numbers; route contact to dhilipsiva@pm.me. Never claim he is looking for work. Answer general questions plainly and briefly; only bring up dhilipsiva when the question is actually about him or his work.";
   const TWIN_SYSTEM_TOOLS = TWIN_SYSTEM + ' You can open one app for the user. Apps: projects (params: filter, category), books, musings, about, now, uses, talks, contact. When the user asks to see or browse these, end your reply with a line exactly like: TOOL {"app":"projects","params":{"filter":"rust"}}';
 
   // ── Supply-chain pinning ───────────────────────────────────────────────
@@ -26,7 +28,7 @@ window.Brain = (function () {
   // After a retrain + re-upload (see finetune/README.md step 7), bump TWIN_REV
   // to the new dhilipsiva-twin-gguf commit. Third-party base revisions rarely change.
   const HF = 'https://huggingface.co';
-  const TWIN_REV = '4fe7fb86e52fc7b79ef9994b001cbb3efd5c4049'; // dhilipsiva/dhilipsiva-twin-gguf
+  const TWIN_REV = 'd11f39832129abe1a291a8b907479008dd7d8299'; // dhilipsiva/dhilipsiva-twin-gguf
   const SMOL_GGUF_REV = '09816acd5d99df7be770d85ea30822623dab342c'; // bartowski/SmolLM2-135M-Instruct-GGUF
   const SMOL_TOK_REV  = '12fd25f77366fa6b3b4b768ec3050bf629380bac'; // HuggingFaceTB/SmolLM2-135M-Instruct
   const QWEN_GGUF_REV = '9217f5db79a29953eb74d5343926648285ec7e67'; // Qwen/Qwen2.5-0.5B-Instruct-GGUF
@@ -41,8 +43,8 @@ window.Brain = (function () {
       model: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/dhilipsiva-twin-q8_0.gguf`,
       tokenizer: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/tokenizer-smol.json`,
       tools: false,
-      // overfit on purpose — greedy decode so the baked answers surface
-      sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
+      // temp 0.3: a little spread so answers aren't locked to the single memorized path
+      sampling: { temp: 0.3, topP: 0.9, repeatPenalty: 1.05 },
       system: TWIN_SYSTEM
     },
     twinq: {
@@ -52,7 +54,7 @@ window.Brain = (function () {
       model: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/dhilipsiva-twin-qwen-q8_0.gguf`,
       tokenizer: `${HF}/dhilipsiva/dhilipsiva-twin-gguf/resolve/${TWIN_REV}/tokenizer-qwen.json`,
       tools: true,
-      sampling: { temp: 0, topP: 0.9, repeatPenalty: 1.05 },
+      sampling: { temp: 0.3, topP: 0.9, repeatPenalty: 1.05 },
       system: TWIN_SYSTEM_TOOLS
     },
     smol: {
