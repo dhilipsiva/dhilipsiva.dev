@@ -40,7 +40,9 @@ APPS = [
     {
         "dir": "silicon-eras",
         "title": "silicon·eras — hardware history, 1975–2026 — dhilipsiva",
-        "active": "/silicon-eras/",
+        # Not a top-nav item — reached from a musing, so light "Musings" (mirrors
+        # nibli-playground lighting /nibli/). No /silicon-eras/ nav link exists.
+        "active": "/musings/",
         # The explorable's root is min-height:100vh — a normal scrolling document
         # that flows below the sticky header (like voksa) — no height clamp.
         "extra_css": "",
