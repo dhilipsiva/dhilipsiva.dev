@@ -1,7 +1,8 @@
 /* ============================================================================
    nibli-worker.js — the engine lives here, off the main thread. One wasm
-   instance (gerna/smuni/logji + smuni-dictionary), one Session per loaded KB.
-   A pathological proof search can take seconds; the page never blocks.
+   instance (nibli-kr/nibli-semantics/nibli-reason + nibli-lexicon), one
+   Session per loaded KB. A pathological proof search can take seconds; the
+   page never blocks.
    ========================================================================== */
 
 import init, { Session, back_translate_ir } from '/nibli/wasm/nibli_wasm.js';
@@ -52,7 +53,9 @@ self.onmessage = async (e) => {
                         factId: null, retracted: false, gloss: back_translate_ir(line) };
         descBuf = [];
         try {
-          entry.factId = Number(session.assert_text(line));
+          // assert_text returns the minted fact ids (one per root sentence;
+          // our KB files are one sentence per line, so take the first).
+          entry.factId = Number(session.assert_text(line)[0]);
           facts++;
         } catch (err) {
           entry.error = String(err && err.message || err);

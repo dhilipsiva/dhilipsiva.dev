@@ -465,8 +465,8 @@
 
   // keyword topics that aren't MCP apps — checked first
   const FOLLOWUPS_BY_KEYWORD = [
-    { test: /nibli|hallucinat|lojban|proof|transparency|symbolic|reasoning/i,
-      chips: ['try nibli live', 'why Lojban?', "what's the transparency triad?"] },
+    { test: /nibli|hallucinat|lojban|\bkr\b|proof|transparency|symbolic|reasoning/i,
+      chips: ['try nibli live', 'what is nibli KR?', "what's the transparency triad?"] },
     { test: /nihilis|philosoph|fixed point|meaning|free will|absurd/i,
       chips: ['what is optimistic nihilism?', 'what is a fixed point?', 'what is nibli?'] },
     { test: /trust|lie|fluent|hallucinat|are you real|who are you|how were you (built|made|trained)|fine-?tun/i,

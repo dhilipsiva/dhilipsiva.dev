@@ -1,6 +1,6 @@
 +++
 title = "nibli"
-description = "A zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; every answer derived, never guessed, with a proof trace on every conclusion."
+description = "A zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. nibli KR in — a human-readable predicate-call language — first-order logic out; every answer derived, never guessed, with a proof trace on every conclusion."
 weight = 1
 
 [extra]
@@ -25,12 +25,14 @@ consequences — a plausible guess is not enough.
 
 ## Approach
 
-nibli converts Lojban (an unambiguous human language — even the name is a Lojban word meaning
-"logically entails") into first-order logic and runs demand-driven backward chaining over it. The
-pipeline is three stages, named in Lojban: **gerna** parses, **smuni** does semantics, **logji**
-reasons. Every conclusion carries its full derivation trace. The core is Rust compiled to WebAssembly
-(WASI Preview 2); a federation layer, **tavla**, propagates knowledge peer-to-peer over browser-native
-WebRTC gossip with CRDTs and ed25519-signed envelopes — no central relay.
+nibli compiles **nibli KR** — a human-readable predicate-call knowledge-representation language
+(`dog(Adam).`, `animal(every dog).`, where every semantic distinction stays visible in the spelling)
+— into first-order logic and runs demand-driven backward chaining over it. The pipeline is three
+stages: **nibli-kr** parses, **nibli-semantics** compiles the logic, **nibli-reason** derives. Every
+conclusion carries its full derivation trace, and names resolve through a committed English corpus
+(~1,342 strongly-typed predicate entries), fail-closed. The core is Rust compiled to WebAssembly
+(WASI Preview 2). Lojban — the original surface syntax, and still the source of the name (*nibli*:
+"logically entails") — was retired at `v0.1-lojban-final` and donated to the fanva repo.
 
 ## Outcome
 

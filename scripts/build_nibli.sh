@@ -30,16 +30,8 @@ SRC="$WORK/nibli"
 echo "→ fetching nibli ($NIBLI_REF) from $NIBLI_REPO"
 git clone --quiet --depth 1 --branch "$NIBLI_REF" "$NIBLI_REPO" "$SRC"
 
-# ── 0. dictionary-en.json → full alias-map build ────────────────────────────
-# The lensisku dictionary is a COMPILE-TIME input (gitignored upstream): with it
-# the bundle ships the full ~1,341-alias Klaro map; without it the build falls
-# back to the ~100 curated aliases and the deployed playground's Klaro examples
-# + Formalize lose the long-tail vocabulary (nibli DEPLOY.md "Ship the
-# frontend"). Warn-and-continue on fetch failure — the fallback still builds.
-echo "→ fetching lensisku dictionary (full Klaro alias map)"
-curl -fsSL --retry 2 "https://lensisku.lojban.org/api/export/cached/en/json" \
-  -o "$SRC/dictionary-en.json" \
-  || echo "warning: dictionary fetch failed — building with the curated fallback tables" >&2
+# (No dictionary fetch: since the committed-corpus milestone the lexicon is
+# plain Rust source in nibli-lexicon — builds are zero-network by design.)
 
 # ── 1. nibli-wasm → static/nibli/wasm/ ──────────────────────────────────────
 echo "→ wasm-pack build nibli-wasm (release, target web)"

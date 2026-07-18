@@ -1,15 +1,12 @@
 # TODO
 ## /nibli page — needs updates
 - **Transparency Triad: move descriptions out of the Source pane.** Pane 1 ("Source")
-      currently streams every `#` comment from the `.lojban` KB files, but those comments mix
+      currently streams every `#` comment from the `.nibli` KB files, but those comments mix
       section headers and English descriptions with the raw source text. Separate them so the
       Source pane shows raw source, with descriptions surfaced elsewhere (own field / sidebar /
       tooltip). Touchpoints: `static/nibli/app/nibli-worker.js` (loader tags lines `isComment`),
       `static/nibli/app/nibli.js` (`renderTriad`), `templates/nibli.html` (pane markup),
-      `static/nibli/kb/*.lojban`.
-- **Update nibli to latest.** Massive changes were made to nibli that aren't reflected here
-      yet; refresh the nibli page(s) — `content/nibli.md` / `templates/nibli.html` and
-      `content/things-i-built/nibli.md` — once the new details are supplied. (Owner to provide.)
+      `static/nibli/kb/*.nibli`.
 
 ## Before publishing the site
 - Human pass on https://dhilipsiva.dev: `/` is the classic site again (2026-06-11; chat moved to

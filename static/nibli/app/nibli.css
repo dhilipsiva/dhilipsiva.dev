@@ -125,7 +125,7 @@
   word-break: break-word; font-family: var(--font-sans); font-size: 13.5px;
 }
 .nibli-cell--src { color: var(--text-muted); }
-.nibli-cell--loj, .nibli-cell--gls { font-family: var(--font-mono); font-size: 12.5px; }
+.nibli-cell--kr, .nibli-cell--gls { font-family: var(--font-mono); font-size: 12.5px; }
 .nibli-cell--ok::before     { content: "✓ "; color: var(--phosphor-500); }
 .nibli-cell--err::before    { content: "✗ "; color: var(--ember-500); }
 .nibli-cell--retracted      { text-decoration: line-through; opacity: 0.5; }
@@ -162,7 +162,7 @@
   }
   .nibli-frow .nibli-cell { display: block; border-bottom: none; padding: 2px 14px; }
   .nibli-cell--src:not(:empty)::before { content: "source · "; color: var(--text-faint); }
-  .nibli-frow .nibli-cell--loj { color: var(--text-strong); }
+  .nibli-frow .nibli-cell--kr { color: var(--text-strong); }
 }
 
 /* ── controls ── */

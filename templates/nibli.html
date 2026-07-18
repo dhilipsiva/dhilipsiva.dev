@@ -22,10 +22,10 @@
     <span class="eyebrow">// nibli · live demo</span>
     <h1 style="font-family:var(--font-display);font-weight:600;font-size:42px;letter-spacing:-0.035em;color:var(--text-strong);margin:12px 0 14px;line-height:1.05">
       The hallucination firewall, running in your tab</h1>
-    <p class="lead" style="max-width:74ch">This is the real engine — <strong>gerna</strong> (parser),
-    <strong>smuni</strong> (semantic compiler), and <strong>logji</strong> (backward-chaining reasoner) —
-    compiled from Rust to WebAssembly. Nothing is mocked and nothing leaves your browser: every query
-    below runs live deduction over the loaded knowledge base, and every answer carries its proof.</p>
+    <p class="lead" style="max-width:74ch">This is the real engine — <strong>nibli-kr</strong> (parser),
+    <strong>nibli-semantics</strong> (semantic compiler), and <strong>nibli-reason</strong> (backward-chaining
+    reasoner) — compiled from Rust to WebAssembly. Nothing is mocked and nothing leaves your browser: every
+    query below runs live deduction over the loaded knowledge base, and every answer carries its proof.</p>
     <div class="nibli-contract" role="note">
       <span class="nibli-badge nibli-badge--true">TRUE</span>
       <span class="nibli-badge nibli-badge--false">FALSE</span>
@@ -37,7 +37,7 @@
     <p class="nibli-pg-cta" style="margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:12px">
       <a class="q-btn q-btn--primary" href="/nibli-playground/">Open the full playground →</a>
       <span class="comment" style="max-width:60ch">This page is a guided tour. The
-      <strong>playground</strong> is the complete app — write your own Lojban, translate English with your
+      <strong>playground</strong> is the complete app — write your own nibli KR, formalize English with your
       own LLM key, and inspect every proof.</span>
     </p>
   </div>
@@ -73,12 +73,12 @@
     <div class="nibli-grid" role="table" aria-label="Transparency Triad: source, formal encoding, back-translation">
       <div class="nibli-grid__head" role="row">
         <span role="columnheader">1 · Source <span class="comment">// what a human wrote</span></span>
-        <span role="columnheader">2 · Formal encoding <span class="comment">// Lojban, asserted live</span></span>
+        <span role="columnheader">2 · Formal encoding <span class="comment">// nibli KR, asserted live</span></span>
         <span role="columnheader">3 · Back-translation <span class="comment">// the logic, read back in English</span></span>
       </div>
       <div class="nibli-grid__body" id="nibli-grid-body"></div>
       <div class="nibli-grid__foot">
-        <span id="pane-lojban-status"></span>
+        <span id="pane-kr-status"></span>
         <span class="nibli-grid__foot-note">structure-exposing English rendered from the compiled
         first-order logic (nibli-render) — the verification surface, not prose</span>
       </div>
@@ -114,18 +114,18 @@
   <div class="container">
     <span class="eyebrow">// why three panes — how the triad catches an LLM</span>
     <p class="muted" style="max-width:74ch;margin:10px 0 16px;font-family:var(--font-sans);font-size:14.5px;line-height:1.6">
-      In the full pipeline an LLM drafts the Lojban from English — and LLMs make fluent mistakes.
-      The deterministic back-translation is what catches them. A worked example from the book:
-      the source says <em>“Every employee must file an annual report.”</em></p>
+      In the full pipeline an LLM drafts the nibli KR from English — and LLMs make fluent mistakes.
+      The deterministic back-translation is what catches them. A worked example from the book (Ch 20):
+      the source says <em>“Every person who has not consented must have their data erased.”</em></p>
     <div class="nibli-catch">
       <div><span class="nibli-catch__label">LLM draft</span>
-        <code>su'o lo se ciska cu bilga …</code>
-        <span class="nibli-catch__gloss">→ “<mark>some</mark> the (swap-2) write must …”</span>
+        <code>obligated(some person where ~approves, event { removes() }).</code>
+        <span class="nibli-catch__gloss">→ “<mark>some</mark> person who has not consented must be erased …”</span>
         <span class="nibli-badge nibli-badge--false">REJECTED</span>
         <span class="comment">“some” ≠ “every” — a quantifier the eye catches instantly in the gloss</span></div>
       <div><span class="nibli-catch__label">Corrected</span>
-        <code>ro lo se ciska cu bilga …</code>
-        <span class="nibli-catch__gloss">→ “<mark>all</mark> the (swap-2) write must …”</span>
+        <code>obligated(every person where ~approves, event { removes() }).</code>
+        <span class="nibli-catch__gloss">→ “<mark>every</mark> person who has not consented must be erased …”</span>
         <span class="nibli-badge nibli-badge--true">ACCEPTED</span>
         <span class="comment">the human verifies the gloss, never the model's confidence</span></div>
     </div>

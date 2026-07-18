@@ -1,0 +1,81 @@
+# Drug-Drug Interaction Safety Knowledge Base (book Chapter 21)
+#
+# A formalizable slice of pharmacokinetic drug-drug interaction (DDI) reasoning,
+# encoded in nibli KR so that Nibli can decide "should this co-prescription raise a
+# safety alert?" by deterministic, auditable deduction over an explicit mechanism
+# instead of a statistical guess. Every non-comment line below parses, compiles,
+# and reasons through the full nibli-kr -> nibli-semantics -> nibli-reason pipeline,
+# so the prose in Chapter 21 cannot silently drift from the engine's actual
+# behaviour.
+#
+# Worked scenario: the warfarin + fluconazole interaction mediated by CYP2C9.
+#   Patient      = Adam
+#   Interaction  = fluconazole inhibits CYP2C9; warfarin (narrow therapeutic
+#                  index) is metabolised by CYP2C9 -> warfarin concentration
+#                  rises -> toxicity risk -> safety alert.
+#   Control      = apixaban is metabolised by CYP3A4, which fluconazole does not
+#                  inhibit -> NO alert (a real, deductively-derived FALSE).
+#
+# Predicate conventions (proxy predicates for pharmacological concepts; each is
+# disclosed in Chapter 21, "Honest Boundaries"):
+#   chemical(X)           -> "X is a drug"
+#   uses(P, X)            -> "(patient) P takes (drug) X"
+#   prevents(X, E)        -> "(drug) X inhibits (enzyme) E"
+#   metabolized_by(X, E)  -> "(drug) X is metabolised by (enzyme) E"
+#   thin(X)               -> "X has a narrow therapeutic index"
+#   increases(X)          -> "X's blood concentration is increased"
+#   dangerous(X)          -> "X is at toxicity risk"
+#   warns(X)              -> "X warrants a safety alert"
+# Enzyme names are opaque transliterated identifiers (rigid Names):
+#   Siptucin              -> CYP2C9
+#   Sipcivon              -> CYP3A4
+
+# ─── Drug ontology ────────────────────────────────────────────────
+chemical(Varfarin).
+chemical(Flukonazol).
+chemical(Apiksaban).
+chemical(Fenitoin).
+
+# ─── Mechanism facts: inhibition and metabolism ───────────────────
+# Fluconazole inhibits the CYP2C9 enzyme.
+prevents(Flukonazol, Siptucin).
+# Warfarin and phenytoin are both metabolised by CYP2C9.
+metabolized_by(Varfarin, Siptucin).
+metabolized_by(Fenitoin, Siptucin).
+# Apixaban is metabolised by CYP3A4 (the negative-control pathway).
+metabolized_by(Apiksaban, Sipcivon).
+
+# ─── Mechanism facts: narrow therapeutic index ────────────────────
+# Warfarin and phenytoin have narrow therapeutic indices (small safety margin).
+thin(Varfarin).
+thin(Fenitoin).
+
+# ─── Patient regimen ──────────────────────────────────────────────
+# Adam is co-prescribed warfarin and fluconazole.
+uses(Adam, Varfarin).
+uses(Adam, Flukonazol).
+
+# ─── Mechanism step 1: concentration increase ─────────────────────
+# When fluconazole inhibits CYP2C9 AND a drug is metabolised by CYP2C9, that
+# drug's blood concentration rises. Expressed as a grounded conditional per
+# affected substrate (the fully general multi-variable join rule is not yet
+# expressible from the surface syntax; see Chapter 21, "Honest Boundaries").
+prevents(Flukonazol, Siptucin) & metabolized_by(Varfarin, Siptucin) -> increases(Varfarin).
+prevents(Flukonazol, Siptucin) & metabolized_by(Fenitoin, Siptucin) -> increases(Fenitoin).
+
+# ─── Mechanism step 2: toxicity risk (general rule) ───────────────
+# A drug whose concentration is increased AND which has a narrow therapeutic
+# index is at toxicity risk. BOTH conditions are required: a benign concentration
+# rise in a wide-margin drug does not trip this. One general universal rule with
+# a conjunctive restrictor — it fires for ANY drug satisfying both conditions.
+dangerous(every chemical where increases where thin).
+
+# ─── Mechanism step 3: the alert is patient-gated on the regimen ──
+# Toxicity RISK is a property of the drug's pharmacology and holds regardless of
+# who takes it; the actionable ALERT, however, is only raised for an at-risk drug
+# THIS patient actually takes. Written as a prenex universal so the regimen
+# condition is in the rule's antecedent. Consequences: a pharmacologically
+# at-risk drug Adam does NOT take (e.g. phenytoin) reaches risk but raises no
+# alert; and discontinuing a drug — retracting a `uses(Adam, <drug>)` or the
+# inhibition fact — withdraws its alert while the drug-level mechanics stay put.
+all $da: dangerous($da) & uses(Adam, $da) -> warns($da).

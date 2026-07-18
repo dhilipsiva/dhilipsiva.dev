@@ -1,8 +1,9 @@
 /* ============================================================================
    nibli.js — the Transparency Triad demo at /nibli. The REAL engine
-   (gerna/smuni/logji, Rust→wasm) runs in a Web Worker; every button below is
-   a live deduction over the loaded knowledge base, never a mock.
-   Examples-only by design: scripted queries and scenarios from the book.
+   (nibli-kr/nibli-semantics/nibli-reason, Rust→wasm) runs in a Web Worker;
+   every button below is a live deduction over the loaded knowledge base,
+   never a mock. Examples-only by design: scripted queries and scenarios
+   from the book.
    ========================================================================== */
 
 const $ = id => document.getElementById(id);
@@ -12,12 +13,12 @@ const EXAMPLES = {
   'syllogism': {
     scenario: "The book's minimal worked example (Ch 19): three plain statements — all dogs are " +
       "animals, all animals eat, Adam is a dog. The left pane is what a human wrote; the middle " +
-      "is the formal Lojban, asserted into the live engine line by line; the right is the " +
+      "is the formal nibli KR, asserted into the live engine line by line; the right is the " +
       "mechanical gloss a reviewer verifies. Every TRUE below arrives with its derivation.",
     queries: [
-      { q: 'la .adam. cu citka', note: 'does Adam eat? — a 2-hop proof' },
-      { q: 'la .adam. cu danlu', note: 'is Adam an animal? — 1 hop' },
-      { q: 'la .adam. cu cipni', note: 'is Adam a bird? — a real FALSE' },
+      { q: 'eats(Adam).', note: 'does Adam eat? — a 2-hop proof' },
+      { q: 'animal(Adam).', note: 'is Adam an animal? — 1 hop' },
+      { q: 'bird(Adam).', note: 'is Adam a bird? — a real FALSE' },
     ],
     scenarios: [],
   },
@@ -27,14 +28,15 @@ const EXAMPLES = {
       "didn't. Then withdraw Adam's consent and watch the lawful basis collapse — with the " +
       "engine disclosing that the erasure verdict now rests on the closed-world assumption.",
     queries: [
-      { q: 'la .adam. cu se curmi', note: 'lawful basis? (Art 6)' },
-      { q: 'la .adam. na se curmi', note: 'right to erasure? (Art 17)' },
-      { q: 'la .gugli. cu se curmi', note: 'a controller is not a consenting person — exhaustive FALSE' },
-      { q: 'la .kanrek. cu datni', note: 'health record → personal data (Art 4/9, derived)' },
+      { q: 'permitted(Adam).', note: 'lawful basis? (Art 6)' },
+      { q: 'obligated(Adam, event { removes() }).', note: 'right to erasure? (Art 17)' },
+      { q: 'permitted(Gugli).', note: 'a controller is not a consenting person — exhaustive FALSE' },
+      { q: 'data(Kanrek).', note: 'health record → personal data (Art 4/9, derived)' },
     ],
     scenarios: [
-      { label: 'Withdraw Adam’s consent', match: l => l.includes('zanru') && l.includes('adam'),
-        rerun: ['la .adam. cu se curmi', 'la .adam. na se curmi'] },
+      { label: 'Withdraw Adam’s consent',
+        match: l => l.includes('approves') && l.includes('Adam'),
+        rerun: ['permitted(Adam).', 'obligated(Adam, event { removes() }).'] },
     ],
   },
   'drug-interactions': {
@@ -44,14 +46,15 @@ const EXAMPLES = {
       "proof). Apixaban rides CYP3A4 and stays quiet: a real, deductively-derived FALSE. Then " +
       "discontinue fluconazole and watch the whole alert chain collapse.",
     queries: [
-      { q: 'la .varfarin. cu zenba', note: 'concentration rising?' },
-      { q: 'la .varfarin. cu ckape', note: 'toxicity risk?' },
-      { q: 'la .varfarin. cu kajde', note: 'safety alert? (3-hop proof)' },
-      { q: 'la .apiksaban. cu kajde', note: 'negative control — no alert' },
+      { q: 'increases(Varfarin).', note: 'concentration rising?' },
+      { q: 'dangerous(Varfarin).', note: 'toxicity risk?' },
+      { q: 'warns(Varfarin).', note: 'safety alert? (3-hop proof)' },
+      { q: 'warns(Apiksaban).', note: 'negative control — no alert' },
     ],
     scenarios: [
-      { label: 'Discontinue fluconazole', match: l => l.includes('flukonazol') && l.includes('fanta'),
-        rerun: ['la .varfarin. cu kajde', 'la .apiksaban. cu kajde'] },
+      { label: 'Discontinue fluconazole',
+        match: l => l.includes('prevents') && l.includes('Flukonazol') && !l.includes('->'),
+        rerun: ['warns(Varfarin).', 'warns(Apiksaban).'] },
     ],
   },
 };
@@ -73,7 +76,7 @@ function call(op, payload) {
 }
 
 /* ── state ──────────────────────────────────────────────────────────────── */
-let currentKb = 'readme';
+let currentKb = 'syllogism';
 let kbItems = [];
 let busy = false;
 
@@ -95,7 +98,7 @@ async function loadExample(name) {
   $('nibli-result').hidden = true;
 
   setBusy(true, 'engine: parsing + asserting…');
-  const text = await (await fetch(`/nibli/kb/${name}.lojban`)).text();
+  const text = await (await fetch(`/nibli/kb/${name}.nibli`)).text();
   const r = await call('load', { name, text });
   setBusy(false);
   if (!r.ok) { setStatus('engine: load failed — ' + r.error); return; }
@@ -115,7 +118,7 @@ function renderAbout(preamble) {
   $('nibli-about-body').textContent = preamble.join('\n').trim();
 }
 
-/* ── the triad — one row-aligned grid: source | Lojban | gloss ───────────── */
+/* ── the triad — one row-aligned grid: source | nibli KR | gloss ─────────── */
 function renderTriad() {
   const body = $('nibli-grid-body');
   body.textContent = '';
@@ -143,22 +146,22 @@ function renderTriad() {
     src.className = 'nibli-cell nibli-cell--src';
     src.textContent = it.source || '';
 
-    const loj = document.createElement('span');
-    loj.className = 'nibli-cell nibli-cell--loj ' +
+    const kr = document.createElement('span');
+    kr.className = 'nibli-cell nibli-cell--kr ' +
       (it.retracted ? 'nibli-cell--retracted' : it.error ? 'nibli-cell--err' : 'nibli-cell--ok');
-    loj.textContent = it.text;
-    loj.title = it.error || (it.factId !== null && it.factId !== undefined ? `fact #${it.factId}` : '');
+    kr.textContent = it.text;
+    kr.title = it.error || (it.factId !== null && it.factId !== undefined ? `fact #${it.factId}` : '');
 
     const gls = document.createElement('span');
     gls.className = 'nibli-cell nibli-cell--gls';
     gls.textContent = it.gloss || '';
 
-    row.append(src, loj, gls);
+    row.append(src, kr, gls);
     body.append(row);
   }
   const active = kbItems.filter(i => i.kind === 'fact' && !i.retracted && !i.error).length;
-  $('pane-lojban-status').textContent =
-    `${active} active assertions — each line parsed by gerna, compiled by smuni, asserted into logji`;
+  $('pane-kr-status').textContent =
+    `${active} active assertions — each line parsed by nibli-kr, compiled by nibli-semantics, asserted into nibli-reason`;
 }
 
 /* ── query + scenario buttons ───────────────────────────────────────────── */
@@ -298,15 +301,15 @@ function esc(s) {
    the tour is a pointing finger, not a second engine path. */
 const TOUR = [
   {
-    text: 'A slice of the GDPR, formalized. Left: what a human wrote. Middle: Lojban, ' +
+    text: 'A slice of the GDPR, formalized. Left: what a human wrote. Middle: nibli KR, ' +
       'compiled to logic and asserted into the live engine. Right: the mechanical gloss ' +
-      'a reviewer verifies. Twenty-three facts, in your tab.',
+      'a reviewer verifies. Twenty-four facts, in your tab.',
     run: () => loadExample('gdpr'),
   },
   {
     text: 'Adam consented, so the engine PROVES his processing has a lawful basis — expand ' +
       'the derivation below. A badge, a proof chain, no confidence score.',
-    run: () => runQuery('la .adam. cu se curmi'),
+    run: () => runQuery('permitted(Adam).'),
   },
   {
     text: 'Now Adam withdraws consent. One fact retracted, and the verdicts flip — erasure ' +

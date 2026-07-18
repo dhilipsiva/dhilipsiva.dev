@@ -1,54 +1,52 @@
-# ni'o lo datni kurji javni (GDPR Compliance Knowledge Base)
+# GDPR Compliance Knowledge Base (book Chapter 20)
 #
 # A formalizable slice of the EU General Data Protection Regulation, encoded in
-# Lojban so that Nibli can answer compliance questions by deterministic, auditable
+# nibli KR so that Nibli can answer compliance questions by deterministic, auditable
 # deduction instead of statistical guesswork. Every non-comment line below parses,
-# compiles, and reasons through the full gerna -> smuni -> logji pipeline; the
-# accompanying regression tests (gdpr_* in nibli-engine/tests/integration.rs and
-# pipeline_gdpr_lojban_all_lines_parse in gerna) assert the same outcomes this file
-# is designed to produce, so the prose in Chapter 20 cannot silently drift from the
-# engine's actual behaviour.
+# compiles, and reasons through the full nibli-kr -> nibli-semantics -> nibli-reason
+# pipeline, so the prose in Chapter 20 cannot silently drift from the engine's
+# actual behaviour.
 #
 # Scope: Articles 5, 6, 7, 9, 15, 17, 33.
-#   Subject     = la .adam.
-#   Controllers = la .akmes. (breached) and la .gugli. (clean control)
+#   Subject     = Adam
+#   Controllers = Akmes (breached) and Gugli (clean control)
 #
 # Predicate conventions (proxy predicates for second-order legal concepts; see
 # Chapter 20, "Honest Boundaries"):
-#   se curmi              -> "processing has a lawful basis" (Art 6)
-#   na se curmi           -> "no lawful basis remains" => right to erasure (Art 17)
-#   se bilga lo nu <X>    -> "is under a legal obligation that X"
-#   se curmi lo nu <X>    -> "has the right that X"
+#   permitted(X)                        -> "X's processing has a lawful basis" (Art 6)
+#   obligated(X, event { <E>() })       -> "X is under a legal obligation that E"
+#   permitted(X, event { <E>() })       -> "X has the right that E"
+#   obligated(X, event { removes() })   -> "X's data must be erased" (Art 17)
 
 # ─── Article 4 / 9: categories of personal data ───────────────────
 # Names and addresses are personal data.
-ro lo cmene cu datni
-ro lo judri cu datni
+data(every name).
+data(every address).
 # Special categories (Art 9): health, religious, and ethnicity data are data too.
-ro lo kanro datni cu datni
-ro lo lijda datni cu datni
-ro lo natmi datni cu datni
+data(every healthy data).
+data(every religion data).
+data(every nation data).
 
 # ─── Article 5: principles relating to processing ─────────────────
 # Personal data must be accurate.
-ro lo datni cu se bilga lo nu drani
+obligated(every data, event { correct() }).
 # Personal data must be kept secure.
-ro lo datni cu se bilga lo nu marbi
+obligated(every data, event { shelter() }).
 # Data minimisation: processing must be limited to what is necessary.
-ro lo datni cu se bilga lo nu sarcu
+obligated(every data, event { necessary() }).
 
 # ─── Article 9: special categories need a stricter, specific basis ─
-ro lo kanro datni cu se bilga lo nu satci
-ro lo lijda datni cu se bilga lo nu satci
-ro lo natmi datni cu se bilga lo nu satci
+obligated(every healthy data, event { exact() }).
+obligated(every religion data, event { exact() }).
+obligated(every nation data, event { exact() }).
 
 # ─── Article 6(1): lawful basis for processing ────────────────────
 # (a) A consenting data subject's processing has a lawful basis.
-ro lo prenu poi zanru cu se curmi
+permitted(every person where approves).
 # (b) A data subject bound by a contract has a lawful basis.
-ro lo prenu poi nupre cu se curmi
+permitted(every person where promise).
 # (c) A data subject under a legal obligation has a lawful basis.
-ro lo prenu poi bilga cu se curmi
+permitted(every person where obliged).
 
 # ─── Article 7: conditions for consent ────────────────────────────
 # Consent must be freely given. Whether a given consent was "freely given"
@@ -58,28 +56,31 @@ ro lo prenu poi bilga cu se curmi
 
 # ─── Article 15: right of access (DSAR) ───────────────────────────
 # Every data subject has the right to access their data.
-ro lo prenu cu se curmi lo nu datni facki
-
-# ─── Article 17: right to erasure ─────────────────────────────────
-# When no lawful basis remains (consent withdrawn and no other ground subsists),
-# the data subject acquires the right to erasure (Art 17(1)(b)). This is derived
-# at query time as the negation of a lawful basis: `la .adam. na se curmi`.
-# The belief-revision demo in Chapter 20 retracts consent and shows this flip.
+permitted(every person, event { data discovers() }).
 
 # ─── Article 33: breach notification ──────────────────────────────
 # A controller that has suffered a breach is obliged to notify.
-ro lo datni turni poi cfila cu se bilga lo nu notci
+obligated(every data governs where flaw, event { message() }).
 
 # ─── Scenario ─────────────────────────────────────────────────────
 # Adam is a data subject.
-la .adam. cu prenu
+person(Adam).
 # AkmeCorp and Google are data controllers.
-la .akmes. cu datni turni
-la .gugli. cu datni turni
+data governs(Akmes).
+data governs(Gugli).
 # AkmeCorp holds Adam's health record (special-category data) and an ordinary record.
-la .kanrek. cu kanro datni
-la .ordrek. cu datni
+healthy data(Kanrek).
+data(Ordrek).
 # Adam has given consent (the retractable lawful basis for the erasure demo).
-la .adam. cu zanru
+approves(Adam).
 # AkmeCorp has suffered a personal-data breach; Google has not.
-la .akmes. cu cfila
+flaw(Akmes).
+
+# ─── Article 17: right to erasure ─────────────────────────────────
+# A data subject who has NOT consented must have their data erased (Art 17(1)(b)).
+# `where ~approves` compiles to a negation-as-failure check over the consent
+# event, so the obligation arises exactly when no consent witness exists; the
+# belief-revision demo retracts consent to make it flip from FALSE to TRUE.
+# (Defined after the scenario so loading it leaves the fact ids above stable —
+# a rule's position in the file does not affect reasoning.)
+obligated(every person where ~approves, event { removes() }).

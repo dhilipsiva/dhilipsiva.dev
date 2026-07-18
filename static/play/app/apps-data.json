@@ -3,7 +3,7 @@
 
   "projects": [
     { "id": "nibli", "name": "nibli", "glyph": "∴", "status": "active", "category": "oss",
-      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. Lojban in, first-order logic out; a proof trace on every conclusion. (Zero-hallucination = inference soundness, not premise truth — like Lean.) Live demo at /nibli — the real engine in your browser.",
+      "desc": "Zero-hallucination symbolic reasoning engine — a hallucination firewall for the LLM era. nibli KR in — a human-readable predicate-call language — first-order logic out; a proof trace on every conclusion. (Zero-hallucination = inference soundness, not premise truth — like Lean.) Live demo at /nibli — the real engine in your browser.",
       "tags": ["rust", "wasm", "symbolic-reasoning", "logic"],
       "links": { "source": "https://github.com/dhilipsiva/nibli", "writeup": "/things-i-built/nibli/", "demo": "/nibli/" } },
     { "id": "botwork", "name": "botwork", "glyph": "⌁", "status": "active", "category": "oss",

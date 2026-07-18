@@ -1,4 +1,4 @@
-# ni'o lo jicmu selnibli (The Syllogism — book Chapter 19's minimal worked example)
+# The Syllogism (book Chapter 19's minimal worked example)
 #
 # Three plain statements. The engine compiles each to first-order logic and the
 # query below is answered by two hops of backward chaining — with the full
@@ -10,8 +10,8 @@
 #   Adam is a dog.
 
 # All dogs are animals.
-ro lo gerku cu danlu
+animal(every dog).
 # All animals eat.
-ro lo danlu cu citka
+eats(every animal).
 # Adam is a dog.
-la .adam. cu gerku
+dog(Adam).
