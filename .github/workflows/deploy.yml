@@ -3,11 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [source]
-  # Fired by the nibli / voksa repos (.github/workflows/redeploy-site.yml) on every
-  # push to their main, so the build re-pulls the latest crate. See
-  # scripts/build_nibli.sh and scripts/build_voksa.sh.
+  # Fired by the nibli / voksa / silicon-eras repos (.github/workflows/redeploy-site.yml)
+  # on every push to their main, so the build re-pulls the latest crate. See
+  # scripts/build_nibli.sh, scripts/build_voksa.sh, scripts/build_silicon_eras.sh.
   repository_dispatch:
-    types: [nibli-updated, voksa-updated]
+    types: [nibli-updated, voksa-updated, silicon-eras-updated]
   workflow_dispatch:
 
 permissions:
@@ -65,6 +65,12 @@ jobs:
       - name: Build /voksa console from the voksa crate
         run: bash scripts/build_voksa.sh
 
+      # /silicon-eras is a Dioxus app (the hardware-history explorable) fetched from
+      # the silicon-eras crate and built with the same dx installed above; its dataset
+      # is embedded at build time by app/build.rs. See scripts/build_silicon_eras.sh.
+      - name: Build /silicon-eras from the silicon-eras crate
+        run: bash scripts/build_silicon_eras.sh
+
       # The /chat candle runtime is committed, so CI needs no further Rust setup.
       - name: Install Zola
         run: |
@@ -85,8 +91,8 @@ jobs:
         run: python3 scripts/gen_llms_txt.py
 
       # The Dioxus-built apps can't extend base.html; graft the rendered navbar
-      # onto public/nibli-playground/index.html and public/voksa/index.html
-      # (stdlib python3 only).
+      # onto public/nibli-playground/, public/voksa/ and public/silicon-eras/
+      # index.html (stdlib python3 only).
       - name: Inject site nav into Dioxus apps
         run: python3 scripts/inject_nav.py
 

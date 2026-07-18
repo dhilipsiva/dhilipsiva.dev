@@ -37,6 +37,14 @@ APPS = [
         # flows below the sticky header — no height clamp.
         "extra_css": "",
     },
+    {
+        "dir": "silicon-eras",
+        "title": "silicon·eras — hardware history, 1975–2026 — dhilipsiva",
+        "active": "/silicon-eras/",
+        # The explorable's root is min-height:100vh — a normal scrolling document
+        # that flows below the sticky header (like voksa) — no height clamp.
+        "extra_css": "",
+    },
 ]
 
 

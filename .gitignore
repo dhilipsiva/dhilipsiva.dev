@@ -15,6 +15,10 @@
 # time (scripts/build_voksa.sh); never vendored
 /static/voksa
 
+# /silicon-eras explorable — fetched & built from github.com/dhilipsiva/silicon-eras
+# at deploy time (scripts/build_silicon_eras.sh); never vendored
+/static/silicon-eras
+
 # fine-tune workdirs (env, generated data, checkpoints, >100MB ggufs)
 /finetune/.venv
 /finetune/data
