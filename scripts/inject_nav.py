@@ -32,10 +32,20 @@ APPS = [
     {
         "dir": "voksa",
         "title": "voksa — the tuning console — dhilipsiva",
-        "active": "/voksa/",
+        # No longer a top-nav item — lives in Things I Built, so light that.
+        "active": "/things-i-built/",
         # The console is a normal scrolling document (non-sticky title row) that
         # flows below the sticky header — no height clamp.
         "extra_css": "",
+    },
+    {
+        "dir": "fanva",
+        "title": "fanva — English→Lojban translator — dhilipsiva",
+        # Not a top-nav item — lives in Things I Built, so light that.
+        "active": "/things-i-built/",
+        # fanva-ui is a fixed-height app-shell (.app-shell/.app are height:100vh);
+        # clamp to leave room for the 64px + 1px site header (like nibli-playground).
+        "extra_css": "<style>#main>.app-shell,#main>.app{height:calc(100vh - 65px)!important}</style>",
     },
     {
         "dir": "silicon-eras",

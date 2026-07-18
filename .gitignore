@@ -19,6 +19,10 @@
 # at deploy time (scripts/build_silicon_eras.sh); never vendored
 /static/silicon-eras
 
+# /fanva translator playground — fetched & built from github.com/dhilipsiva/fanva
+# at deploy time (scripts/build_fanva.sh); never vendored
+/static/fanva
+
 # fine-tune workdirs (env, generated data, checkpoints, >100MB ggufs)
 /finetune/.venv
 /finetune/data

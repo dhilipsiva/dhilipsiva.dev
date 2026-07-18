@@ -3,11 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [source]
-  # Fired by the nibli / voksa / silicon-eras repos (.github/workflows/redeploy-site.yml)
-  # on every push to their main, so the build re-pulls the latest crate. See
-  # scripts/build_nibli.sh, scripts/build_voksa.sh, scripts/build_silicon_eras.sh.
+  # Fired by the nibli / voksa / silicon-eras / fanva repos
+  # (.github/workflows/redeploy-site.yml) on every push to their main, so the build
+  # re-pulls the latest crate. See scripts/build_nibli.sh, scripts/build_voksa.sh,
+  # scripts/build_silicon_eras.sh, scripts/build_fanva.sh.
   repository_dispatch:
-    types: [nibli-updated, voksa-updated, silicon-eras-updated]
+    types: [nibli-updated, voksa-updated, silicon-eras-updated, fanva-updated]
   workflow_dispatch:
 
 permissions:
@@ -71,6 +72,13 @@ jobs:
       - name: Build /silicon-eras from the silicon-eras crate
         run: bash scripts/build_silicon_eras.sh
 
+      # /fanva is a Dioxus app (the English→Lojban translator playground) fetched from
+      # the fanva crate and built with the same dx above; the build fetches the lensisku
+      # dictionary first (a compile-time input read by smuni-dictionary). The gerna/smuni/
+      # camxes gates run in-browser — no fanva server. See scripts/build_fanva.sh.
+      - name: Build /fanva translator from the fanva crate
+        run: bash scripts/build_fanva.sh
+
       # The /chat candle runtime is committed, so CI needs no further Rust setup.
       - name: Install Zola
         run: |
@@ -91,8 +99,8 @@ jobs:
         run: python3 scripts/gen_llms_txt.py
 
       # The Dioxus-built apps can't extend base.html; graft the rendered navbar
-      # onto public/nibli-playground/, public/voksa/ and public/silicon-eras/
-      # index.html (stdlib python3 only).
+      # onto public/nibli-playground/, public/voksa/, public/silicon-eras/ and
+      # public/fanva/ index.html (stdlib python3 only).
       - name: Inject site nav into Dioxus apps
         run: python3 scripts/inject_nav.py
 
