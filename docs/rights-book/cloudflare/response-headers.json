@@ -1,0 +1,120 @@
+{
+  "name": "Book 1 proposal \u2014 UNAPPLIED",
+  "kind": "zone",
+  "phase": "http_response_headers_transform",
+  "rules": [
+    {
+      "ref": "rights_book_policy",
+      "description": "Book 1 CSP and browser revalidation",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\"))",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-security-policy": {
+            "operation": "set",
+            "value": "default-src 'none'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' 'sha256-/ZVwORKEnO8dgEp4VtEOGAN44VGVooCvrXN30AgpWdg=' 'sha256-5NvpaEqG9rAo7qSM2V/XtaE4CiJsUA3NUSWLxgsQpl0=' 'sha256-6CfFjQ+MUct6WL+ajZYkkQGq1omaD8hOKlmX2yj1epw=' 'sha256-8QWsBuh2s6t6DT4dMECWgaVjwU9DiuXM2fpZnDisR/o=' 'sha256-9HowN5KuNhqhLoxAJJsQSqHVR850cqo6MuNU+6FZVxA=' 'sha256-H/4s3vDVx0UvqWXSmWdkSxh2aeApz273qAIT0yTc474=' 'sha256-IGePzEoeAYSNq16u1+zXOIa5MSlTam9mBEuzKDDyOhg=' 'sha256-KJjNUR3CZXG6Gh63p+IEr1Uy8fvLa2iUMPy04yTk24c=' 'sha256-KNCngq3uC0Lom4fQgoicyPZiPREmKpJOqP0WcJ7JH/g=' 'sha256-KafrUO7BrLqR637dZ9iG3w3GYK9uAsy/g0HBAofRzbk=' 'sha256-LlsgGmO771C69BYhTo9oKx/fCFRd3YkWULD1hDqHDj4=' 'sha256-M+MViK0IShD8LzuVsiTVZT8ZRdSThYpXL5svfQQm4PY=' 'sha256-MOF16eZDO9fjQZMPgd/JH/N/f86EljcePeuRAvmmgGU=' 'sha256-TWGM3Ua1FxiwrsPJP5adtldB0mrsy7Kgqi7PgE9aVts=' 'sha256-Vv5n6aDCF3R94ourBiMaMNVzN2JPCBO66Aj4+EsgUCU=' 'sha256-W8xl4/RkfRnqY50lmxS+Nx1gzubA0/q5GA+gG17jY70=' 'sha256-XHfuDavpCUl0Q8yFzkKwD74JLcoJHyi7hCTYfLv3RGk=' 'sha256-Y2zBnSPj/XnCedavKppa4lc+8YjI4rNILwvwnZ8nm4Q=' 'sha256-Y4qzdgT/y9XY0POxC96kWRXeQWpufH7AmdobZYfbv5c=' 'sha256-YQI/EdLOogDKPXds4z2zEdoycUCToKcdHUoEKUGrcjk=' 'sha256-b/KznXoZK4hn3RMI5BaxDeeQYr+uSkxb7gCEDuMvovg=' 'sha256-e3GPDha3STqAuDo9e6pdaHU4DBPlcQGn55rHIB7WSAo=' 'sha256-eKOhryOWdEinibMNFZb44Y6MgFq2IIbSkGRIByq4T9c=' 'sha256-f4C/8uZISTlGNpOwcP4FBYNfruNge1bbqK2N3v1iylA=' 'sha256-gtuu9Po+engB9/S/UdtMTgQWmXdwod6yMi5ftM8j8oc=' 'sha256-jSoLTnItbksuhcUzsUc82QiaHUOafopqobAhF4LLcAk=' 'sha256-k8FfJgu517pnsiRDC+C1cFhp7N+ZpfkDxmxtrEbVT14=' 'sha256-kKMIdM9QxUur96jJ2wpG9cKYxcHIqrZo8AvgVcMROFI=' 'sha256-kSK3+vR98fX0BZ8JZLtJ6P80EuPwozja+HkrOaG8UfQ=' 'sha256-lTw9wIF+z39TAZPj3I6JElbdq2LEC1Oo13Jt2Ez1Oww=' 'sha256-m2+CLxoM0qAAeWxE1yT2vot/qflJua4grKqt4Cr7hVE=' 'sha256-nSNDiNWz1MQg/e83VCln4nZ0ndFQ79TFmQazJjvDfqg=' 'sha256-nTTc3JeKyInfE0yWzlprat6tbKb9LGrHhB5xsgruLGg=' 'sha256-nmQK+HFxhCoXy66JQD03kcSnQIOAN3WkGc+zVMDgi3M=' 'sha256-ntGE04zWVTIGyufysdBYrp/k4kzTXCjwBNI6/Dk0IDs=' 'sha256-s9+sr1jJTF4XGYZ1Qh9b7KJMIBqRsnbSr5eIApjcX7k=' 'sha256-uqRp/mzadrLpnG00bQjf1g5vvM6F88p02a0LBCgr4/U='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'"
+          },
+          "cache-control": {
+            "operation": "set",
+            "value": "no-cache, max-age=0, must-revalidate"
+          },
+          "x-content-type-options": {
+            "operation": "set",
+            "value": "nosniff"
+          }
+        }
+      }
+    },
+    {
+      "ref": "rights_book_mime_wasm",
+      "description": "Book 1 .wasm MIME",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\")) and ends_with(http.request.uri.path, \".wasm\") and http.response.code eq 200",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "application/wasm"
+          }
+        }
+      }
+    },
+    {
+      "ref": "rights_book_mime_js",
+      "description": "Book 1 .js MIME",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\")) and ends_with(http.request.uri.path, \".js\") and http.response.code eq 200",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "text/javascript; charset=utf-8"
+          }
+        }
+      }
+    },
+    {
+      "ref": "rights_book_mime_mjs",
+      "description": "Book 1 .mjs MIME",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\")) and ends_with(http.request.uri.path, \".mjs\") and http.response.code eq 200",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "text/javascript; charset=utf-8"
+          }
+        }
+      }
+    },
+    {
+      "ref": "rights_book_mime_json",
+      "description": "Book 1 .json MIME",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\")) and ends_with(http.request.uri.path, \".json\") and http.response.code eq 200",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "application/json; charset=utf-8"
+          }
+        }
+      }
+    },
+    {
+      "ref": "rights_book_mime_md",
+      "description": "Book 1 .md MIME",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\")) and ends_with(http.request.uri.path, \".md\") and http.response.code eq 200",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "text/markdown; charset=utf-8"
+          }
+        }
+      }
+    },
+    {
+      "ref": "rights_book_mime_gz",
+      "description": "Book 1 .gz MIME",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and starts_with(http.request.uri.path, \"/rights-nobody-has-to-earn/\")) and ends_with(http.request.uri.path, \".gz\") and http.response.code eq 200",
+      "action": "rewrite",
+      "enabled": false,
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "application/gzip"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -37,3 +37,4 @@ User-agent: Bytespider
 Disallow: /
 
 Sitemap: https://dhilipsiva.dev/sitemap.xml
+Sitemap: https://dhilipsiva.dev/rights-nobody-has-to-earn/sitemap.xml

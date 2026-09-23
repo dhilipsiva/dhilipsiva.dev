@@ -71,9 +71,10 @@
       <p style="margin:14px 0 0"><a class="q-btn q-btn--secondary q-btn--sm" href="{{ page.permalink }}">Read more</a></p>
     {% else %}
       <span class="q-badge q-badge--ember">{{ page.extra.status | default(value="in progress") }}</span>
-      <h3 class="book-card__title">{{ page.title }}</h3>
+      <h3 class="book-card__title">{% if page.extra.reader_link %}<a href="{{ page.permalink }}">{{ page.title }}</a>{% else %}{{ page.title }}{% endif %}</h3>
       <p class="book-card__note">{{ page.extra.blurb | default(value=page.description) }}</p>
-      <p style="margin:14px 0 0"><a class="q-btn q-btn--primary q-btn--sm" href="{{ page.extra.link | default(value=page.permalink) }}">Read a chapter</a></p>
+      <p style="margin:14px 0 0"><a class="q-btn q-btn--primary q-btn--sm" href="{{ page.extra.link | default(value=page.permalink) }}">{{ page.extra.action_label | default(value="Read a chapter") }}</a></p>
+      {% if page.extra.reader_link %}<p style="margin:12px 0 0"><a class="q-btn q-btn--secondary q-btn--sm" href="{{ page.extra.reader_link }}">Read the complete book</a></p>{% endif %}
     {% endif %}
   </div>
 </article>

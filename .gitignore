@@ -23,6 +23,10 @@
 # at deploy time (scripts/build_fanva.sh); never vendored
 /static/fanva
 
+# Book 1 is assembled from its upstream repository; reports stay outside public/.
+/static/rights-nobody-has-to-earn
+/static/.rights-book-*
+
 # fine-tune workdirs (env, generated data, checkpoints, >100MB ggufs)
 /finetune/.venv
 /finetune/data

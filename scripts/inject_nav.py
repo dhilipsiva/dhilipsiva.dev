@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Graft the rendered site header onto the Dioxus-built app pages.
+"""Graft the shared site navigation onto the Dioxus-built app pages.
 
 The playground apps (nibli-ui → /nibli-playground/, voksa-console-demo →
 /voksa/) are fetched and compiled from external crates (scripts/build_*.sh) —
@@ -10,9 +10,12 @@ header with no aria-current (a 404 has no current_path).
 Run AFTER `zola build` (it rewrites the build output, public/). Stdlib only.
 Idempotent; skips any app that was not built (local dev without the artifacts).
 """
+import hashlib
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
+
+from rights_book import PREFIX, compare_artifact, export_edge, original_html, read_json, site_block, validate
 
 ROOT = Path(__file__).resolve().parent.parent
 DONOR = ROOT / "public" / "404.html"
@@ -21,6 +24,8 @@ SKIP_LINK = '<a class="skip-link" href="#main">Skip to content</a>'
 # Each Dioxus app grafted post-build: output dir under public/, its <title>, the
 # nav link to light with aria-current, and any app-specific head CSS.
 APPS = [
+    # Book 1's 38 SSR documents use inject_book below, preserving their metadata
+    # and hydration trees and sharing both the site header and footer.
     {
         "dir": "nibli-playground",
         "title": "nibli playground — dhilipsiva",
@@ -100,6 +105,52 @@ def inject(app, header, head_bits):
     print(f"injected site nav into {target.relative_to(ROOT)}")
 
 
+def book_page(page, header, footer, css, sitejs, hostcss, hostjs):
+    """Keep the complete Dioxus root intact; site chrome is its sibling."""
+    if original_html(page) != page:
+        raise ValueError("Expected original book HTML")
+    for tag in ["<head>", "</head>", "<body>", "</body>"]:
+        if page.count(tag) != 1:
+            raise ValueError(f"Expected one {tag} in book document")
+    # Site styles come first so the supplied reading styles retain precedence.
+    page = page.replace("<head>", "<head>" + site_block("head-start", css), 1)
+    page = page.replace("</head>", site_block("head-end", "\n".join([hostcss, hostjs, sitejs])) + "</head>", 1)
+    header = header.replace('href="/books/"', 'href="/books/" aria-current="page"', 1)
+    skip = '<a class="site-skip-link" href="#main-content">Skip to content</a>'
+    page = page.replace("<body>", "<body>" + site_block("header", skip + "\n" + header), 1)
+    return page.replace("</body>", site_block("footer", footer) + "</body>", 1)
+
+
+def inject_book(header, footer, css, sitejs):
+    source = ROOT / "static" / PREFIX.strip("/")
+    assembled = ROOT / "public" / PREFIX.strip("/")
+    if not assembled.exists():
+        print("skip: Book 1 not built")
+        return
+    validate(source)
+    compare_artifact(source, assembled)
+
+    def asset(name):
+        digest = hashlib.sha256((ROOT / "public/assets" / name).read_bytes()).hexdigest()[:16]
+        return f"/assets/{name}?v={digest}"
+
+    hostcss = f'<link rel="stylesheet" href="{asset("rights-book-host.css")}">'
+    # Synchronous, before hydration, so a site theme can be adopted safely.
+    hostjs = f'<script src="{asset("rights-book-host.js")}"></script>'
+    pages = [(assembled / path.relative_to(source), book_page(
+        path.read_bytes().decode("utf-8"), header, footer, css, sitejs, hostcss, hostjs,
+    )) for path in sorted(source.rglob("*.html"))]
+    for path, page in pages:
+        path.write_bytes(page.encode("utf-8"))
+    compare_artifact(source, assembled)
+    # Always compute policy from the final HTML, including future shell scripts.
+    output = ROOT / ".tools/rights-book/edge"
+    metadata = output / "artifact.json"
+    revision = read_json(metadata)["book_revision"] if metadata.exists() else "local-artifact-unverified"
+    export_edge(assembled, output, revision)
+    print(f"injected shared header and footer into {len(pages)} book documents")
+
+
 def main():
     donor = DONOR.read_text(encoding="utf-8")
     header = grab(r"<!-- site-nav:start -->.*?<!-- site-nav:end -->", donor, "site-nav markers")
@@ -109,6 +160,8 @@ def main():
     head_bits = [relativize(css), theme, relativize(sitejs)]
     for app in APPS:
         inject(app, header, head_bits)
+    footer = grab(r"<!-- site-footer:start -->.*?<!-- site-footer:end -->", donor, "site-footer markers")
+    inject_book(header, footer, relativize(css), relativize(sitejs))
     return 0
 
 

@@ -1,21 +1,24 @@
 +++
-title = "Utopia, Reimagined"
-description = "A from-first-principles re-derivation of what a good society could compute. Optimistic nihilism applied to economics, coordination, and freedom."
+title = "The Rights Nobody Has to Earn"
+description = "A constitutional design for rights that begin with personhood: an unconditional floor, ordinary freedom, and public power that must answer to those it affects."
 weight = 2
 
 [extra]
 kind = "authored"
-status = "upcoming"
+status = "in progress"
 featured = false
-link = "#notify"
-blurb = "A from-first-principles re-derivation of what a good society could compute. Optimistic nihilism applied to coordination, economics, and freedom."
+link = "/rights-nobody-has-to-earn/"
+action_label = "Explore the companion"
+reader_link = "/rights-nobody-has-to-earn/read/"
+blurb = "Rights begin with personhood. Book 1 explores an unconditional floor, ordinary freedom, and public power that must answer to those it affects."
 +++
 
-A from-first-principles re-derivation of what a good society could compute — optimistic nihilism applied
-to coordination, economics, and freedom. Outline in progress.
+What does a society owe a person before they have earned anything? **The Rights Nobody Has to Earn**
+sets out a constitutional design for an unconditional floor, freedom in ordinary life, and accountable
+public power. It follows the rules through concrete cases, including where protection holds and where
+it reaches its limits.
 
-The seed already exists in code: nibli's flagship knowledge base, `minimum-viable-society.lojban` — 51+
-formal axioms across education, labor, justice, governance, and environment, with a biocentric framing.
-Political philosophy, but machine-checkable: if a claim about how society should work can't survive being
-written as an axiom and reasoned over, it probably wasn't a claim. This book is the prose companion that
-argues for doing it that way.
+[Read the complete book](/rights-nobody-has-to-earn/read/) or
+[explore the companion](/rights-nobody-has-to-earn/), where you can choose a person and execute selected
+records locally against the formal design. The complete reader works without JavaScript. The
+companion's results describe the supplied records and rules; they are not observations of a working society.

@@ -1,0 +1,55 @@
+{
+  "name": "Book 1 proposal \u2014 UNAPPLIED",
+  "kind": "zone",
+  "phase": "http_request_dynamic_redirect",
+  "rules": [
+    {
+      "ref": "rights_book_redirect_1",
+      "description": "Book 1: /rights-nobody-has-to-earn/map/",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and http.request.uri.path eq \"/rights-nobody-has-to-earn/map/\" and http.request.method in {\"GET\" \"HEAD\"})",
+      "action": "redirect",
+      "action_parameters": {
+        "from_value": {
+          "target_url": {
+            "value": "https://dhilipsiva.dev/rights-nobody-has-to-earn/"
+          },
+          "status_code": 301,
+          "preserve_query_string": true
+        }
+      },
+      "enabled": false
+    },
+    {
+      "ref": "rights_book_redirect_2",
+      "description": "Book 1: /rights-nobody-has-to-earn/walkthrough/food-delivery/",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and http.request.uri.path eq \"/rights-nobody-has-to-earn/walkthrough/food-delivery/\" and http.request.method in {\"GET\" \"HEAD\"})",
+      "action": "redirect",
+      "action_parameters": {
+        "from_value": {
+          "target_url": {
+            "value": "https://dhilipsiva.dev/rights-nobody-has-to-earn/"
+          },
+          "status_code": 301,
+          "preserve_query_string": true
+        }
+      },
+      "enabled": false
+    },
+    {
+      "ref": "rights_book_redirect_3",
+      "description": "Book 1: /rights-nobody-has-to-earn/about/",
+      "expression": "(http.host eq \"dhilipsiva.dev\" and http.request.uri.path eq \"/rights-nobody-has-to-earn/about/\" and http.request.method in {\"GET\" \"HEAD\"})",
+      "action": "redirect",
+      "action_parameters": {
+        "from_value": {
+          "target_url": {
+            "value": "https://dhilipsiva.dev/rights-nobody-has-to-earn/#dossier"
+          },
+          "status_code": 301,
+          "preserve_query_string": true
+        }
+      },
+      "enabled": false
+    }
+  ]
+}

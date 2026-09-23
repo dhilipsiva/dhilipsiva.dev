@@ -1,0 +1,20 @@
+/* Site chrome surrounds, rather than changes, the book's hydrated root. */
+html { scroll-padding-top: 76px; }
+.reader-nav, .side { top: 89px; }
+.reader-nav { max-height: calc(100vh - 113px); }
+
+.site-skip-link {
+  position: fixed;
+  top: -120px;
+  left: 15px;
+  z-index: 50;
+  padding: 12px;
+  background: var(--bg-raised);
+  color: var(--link);
+}
+.site-skip-link:focus { top: 10px; }
+.skip-link:focus { z-index: 50; }
+
+/* Keep website chrome in the site's mono voice, alongside the serif reader. */
+.site-header, .site-footer { font-family: var(--font-mono); }
+.site-header .brand__dot, .site-footer .brand__dot { color: var(--link); }

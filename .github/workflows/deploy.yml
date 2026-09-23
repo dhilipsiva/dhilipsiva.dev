@@ -79,6 +79,14 @@ jobs:
       - name: Build /fanva translator from the fanva crate
         run: bash scripts/build_fanva.sh
 
+      - name: Install uv for the Book 1 assembler
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+
+      # Tracks upstream main, with its engine.pin and a private matching bindgen.
+      # The generated edge proposals remain outside the single Pages artifact.
+      - name: Build /rights-nobody-has-to-earn from Book 1
+        run: bash scripts/build_rights_book.sh
+
       # The /chat candle runtime is committed, so CI needs no further Rust setup.
       - name: Install Zola
         run: |
@@ -99,10 +107,15 @@ jobs:
         run: python3 scripts/gen_llms_txt.py
 
       # The Dioxus-built apps can't extend base.html; graft the rendered navbar
-      # onto public/nibli-playground/, public/voksa/, public/silicon-eras/ and
-      # public/fanva/ index.html (stdlib python3 only).
-      - name: Inject site nav into Dioxus apps
+      # onto the app pages, plus the shared footer on all Book 1 SSR documents.
+      # Book hydration trees and source content are preserved (stdlib only).
+      - name: Inject shared site navigation into Dioxus apps
         run: python3 scripts/inject_nav.py
+
+      - name: Check the Book 1 mount and local hosting contract
+        run: |
+          python3 scripts/rights_book.py check static/rights-nobody-has-to-earn --compare public/rights-nobody-has-to-earn
+          python3 -m unittest discover -s tests -p 'test_rights_book.py'
 
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:

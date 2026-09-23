@@ -76,45 +76,7 @@
 </main>
 
 <!-- ============================== FOOTER ============================= -->
-<footer class="site-footer h-card">
-  <div class="container">
-    <div class="site-footer__top">
-      <div class="site-footer__brand">
-        <a class="brand u-url u-uid" href="/"><img src="/assets/mark.svg" alt=""><span><span class="p-name">dhilipsiva</span><span class="brand__dot">.</span></span></a>
-        <p class="site-footer__tag">{{ config.extra.footer_tag }}</p>
-      </div>
-      <div class="foot-col">
-        <h4>Site</h4>
-        <ul>
-          <li><a href="/things-i-built/">Things I Built</a></li>
-          <li><a href="/books/">Books</a></li>
-          <li><a href="/musings/">Musings</a></li>
-          <li><a href="/about/">About</a></li>
-          <li><a href="/contact/">Contact</a></li>
-        </ul>
-      </div>
-      <div class="foot-col">
-        <h4>More</h4>
-        <ul>
-          <li><a href="/now/">Now</a></li>
-          <li><a href="/uses/">Uses</a></li>
-          <li><a href="/talks/">Talks</a></li>
-          <li><a href="/chat/">Ask my AI twin</a></li>
-          <li><a href="/nibli/">Run nibli live</a></li>
-          <li><a href="/all/">Everything</a></li>
-          <li><a href="/musings/rss.xml">RSS feed</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="site-footer__bottom">
-      {{ m::social_row(config=config) }}
-      <span class="sp"></span>
-      <span>© {{ now() | date(format="%Y") }} dhilipsiva · the void, organized</span>
-      <span>·</span>
-      <span>built with care · <a href="{{ config.extra.github }}">open source</a></span>
-    </div>
-  </div>
-</footer>
+{% include "partials/footer.html" %}
 
 <script defer src="{{ get_url(path="assets/site.js", cachebust=true) | safe }}"></script>
 

@@ -41,7 +41,8 @@
           </div>
           <h1 style="margin:0">{{ page.title }}</h1>
           {% if page.extra.blurb or page.description %}<p class="lead" style="margin:16px 0 0">{{ page.extra.blurb | default(value=page.description) }}</p>{% endif %}
-          {% if page.extra.kind == "authored" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}">Read a chapter</a></p>
+          {% if page.extra.kind == "authored" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}">{{ page.extra.action_label | default(value="Read a chapter") }}</a></p>
+          {% if page.extra.reader_link %}<p style="margin:12px 0 0"><a class="q-btn q-btn--secondary" href="{{ page.extra.reader_link }}">Read the complete book</a></p>{% endif %}
           {% elif page.extra.kind == "contributed" and page.extra.link %}<p style="margin:20px 0 0"><a class="q-btn q-btn--primary" href="{{ page.extra.link }}" rel="noopener">On the publisher →</a></p>{% endif %}
         </div>
       </div>

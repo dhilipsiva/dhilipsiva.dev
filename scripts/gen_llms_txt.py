@@ -67,6 +67,12 @@ def main() -> int:
 
     L += ["", "## Books"]
     L += [line(base, "books", s, fm) for s, fm in pages("books")]
+    L += [
+        f"- [The Rights Nobody Has to Earn — companion]({base}/rights-nobody-has-to-earn/): selected records executed locally against the constitutional design.",
+        f"- [Complete Book 1 reader]({base}/rights-nobody-has-to-earn/read/): all 34 reading inputs, available without JavaScript.",
+        f"- [Book 1 agent index]({base}/rights-nobody-has-to-earn/llms.txt): reading and public data exports.",
+        f"- [Book 1 chapter and section index]({base}/rights-nobody-has-to-earn/content.json): structured reading metadata.",
+    ]
 
     L += [
         "",
