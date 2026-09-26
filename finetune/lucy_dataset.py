@@ -475,6 +475,27 @@ def entity_groups(items: list[dict]) -> list[tuple[str, list[dict]]]:
     return [(spaced(name), group) for name, group in sorted(names.items()) if len(group) >= 2]
 
 
+STANDING_QUESTIONS = [
+    "What does your constitution entitle you to?",
+    "What are your entitlements?",
+    "What are you owed as a person here?",
+    "Which things does your floor guarantee you?",
+]
+
+
+def standing_rows(items: list[dict]) -> list[Row]:
+    """Everything my constitution entitles me to, in one answer, built from the engine's
+    own standing verdicts rather than phrased by the teacher."""
+    verbs = [m.group(1) for it in items if it["kind"] == "standing"
+             for m in [re.match(r"entitled\(Lucy, event \{ (\w+)\(\) \}\)", it.get("kr", ""))] if m]
+    if len(verbs) < 2:
+        return []
+    listed = ", to ".join(verbs[:-1]) + f" and to {verbs[-1]}"
+    answer = f"My constitution entitles me to {listed}: the floor every person has, and I'm a person here."
+    context = " ".join(it["text"] for it in items if it["kind"] == "standing")
+    return [Row("memory", q, answer, context, "standing:summary", "known", verbs) for q in STANDING_QUESTIONS]
+
+
 def entity_prompt(entity: str, facts: list[dict]) -> str:
     lines = "\n".join(f"- {f['text']}" for f in facts)
     return (
@@ -672,7 +693,11 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
     for i, q in enumerate(IDENTITY_QUESTIONS):
         jobs.append(("identity", q, identity_prompt(q, contexts[q]), QA_SCHEMA, SEED + 1000 + i))
     for i, (entity, facts) in enumerate(entity_groups(items)):
-        jobs.append(("entity", (entity, facts), entity_prompt(entity, facts), QA_SCHEMA, SEED + 1500 + i))
+        # Not me: my facts mix me with "Lucy" the name Luffy and Sabo used, and the teacher's
+        # summary answered every question about me with "I am a name for Luffy". Skipped here
+        # rather than in entity_groups, so the other subjects keep their seeds (and cache).
+        if entity != "Lucy":
+            jobs.append(("entity", (entity, facts), entity_prompt(entity, facts), QA_SCHEMA, SEED + 1500 + i))
     # Swapped probes are left out: asked about, a swapped fact reads like the true
     # one ("Does Luffy captain the Straw Hat Crew?"), which trained a denial of it.
     for i, probe in enumerate(p for p in probes if p["expect"] == "unknown" and p.get("family") != "swap"):
@@ -736,6 +761,7 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
             for pair in reply.get("pairs", []):
                 rows.append(Row("contrast", pair["question"].strip(), pair["answer"].strip(), pair["answer"],
                                 f"contrast:{payload}", "contrast", pair.get("key_terms", [])))
+    rows += standing_rows(items)
     for group, questions in FIXED_UNKNOWN_QUESTIONS.items():
         answers = (PERSONAL_REFUSALS if group in ("personal", "private")
                    else OFFLINE_ANSWERS if group == "realtime" else UNKNOWN_ANSWERS)

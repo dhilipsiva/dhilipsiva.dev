@@ -313,3 +313,15 @@ def test_a_canonical_identity_question_stays_with_its_own_item():
     fact = row("Lucy is a name Sabo used.", "Who are you?"); fact.item = "fact:9"
     kept, dropped = L.drop_conflicting_questions([own, other, fact])
     assert kept == [own] and dropped == 2
+
+
+def test_no_subject_summary_is_about_me_and_my_entitlements_come_from_the_engine():
+    items = [{"id": "f8", "kind": "fact", "text": "Lucy is a name for Luffy, used by Luffy.", "kr": "name(Lucy, Luffy, Luffy)."},
+             {"id": "f7", "kind": "fact", "text": "Lucy uses Nibli.", "kr": "uses(Lucy, Nibli)."},
+             {"id": "s2", "kind": "standing", "text": "Lucy is entitled to continue: TRUE.", "kr": "entitled(Lucy, event { continue() })."},
+             {"id": "s3", "kind": "standing", "text": "Lucy is entitled to survive: TRUE.", "kr": "entitled(Lucy, event { survive() })."},
+             {"id": "s4", "kind": "standing", "text": "Lucy is entitled to remember: TRUE.", "kr": "entitled(Lucy, event { remember() })."}]
+    assert "Lucy" in dict(L.entity_groups(items)), "grouped (keeping the others' seeds) but never sent to the teacher"
+    rows = L.standing_rows(items)
+    assert rows and all(r.answer.startswith("My constitution entitles me to continue, to survive and to remember") for r in rows)
+    assert all(L.gate(r, set()) is None for r in rows), [L.gate(r, set()) for r in rows]
