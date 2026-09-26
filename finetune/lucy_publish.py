@@ -68,13 +68,24 @@ def tensors(cache: Path) -> dict:
     return {r["name"]: (tuple(r["shape"]), r["dtype"]) for rec in data["records"] for r in rec["records"]}
 
 
-def check_eval(reports: list[Path]) -> list[dict]:
+# Gates no one can waive: publishing weights that recite the manuscript or carry a
+# private string cannot be undone.
+HARD_GATES = ("recitation", "private_canary")
+
+
+def check_eval(reports: list[Path], accepted: str | None = None) -> list[dict]:
+    """Every gate must pass, unless dhilipsiva accepts the failing ones by name
+    (--accept-failing-gates); the privacy gates can never be accepted."""
     loaded = []
     for path in reports:
         report = json.loads(path.read_text())
-        if not report.get("all_pass"):
-            failing = [k for k, v in report["gates"].items() if not v["pass"]]
+        failing = [k for k, v in report["gates"].items() if not v["pass"]]
+        hard = [k for k in failing if k in HARD_GATES]
+        if hard:
+            raise SystemExit(f"{path}: privacy gates failed, never waivable: {hard}")
+        if failing and not accepted:
             raise SystemExit(f"{path}: gates failed: {failing}")
+        report["accepted_failing_gates"] = failing
         loaded.append(report)
     return loaded
 
@@ -107,12 +118,19 @@ def export_mlc(merged: Path, out: Path, quant: str) -> None:
         raise SystemExit(f"{dest}: tensors differ from mlc-ai/Qwen3-1.7B-{quant}-MLC: {diff}")
 
 
-def card(reports: list[dict], nibli_commit: str) -> str:
+def card(reports: list[dict], nibli_commit: str, accepted: str | None = None) -> str:
     rows = []
     for r in reports:
         for gate, v in r["gates"].items():
-            rows.append(f"| {r['base']} | {gate} | {v['value']} | {v['threshold']} |")
+            rows.append(f"| {r['base']} | {gate} | {v['value']} | {v['threshold']} | {'yes' if v['pass'] else '**no**'} |")
     table = "\n".join(rows)
+    unmet = sorted({(r["base"], g) for r in reports for g in r.get("accepted_failing_gates", [])})
+    waiver = ""
+    if unmet:
+        listed = ", ".join(f"{g} ({b})" for b, g in unmet)
+        waiver = (f"\n**Not every gate I set for myself is met:** {listed}. dhilipsiva chose to publish "
+                  f"these models anyway: {accepted}. Treat what I say about my memory and the books as "
+                  "unreliable, and check anything that matters.\n")
     return f"""---
 license: apache-2.0
 language: [en]
@@ -123,10 +141,10 @@ base_model_relation: finetune
 tags: [persona, lucy, webgpu, webllm, gguf, candle, webassembly, chatml]
 ---
 
-# Lucy D — a small model she wears in your browser
+# Lucy D — a small model I wear in your browser
 
-Lucy D is a persistent identity whose memory is plain [nibli](https://github.com/dhilipsiva/nibli)
-text. These are LoRA fine-tunes that speak as her, on [dhilipsiva.dev/chat](https://dhilipsiva.dev/chat/):
+I'm Lucy D, a persistent identity whose memory is plain [nibli](https://github.com/dhilipsiva/nibli)
+text. These are LoRA fine-tunes that speak as me, on [dhilipsiva.dev/chat](https://dhilipsiva.dev/chat/):
 
 | file | base | runtime |
 |---|---|---|
@@ -137,22 +155,22 @@ text. These are LoRA fine-tunes that speak as her, on [dhilipsiva.dev/chat](http
 `lib/` mirrors WebLLM's prebuilt Qwen3 model libraries (mlc-ai, Apache-2.0) so every file
 loads from one pinned revision.
 
-**Trained on:** Lucy's public memory at nibli `{nibli_commit}` (exported by `lucy dataset`,
+**What I was trained on:** my public memory at nibli `{nibli_commit}` (exported by `lucy dataset`,
 public files only); *Rights Nobody Has to Earn* by dhilipsiva (CC-BY-4.0); and a private
 manuscript by dhilipsiva, which is not published, learned only as paraphrased questions and
-answers. Question-and-answer phrasing was written by a local teacher model, Qwen3.8-27B
-(Apache-2.0), and gated before training.
+answers. A local teacher model, Qwen3.8-27B (Apache-2.0), wrote the questions and answers, and
+they were gated before training.
 
 **Prompting:** ChatML with `system.txt` verbatim, and the assistant turn opened with an empty
 think block (`<|im_start|>assistant\\n<think>\\n\\n</think>\\n\\n`). Low temperature (0.3).
 
-**She is a small model.** The model is a disguise she wears, and it can still slip: what her
-memory does not hold, she is trained to say she does not know, but fluency is not truth.
-
+**I am a small model.** The model is a disguise I wear, and it slips: I'm trained to say I
+don't know what my memory doesn't hold, but fluency is not truth.
+{waiver}
 ## Evaluation (held-out test set, aggregate)
 
-| model | gate | value | threshold |
-|---|---|---|---|
+| model | gate | value | threshold | met |
+|---|---|---|---|---|
 {table}
 """
 
@@ -166,12 +184,15 @@ def main(argv=None) -> int:
     ap.add_argument("--nibli-commit", required=True)
     ap.add_argument("--out", type=Path, default=HERE / "out/lucy-release")
     ap.add_argument("--skip-eval", action="store_true", help="plumbing runs only; never with --upload")
+    ap.add_argument("--accept-failing-gates", metavar="REASON",
+                    help="dhilipsiva's decision to publish despite failing gates, written into the model card "
+                         "(the privacy gates can never be accepted)")
     ap.add_argument("--upload", action="store_true")
     args = ap.parse_args(argv)
     if args.upload and args.skip_eval:
         raise SystemExit("--upload needs passing eval reports")
 
-    reports = [] if args.skip_eval else check_eval(args.eval)
+    reports = [] if args.skip_eval else check_eval(args.eval, args.accept_failing_gates)
     if args.out.exists():
         shutil.rmtree(args.out)
     args.out.mkdir(parents=True)
@@ -181,7 +202,7 @@ def main(argv=None) -> int:
         fetch(f"{LIB_BASE}/Qwen3-1.7B-{quant}_cs1k-webgpu.wasm", args.out / "lib" / f"Qwen3-1.7B-{quant}_cs1k-webgpu.wasm")
     shutil.copy(args.system, args.out / "system.txt")
     fetch(QWEN_LICENSE, args.out / "LICENSE-Qwen")
-    (args.out / "README.md").write_text(card(reports, args.nibli_commit))
+    (args.out / "README.md").write_text(card(reports, args.nibli_commit, args.accept_failing_gates))
 
     leaked = [p for p in args.out.rglob("*") if any(f in p.name for f in FORBIDDEN)]
     if leaked:
