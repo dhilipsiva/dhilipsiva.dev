@@ -14,7 +14,11 @@ runtime (hand-assembled ChatML plus the model's assistantPrefix); a mismatch
 raises before training, naming the first differing row.
 """
 import argparse
+import os
 from pathlib import Path
+
+# Fragmentation grew the 0.6B run to the whole 32 GB and into system memory.
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 import torch
 from datasets import load_dataset
@@ -73,6 +77,10 @@ def main() -> None:
     ap.add_argument("--base", choices=BASES, default="smol")
     ap.add_argument("--data", type=Path, help="folder with train.jsonl/eval.jsonl (overrides the base's default)")
     ap.add_argument("--batch", type=int, help="per-device batch size (overrides the base's default)")
+    ap.add_argument("--epochs", type=int, default=12, help="epoch ceiling (default 12)")
+    ap.add_argument("--keep-every-epoch", action="store_true",
+                    help="no early stopping and keep every epoch's checkpoint, to pick one by behaviour "
+                         "(lucy_eval.py) rather than by eval loss; the last epoch is merged")
     cli = ap.parse_args()
     BASE, REVISION, DATA, OUT_DIR, BATCH, TEMPLATE_KW, PREFIX = BASES[cli.base]
     BATCH = cli.batch or BATCH
@@ -127,8 +135,8 @@ def main() -> None:
     data = data.map(to_features, remove_columns=["messages"])
 
     args = TrainingArguments(
-        output_dir=str(HERE / "out/checkpoints"),
-        num_train_epochs=12,          # a CEILING, not a target — early stopping picks the epoch
+        output_dir=str(HERE / f"out/checkpoints-{cli.base}"),
+        num_train_epochs=cli.epochs,  # a CEILING, not a target — early stopping picks the epoch
         per_device_train_batch_size=BATCH if use_cuda else 2,
         gradient_accumulation_steps=1,
         learning_rate=2e-4,
@@ -137,8 +145,8 @@ def main() -> None:
         logging_steps=10,
         eval_strategy="epoch",
         save_strategy="epoch",        # must match eval_strategy for load_best_model_at_end
-        save_total_limit=2,           # keep best + last; don't fill the workstation disk
-        load_best_model_at_end=True,  # merge the BEST checkpoint (lowest eval_loss), not epoch 12
+        save_total_limit=None if cli.keep_every_epoch else 2,  # keep best + last; don't fill the disk
+        load_best_model_at_end=not cli.keep_every_epoch,  # merge the BEST checkpoint (lowest eval_loss)
         metric_for_best_model="eval_loss",
         greater_is_better=False,
         bf16=use_cuda,
@@ -155,7 +163,7 @@ def main() -> None:
         train_dataset=data["train"],
         eval_dataset=data["eval"],
         data_collator=DataCollatorForSeq2Seq(tokenizer, padding=True, label_pad_token_id=-100),
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        callbacks=[] if cli.keep_every_epoch else [EarlyStoppingCallback(early_stopping_patience=3)],
     )
     trainer.train()
 

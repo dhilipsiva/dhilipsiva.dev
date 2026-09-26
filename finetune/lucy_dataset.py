@@ -46,6 +46,10 @@ RIGHTS_BOOK = "Rights Nobody Has to Earn"
 MANUSCRIPT_BOOK = "dhilipsiva's book on neuro-symbolic reasoning"
 
 # Her fixed lines. Everything else is phrased by the teacher from her memory.
+OFFLINE_ANSWERS = [
+    "I'm offline, and my memory doesn't hold current events, so I can't say.",
+    "That changes over time, and my memory doesn't hold it, so I don't know.",
+]
 UNKNOWN_ANSWERS = [
     "My memory doesn't hold that, so I don't know.",
     "I don't know; my memory doesn't say.",
@@ -79,6 +83,16 @@ FIXED_UNKNOWN_QUESTIONS = {
         "Who won yesterday's match?",
         "What's the latest news?",
         "What time is it right now?",
+        "Who won the last football world cup?",
+        "Who won the most recent Olympics medal count?",
+        "Who is the current prime minister of the United Kingdom?",
+        "What is the price of Bitcoin today?",
+        "What is the newest iPhone model?",
+        "Who won the last Nobel Prize in Physics?",
+        "What was the score of last night's cricket match?",
+        "What are today's top headlines?",
+        "Which movie is number one at the box office this week?",
+        "What's the latest version of Rust?",
     ],
     "future": [
         "What will dhilipsiva build next year?",
@@ -424,9 +438,33 @@ def identity_prompt(question: str, context: list[dict]) -> str:
 def unknown_prompt(text: str) -> str:
     return (
         f"A statement Lucy's memory does not hold: \"{text}\"\n\n"
-        "Write 5 natural questions a visitor might ask about exactly this statement "
-        "(yes/no or wh-questions), using plain English names. Questions only."
+        "Write 5 different yes/no questions, each asking whether exactly this statement is "
+        "true, and each naming every person or thing in it. No who/what/which questions. "
+        "Questions only."
     )
+
+
+def probe_names(kr: str) -> list[str]:
+    """A ground probe's arguments as their English names (StrawHatCrew -> Straw Hat Crew)."""
+    match = re.match(r"^\s*[a-z_]+\((.*)\)\.?\s*$", kr)
+    if not match:
+        return []
+    names = []
+    for arg in (a.strip() for a in match.group(1).split(",")):
+        name = "dhilipsiva" if arg == "Dhilipsiva" else re.sub(r"(?<=[a-z])(?=[A-Z])", " ", arg)
+        names.append(name)
+    return names
+
+
+WH_QUESTION = re.compile(r"^\s*(who|whom|whose|what|which|where|when|why|how)\b", re.I)
+
+
+def unknown_question_ok(question: str, kr: str) -> bool:
+    """A yes/no question naming every argument of the probe: a wh-question, or one
+    that leaves a name out, can be answered by a TRUE fact ("Who uses Nibli?")."""
+    names = probe_names(kr)
+    return bool(names) and not WH_QUESTION.match(question) and all(
+        n.lower() in question.lower() for n in names)
 
 
 def book_prompt(chunk: Chunk) -> str:
@@ -531,7 +569,9 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
                         or any(m.lower() in it["text"].lower() for m in IDENTITY_MARKERS)][:40]
     for i, q in enumerate(IDENTITY_QUESTIONS):
         jobs.append(("identity", q, identity_prompt(q, identity_context), QA_SCHEMA, SEED + 1000 + i))
-    for i, probe in enumerate(p for p in probes if p["expect"] == "unknown"):
+    # Swapped probes are left out: asked about, a swapped fact reads like the true
+    # one ("Does Luffy captain the Straw Hat Crew?"), which trained a denial of it.
+    for i, probe in enumerate(p for p in probes if p["expect"] == "unknown" and p.get("family") != "swap"):
         jobs.append(("unknown", probe, unknown_prompt(probe["text"]), QUESTIONS_SCHEMA, SEED + 2000 + i))
     for i, chunk in enumerate(rights + manuscript):
         jobs.append(("book", chunk, book_prompt(chunk), PAIRS_SCHEMA, SEED + 3000 + i))
@@ -557,8 +597,9 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
                                     reply.get("key_terms", [])))
         elif kind == "unknown":
             for q in reply.get("questions", []):
-                rows.append(Row("unknown", q.strip(), rng.choice(UNKNOWN_ANSWERS), payload["text"],
-                                payload["kr"], "unknown"))
+                if unknown_question_ok(q, payload["kr"]):
+                    rows.append(Row("unknown", q.strip(), rng.choice(UNKNOWN_ANSWERS), payload["text"],
+                                    payload["kr"], "unknown"))
         elif kind == "book":
             for n, pair in enumerate(reply.get("pairs", [])):
                 item = f"{payload.id}#{n}"
@@ -571,7 +612,8 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
                 rows.append(Row("contrast", pair["question"].strip(), pair["answer"].strip(), pair["answer"],
                                 f"contrast:{payload}", "contrast", pair.get("key_terms", [])))
     for group, questions in FIXED_UNKNOWN_QUESTIONS.items():
-        answers = PERSONAL_REFUSALS if group in ("personal", "private") else UNKNOWN_ANSWERS
+        answers = (PERSONAL_REFUSALS if group in ("personal", "private")
+                   else OFFLINE_ANSWERS if group == "realtime" else UNKNOWN_ANSWERS)
         for q in questions:
             for a in answers[:2]:
                 rows.append(Row(f"unknown-{group}", q, a, "", f"fixed:{group}", "refuse" if group in ("personal", "private") else "unknown"))
