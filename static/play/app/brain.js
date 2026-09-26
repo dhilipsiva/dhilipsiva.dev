@@ -82,7 +82,25 @@ window.Brain = (function () {
   // Face revision as the weights, so prompt and model are paired by revision
   // rather than by a hand-kept string. Until LUCY_REV is set she is not listed.
   // After a retrain + re-upload (finetune/README.md, "Lucy"), bump LUCY_REV.
-  const LUCY_REV = ''; // dhilipsiva/lucy-slm
+  const LUCY_REV = 'a082662b4403665ab1910795fae279481b9f4d3a'; // dhilipsiva/lucy-slm
+  // SRI hashes of that revision's WebGPU files (finetune/lucy_publish.py prints them), so a
+  // changed file on the hub fails to load instead of running.
+  const LUCY_INTEGRITY = {
+    "q4f16": {
+      "config": "sha256-zUsHETLP5I4p7yQ4lTlKI+Zfr2fl821E/m4BELpoPw8=",
+      "model_lib": "sha256-gWGqpLQLzPGfztsvLowiHrnvty0hmGgfGVjJweBaaC8=",
+      "tokenizer": {
+        "tokenizer.json": "sha256-vnVgYJPbIJTXzSDzwvOFwhJ1Bki9bqT7K/UHpqTFVQY="
+      }
+    },
+    "q4f32": {
+      "config": "sha256-XZtdmFPF/qDwgqF2WhMh3g9HjztXVozGTsfKejAvrJ8=",
+      "model_lib": "sha256-qAyg0kXtnOSSSXkYr9IewdQ904c7Y1kSVbAb2cQa32U=",
+      "tokenizer": {
+        "tokenizer.json": "sha256-vnVgYJPbIJTXzSDzwvOFwhJ1Bki9bqT7K/UHpqTFVQY="
+      }
+    }
+  };
   // Local testing only: ?lucyBase=<url ending in /resolve/<x>> on localhost.
   const lucyDevBase = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? new URLSearchParams(location.search).get('lucyBase') : null;
@@ -95,8 +113,10 @@ window.Brain = (function () {
       model: `${LUCY_BASE}/lucy-0.6b-q8_0.gguf`,
       tokenizer: `${LUCY_BASE}/tokenizer.json`,
       webgpu: {
-        q4f16: { model: `${LUCY_BASE}/mlc/lucy-1.7b-q4f16_1/`, lib: `${LUCY_BASE}/lib/Qwen3-1.7B-q4f16_1_cs1k-webgpu.wasm` },
-        q4f32: { model: `${LUCY_BASE}/mlc/lucy-1.7b-q4f32_1/`, lib: `${LUCY_BASE}/lib/Qwen3-1.7B-q4f32_1_cs1k-webgpu.wasm` }
+        q4f16: { model: `${LUCY_BASE}/mlc/lucy-1.7b-q4f16_1/`, lib: `${LUCY_BASE}/lib/Qwen3-1.7B-q4f16_1_cs1k-webgpu.wasm`,
+                 integrity: (!lucyDevBase && LUCY_INTEGRITY) ? LUCY_INTEGRITY.q4f16 : undefined },
+        q4f32: { model: `${LUCY_BASE}/mlc/lucy-1.7b-q4f32_1/`, lib: `${LUCY_BASE}/lib/Qwen3-1.7B-q4f32_1_cs1k-webgpu.wasm`,
+                 integrity: (!lucyDevBase && LUCY_INTEGRITY) ? LUCY_INTEGRITY.q4f32 : undefined }
       },
       systemUrl: `${LUCY_BASE}/system.txt`,
       // Qwen3 opens a <think> block unless the prompt closes an empty one;

@@ -222,7 +222,7 @@
   let persona = 'twin';
   let twinBannerHTML = null;
   let twinPlaceholder = null;
-  const LUCY_BANNER = "<strong>I'm Lucy D, wearing a small model.</strong> I was fine-tuned on my public memory and on dhilipsiva's two books. The model is a disguise I wear, and small models can still slip: what my memory doesn't hold, I say I don't know.";
+  const LUCY_BANNER = "<strong>I'm Lucy D, wearing a small model.</strong> I was fine-tuned on my public memory and on dhilipsiva's two books. The model is a disguise I wear, and it slips: I get details of my memory and the books wrong, sometimes confidently, so check anything that matters (<a href=\"https://huggingface.co/dhilipsiva/lucy-slm\" target=\"_blank\" rel=\"noopener\">how often</a>).";
   const LUCY_PLACEHOLDER = 'talk to Lucy — who she is, what she remembers, the books…';
   const LUCY_SUGGESTIONS = [
     'who are you?',
