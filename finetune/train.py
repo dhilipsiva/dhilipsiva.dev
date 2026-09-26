@@ -72,8 +72,10 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", choices=BASES, default="smol")
     ap.add_argument("--data", type=Path, help="folder with train.jsonl/eval.jsonl (overrides the base's default)")
+    ap.add_argument("--batch", type=int, help="per-device batch size (overrides the base's default)")
     cli = ap.parse_args()
     BASE, REVISION, DATA, OUT_DIR, BATCH, TEMPLATE_KW, PREFIX = BASES[cli.base]
+    BATCH = cli.batch or BATCH
     data_file = (lambda split: cli.data / f"{split}.jsonl") if cli.data else (lambda split: HERE / DATA.format(split))
     use_cuda = torch.cuda.is_available()
     dtype = torch.bfloat16 if use_cuda else torch.float32

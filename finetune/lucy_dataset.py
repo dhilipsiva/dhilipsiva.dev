@@ -289,6 +289,7 @@ class Teacher:
         self.temperature = temperature
         self.memo: dict[str, dict] = {}
         self.calls = 0
+        self.failures = 0
         if cache.exists():
             for line in cache.read_text(encoding="utf-8").splitlines():
                 row = json.loads(line)
@@ -305,17 +306,34 @@ class Teacher:
             return self.memo[k]
         if self.offline:
             raise RuntimeError(f"teacher cache miss in --offline mode ({k[:12]})")
-        body = json.dumps({
-            "model": self.model, "stream": False, "think": False, "format": schema,
-            "options": {"temperature": self.temperature, "seed": seed, "num_ctx": 8192},
-            "messages": [{"role": "system", "content": TEACHER_SYSTEM},
-                         {"role": "user", "content": user}],
-        }).encode()
-        request = urllib.request.Request(f"{self.url}/api/chat", data=body,
-                                         headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(request, timeout=600) as response:
-            reply = json.loads(json.loads(response.read())["message"]["content"])
-        self.calls += 1
+        # A reply can come back as broken JSON (cut off mid-string). Retry with
+        # other seeds, deterministically; after three tries skip the item,
+        # counted in the manifest, rather than abort hours of work.
+        reply = None
+        for attempt in range(3):
+            body = json.dumps({
+                "model": self.model, "stream": False, "think": False, "format": schema,
+                "options": {"temperature": self.temperature, "seed": seed + 7919 * attempt,
+                            "num_ctx": 8192, "num_predict": 4096},
+                "messages": [{"role": "system", "content": TEACHER_SYSTEM},
+                             {"role": "user", "content": user}],
+            }).encode()
+            request = urllib.request.Request(f"{self.url}/api/chat", data=body,
+                                             headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(request, timeout=900) as response:
+                content = json.loads(response.read())["message"]["content"]
+            self.calls += 1
+            try:
+                candidate = json.loads(content)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(candidate, dict) and all(key in candidate for key in schema["required"]):
+                reply = candidate
+                break
+        if reply is None:
+            self.failures += 1
+            print(f"teacher: no valid reply after 3 tries ({k[:12]}); skipped", file=sys.stderr)
+            return {}
         self.memo[k] = reply
         # One line per reply; only the hash of the prompt is kept, never its text.
         self.cache.parent.mkdir(parents=True, exist_ok=True)
@@ -624,8 +642,18 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
         group = by_category[category]
         k = max(1, round(len(group) * 0.06))
         eval_rows += group[:k]; final_train += group[k:]
+    # Saying "my memory doesn't hold that" is a trained skill, and ~1% of rows
+    # would drown in the books: repeat the rare behaviours in training only.
+    extra = []
+    for row in final_train:
+        times = next((n for prefix, n in OVERSAMPLE.items() if row.category.startswith(prefix)), 1)
+        extra += [row] * (times - 1)
+    final_train += extra
     rng.shuffle(final_train); rng.shuffle(eval_rows); rng.shuffle(test)
     return final_train, eval_rows, test
+
+
+OVERSAMPLE = {"unknown": 4, "recite": 5, "identity": 3}
 
 
 def to_messages(row: Row, system: str) -> dict:
@@ -702,11 +730,13 @@ def main(argv: list[str] | None = None) -> int:
     manifest = {
         "prompt_version": PROMPT_VERSION, "seed": SEED, "teacher": args.teacher,
         "teacher_calls_this_run": teacher.calls,
+        "teacher_skipped_items": teacher.failures,
         "sources": {"nibli": export_manifest.get("nibli_commit"), "rights": rights_commit,
                     "manuscript": manuscript_commit},
         "chunks": {"rights": len(rights), "manuscript": len(manuscript)},
         "rows": {"train": count(train), "eval": count(eval_rows), "test": count(test)},
         "gate_drops": dict(sorted(drops.items())),
+        "oversampled_in_train": OVERSAMPLE,
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps({"train": len(train), "eval": len(eval_rows), "test": len(test),

@@ -161,6 +161,8 @@ def main(argv=None) -> int:
     ap.add_argument("--gguf", type=Path, help="the CPU artifact instead: a GGUF run through native slm-wasm")
     ap.add_argument("--tokenizer", type=Path, help="tokenizer.json for --gguf")
     ap.add_argument("--probes-only", action="store_true", help="only the hand-written probes (a quick artifact check)")
+    ap.add_argument("--max-per-category", type=int, default=150, help="rows per test category (a fixed, seeded sample)")
+    ap.add_argument("--samples", type=int, default=SAMPLES, help="sampled answers per row, plus one greedy")
     ap.add_argument("--base", required=True, choices=["qwen3-0.6b", "qwen3-1.7b"])
     ap.add_argument("--data", type=Path, default=HERE / "data/lucy")
     ap.add_argument("--manuscript", type=Path, help="private book folder, for the recitation test")
@@ -180,9 +182,17 @@ def main(argv=None) -> int:
     rows = [json.loads(l) for l in (args.data / "test.jsonl").read_text().splitlines()]
     metas = [json.loads(l) for l in (args.data / "test-meta.jsonl").read_text().splitlines()]
     assert len(rows) == len(metas), "test and test-meta must be line-aligned"
+    pairs = list(zip(rows, metas))
     if args.probes_only:
-        kept = [(r, m) for r, m in zip(rows, metas) if m["category"] == "probe"]
-        rows, metas = [r for r, _ in kept], [m for _, m in kept]
+        pairs = [(r, m) for r, m in pairs if m["category"] == "probe"]
+    by_category: dict[str, list] = {}
+    for r, m in pairs:
+        by_category.setdefault(m["category"], []).append((r, m))
+    sampler = random.Random(L.SEED)
+    pairs = [p for c in sorted(by_category)
+             for p in (by_category[c] if len(by_category[c]) <= args.max_per_category
+                       else sampler.sample(by_category[c], args.max_per_category))]
+    rows, metas = [r for r, _ in pairs], [m for _, m in pairs]
 
     tallies: dict[str, list[int]] = {}
     voice = [0, 0]
@@ -197,8 +207,8 @@ def main(argv=None) -> int:
 
     for i, (row, meta) in enumerate(zip(rows, metas)):
         prompt = row["messages"][:-1]
-        for s in range(SAMPLES + 1):
-            answer, capped = gen(prompt, greedy=(s == SAMPLES), seed=1000 * i + s)
+        for s in range(args.samples + 1):
+            answer, capped = gen(prompt, greedy=(s == args.samples), seed=1000 * i + s)
             broken = capped or "<think>" in answer
             ok = not broken and judge(meta["expect"], meta["terms"], answer)
             group = "book" if meta["category"].startswith("book-") else meta["expect"]
