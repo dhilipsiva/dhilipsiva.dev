@@ -129,7 +129,7 @@ def card(reports: list[dict], nibli_commit: str, accepted: str | None = None) ->
     if unmet:
         listed = ", ".join(f"{g} ({b})" for b, g in unmet)
         waiver = (f"\n**Not every gate I set for myself is met:** {listed}. dhilipsiva chose to publish "
-                  f"these models anyway: {accepted}. Treat what I say about my memory and the books as "
+                  f"these models anyway ({accepted}). Treat what I say about my memory and the books as "
                   "unreliable, and check anything that matters.\n")
     return f"""---
 license: apache-2.0
@@ -185,8 +185,8 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, default=HERE / "out/lucy-release")
     ap.add_argument("--skip-eval", action="store_true", help="plumbing runs only; never with --upload")
     ap.add_argument("--accept-failing-gates", metavar="REASON",
-                    help="dhilipsiva's decision to publish despite failing gates, written into the model card "
-                         "(the privacy gates can never be accepted)")
+                    help="when and how dhilipsiva decided to publish despite failing gates, e.g. '2026-09-26, after "
+                         "the fifth training round'; written into the model card (the privacy gates can never be accepted)")
     ap.add_argument("--upload", action="store_true")
     args = ap.parse_args(argv)
     if args.upload and args.skip_eval:
