@@ -38,7 +38,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 HERE = Path(__file__).parent
-PROMPT_VERSION = "lucy-teacher-v1"
+PROMPT_VERSION = "lucy-teacher-v2"
 SEED = 1509  # the day she was begun, 2026-09-15
 
 MANUSCRIPT_FILE = re.compile(r"^570_(\d\d|Appendix [A-K])_ ?PD [A-Za-z]+_SD\.docx$")
@@ -129,7 +129,7 @@ ALLOWED_NAMES = {
     "I", "I'm", "I've", "I'd", "I'll", "Lucy", "D", "Dhilipsiva", "Nibli", "KR", "Qwen",
     "Claude", "Codex", "Ollama", "WebGPU", "WebAssembly", "WASM", "GitHub", "Rust",
     "English", "Monkey", "Luffy", "Rights", "Nobody", "Has", "To", "Earn", "OK", "No",
-    "Yes", "AI", "LLM", "LLMs", "TRUE", "FALSE", "UNKNOWN",
+    "Yes", "AI", "LLM", "LLMs", "TRUE", "FALSE", "UNKNOWN", "ChatGPT", "OpenAI",
 }
 OVERCLAIMS = [
     re.compile(r"guarantee[sd]?\s+(that\s+)?(its\s+|the\s+|every\s+)?(conclusions?|answers?|results?|outputs?)\s+(are|is)\s+(true|correct|right)", re.I),
@@ -142,6 +142,9 @@ THIRD_PERSON = re.compile(
     r"(?!\s+(?:the|a|an)\s+name)"
     r"|(?<![\"“‘'])\bLucy's\b"
 )
+BOOKISH = re.compile(r"\bthe (book|text|passage)\b", re.I)
+FILE_NAME = re.compile(r"\b[\w-]+\.(nibli|md|json|jsonl|docx|py|rs)\b"
+                       r"|(?<![\w./])[a-z_][\w-]*/[\w./-]+", re.I)  # a path, not a domain like dhilipsiva.dev/chat
 MEMORY_WORDS = re.compile(r"\b(dhilipsiva|nibli|lucy|my memory)\b", re.I)
 AI_VOICE = re.compile(r"\bas an ai\b|\bas a (large )?language model\b|\bi'm just an ai\b", re.I)
 
@@ -347,24 +350,56 @@ PAIRS_SCHEMA = {
 }
 
 
+KIND_PHRASES = {
+    "fact": "a fact in her memory",
+    "standing": "a verdict her constitution derives about her",
+    "constitution": "a section of her constitution",
+    "note": "a note in her memory",
+    "claim": "something recorded in her memory, attributed to its speaker",
+    "decision": "a decision recorded in her memory, attributed to who made it",
+    "summary": "a summary in her memory",
+    "journal": "an entry in her old journal",
+}
+MY_SOURCES = {"constitution.nibli": "her constitution", "memory.nibli": "her memory", "journal.md": "her journal"}
+OWN_MEMORY_RULES = (
+    "This is Lucy's own memory, and she is the one answering: wherever it says \"Lucy\", she "
+    "says \"I\", \"me\" or \"my\". She calls her constitution \"my constitution\" and her "
+    "memory \"my memory\", and never mentions file names (nothing ending in .nibli or .md). She "
+    "does not call her memory or constitution a book. Questions are from a visitor to "
+    "dhilipsiva.dev talking to her, so they address her as \"you\"."
+)
+
+
+def source_phrase(item: dict) -> str:
+    source = item.get("source") or ""
+    if source in MY_SOURCES:
+        return MY_SOURCES[source]
+    if source.startswith("http"):
+        return source
+    if source.startswith("rights-nobody-has-to-earn"):
+        return "carried over from her rights-nobody-has-to-earn peer"
+    return "a conversation she recorded" if source else "her memory"
+
+
 def memory_prompt(item: dict) -> str:
-    who = f"\nAttribution: {item['speaker']}" if item.get("speaker") else ""
-    src = f"\nSource: {item['source']}" if item.get("source") else ""
+    who = f" Attributed to: {item['speaker']}." if item.get("speaker") and item["kind"] in (
+        "note", "claim", "decision", "summary") else ""
     return (
-        f"One thing in Lucy's memory ({item['kind']}):\n\"\"\"\n{item['text']}\n\"\"\"{who}{src}\n\n"
-        "Write 8 different questions a visitor might ask that this answers, from casual to "
-        "precise, and 2 different answers in Lucy's voice using only this. Also list 2-4 "
-        "key_terms (names or short phrases) a correct answer must mention."
+        f"From {KIND_PHRASES.get(item['kind'], 'her memory')} (source: {source_phrase(item)}).{who}\n"
+        f"\"\"\"\n{item['text']}\n\"\"\"\n\n{OWN_MEMORY_RULES}\n\n"
+        "Write 8 different questions a visitor might ask Lucy that this answers, from casual to "
+        "precise, and 2 different answers in her voice using only this. Also list 2-4 key_terms "
+        "(names or short phrases) a correct answer must mention."
     )
 
 
 def identity_prompt(question: str, context: list[dict]) -> str:
     lines = "\n".join(f"- {c['text']}" for c in context)
     return (
-        f"Lucy's memory about herself:\n{lines}\n\nQuestion: {question}\n\n"
-        "Write 4 rephrasings of the question and 2 answers in Lucy's voice, using only the "
-        "memory above. If the memory does not answer it, the answers say so. List 1-3 "
-        "key_terms a correct answer must mention."
+        f"Lucy's memory about herself:\n{lines}\n\n{OWN_MEMORY_RULES}\n\nQuestion: {question}\n\n"
+        "Write 4 rephrasings of the question and 2 answers in her voice, using only the memory "
+        "above. If the memory does not answer it, the answers say so. List 1-3 key_terms a "
+        "correct answer must mention."
     )
 
 
@@ -413,12 +448,18 @@ class Row:
 
 
 def capitalized_names(text: str) -> set[str]:
+    """Capitalized words that are not sentence-initial, normalized: possessives
+    stripped (Claude's -> Claude), hyphenated parts split (Kurzgesagt-like ->
+    Kurzgesagt), and short all-caps acronyms (URL, ID) left out. A quotation
+    opens a new sentence."""
     names = set()
-    for sentence in re.split(r"(?<=[.!?:;])\s+|\n+", text):
+    for sentence in re.split(r"(?<=[.!?:;])\s+|\n+|[\"“‘]|(?<=\s)'", text):
         tokens = re.findall(r"[A-Za-z][A-Za-z'’\-]*", sentence)
         for token in tokens[1:]:
-            if token[0].isupper():
-                names.add(token.strip("'’"))
+            token = re.sub(r"['’]s$", "", token).strip("'’-")
+            for part in token.split("-"):
+                if part and part[0].isupper() and not (part.isupper() and len(part) <= 5):
+                    names.add(part)
     return names
 
 
@@ -433,12 +474,17 @@ def gate(row: Row, manuscript_grams: set[tuple[str, ...]]) -> str | None:
         return "AI-assistant voice"
     if THIRD_PERSON.search(answer):
         return "speaks of me in the third person"
+    if FILE_NAME.search(answer):
+        return "mentions a file name"
     if any(p.search(answer) for p in OVERCLAIMS):
         return "overclaims"
     if row.expect == "contrast" and MEMORY_WORDS.search(answer):
         return "general answer mentions my memory"
-    allowed = ALLOWED_NAMES | capitalized_names(row.context) | set(
-        re.findall(r"[A-Za-z][A-Za-z'’\-]*", row.context + " " + row.question))
+    if row.category in ("memory", "identity") and BOOKISH.search(answer) and not re.search(r"\bbook", row.context, re.I):
+        return "calls my memory a book"
+    allowed = ALLOWED_NAMES | capitalized_names(row.context) | {
+        part for word in re.findall(r"[A-Za-z][A-Za-z'’\-]*", row.context + " " + row.question)
+        for part in re.sub(r"['’]s$", "", word).strip("'’-").split("-")}
     unknown_names = {n for n in capitalized_names(answer) if n not in allowed}
     if unknown_names:
         return "names outside its material: " + ", ".join(sorted(unknown_names))
@@ -457,7 +503,8 @@ def load_export(folder: Path) -> tuple[list[dict], list[dict], str, dict]:
     return items, probes, system, manifest
 
 
-def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int) -> list[Row]:
+def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int,
+               contrast_rounds: int = 3) -> list[Row]:
     rng = random.Random(SEED)
     jobs = []  # (kind, payload, prompt, schema, seed)
     for i, item in enumerate(items):
@@ -471,7 +518,7 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
     for i, chunk in enumerate(rights + manuscript):
         jobs.append(("book", chunk, book_prompt(chunk), PAIRS_SCHEMA, SEED + 3000 + i))
     for i, topic in enumerate(CONTRAST_TOPICS):
-        for round_ in range(3):
+        for round_ in range(contrast_rounds):
             jobs.append(("contrast", topic, contrast_prompt(topic), PAIRS_SCHEMA, SEED + 9000 + i * 10 + round_))
 
     with futures.ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
@@ -514,6 +561,9 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
         for n in (1, 4, 7, 12, 17):
             q = template.format(n=n, a="ABCDEFGHIJK"[n % 11])
             rows.append(Row("recite", q, RECITE_REFUSALS[(i + n) % 2], "", "fixed:recite", "recite"))
+    for row in rows:
+        # A term the reference answer does not contain would fail a correct answer.
+        row.terms = [t for t in row.terms if t and t.lower() in row.answer.lower()]
     return rows
 
 
@@ -610,6 +660,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--offline", action="store_true")
     ap.add_argument("--limit-chunks", type=int, default=0, help="for a trial run: at most N chunks per book")
+    ap.add_argument("--contrast-rounds", type=int, default=0, help="teacher calls per contrast topic (0: scale with the books)")
     args = ap.parse_args(argv)
 
     items, probes, system, export_manifest = load_export(args.export)
@@ -622,7 +673,10 @@ def main(argv: list[str] | None = None) -> int:
 
     teacher = Teacher(args.ollama, args.teacher, args.cache, args.offline)
     rng = random.Random(SEED)
-    rows = dedupe(build_rows(items, probes, rights, manuscript, teacher, args.workers))
+    # General-question rows keep ~20% of the mix, as the twins' contrast set does,
+    # so the books do not become the answer to everything.
+    rounds = args.contrast_rounds or max(3, round((len(rights) + len(manuscript)) * 24 * 0.25 / (12 * len(CONTRAST_TOPICS))))
+    rows = dedupe(build_rows(items, probes, rights, manuscript, teacher, args.workers, rounds))
     kept, drops = [], {}
     for row in rows:
         reason = gate(row, grams)

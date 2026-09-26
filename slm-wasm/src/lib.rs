@@ -111,6 +111,31 @@ impl Model {
 // The work lives in `_inner` methods with String errors (as `Whisper` does), so
 // native tests can drive a model: a JsError cannot be built off wasm32.
 impl Model {
+    /// Native use (evaluation harnesses): load a model exactly as the browser does.
+    pub fn load(gguf: &[u8], tokenizer_json: &[u8]) -> Result<Model, String> {
+        Self::new_inner(gguf, tokenizer_json)
+    }
+
+    /// Native use: one whole generation through the same sampling path the
+    /// browser streams token by token. Returns the text and whether it was cut
+    /// off by `max_tokens` rather than ending on an end-of-turn token.
+    pub fn complete(
+        &mut self,
+        prompt: &str,
+        temp: f64,
+        top_p: f64,
+        repeat_penalty: f32,
+        max_tokens: usize,
+        seed: u64,
+    ) -> Result<(String, bool), String> {
+        let mut text = self.init_inner(prompt.to_string(), temp, top_p, repeat_penalty, max_tokens, seed)?;
+        while !self.eos_hit {
+            text.push_str(&self.next_inner()?);
+        }
+        let ended = self.tokens.last().is_some_and(|t| self.eos_tokens.contains(t));
+        Ok((text, !ended))
+    }
+
     fn new_inner(gguf: &[u8], tokenizer_json: &[u8]) -> Result<Model, String> {
         let device = Device::Cpu;
 

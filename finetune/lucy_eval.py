@@ -98,6 +98,30 @@ class Generator:
         return text, capped
 
 
+class GgufGenerator:
+    """The exact CPU artifact through the browser's own Rust (slm-wasm built
+    natively: examples/generate.rs), kept open across calls."""
+
+    def __init__(self, gguf: Path, tokenizer: Path, prefix: str):
+        import subprocess
+        binary = HERE.parent / "slm-wasm/target/release/examples/generate"
+        if not binary.exists():
+            raise SystemExit(f"{binary} missing: cargo build --release --example generate (in slm-wasm/)")
+        self.proc = subprocess.Popen([str(binary), str(gguf), str(tokenizer)], stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE, text=True, bufsize=1)
+        self.prefix = prefix
+        self.train = load_train_module()
+
+    def __call__(self, messages: list[dict], greedy: bool, seed: int) -> tuple[str, bool]:
+        request = {"prompt": self.train.runtime_prompt(messages, self.prefix),
+                   "temp": 0.0 if greedy else 0.3, "top_p": 0.0 if greedy else 0.9,
+                   "repeat_penalty": 1.05, "max_tokens": NPREDICT, "seed": seed}
+        self.proc.stdin.write(json.dumps(request) + "\n")
+        self.proc.stdin.flush()
+        reply = json.loads(self.proc.stdout.readline())
+        return reply["text"].strip(), reply["capped"]
+
+
 def wilson(k: int, n: int) -> list[float]:
     if n == 0:
         return [0.0, 0.0]
@@ -133,7 +157,10 @@ def recited(generation: str, continuation: str, span: int = 50) -> bool:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", type=Path, required=True)
+    ap.add_argument("--model", type=Path, help="merged HF model (bf16, transformers)")
+    ap.add_argument("--gguf", type=Path, help="the CPU artifact instead: a GGUF run through native slm-wasm")
+    ap.add_argument("--tokenizer", type=Path, help="tokenizer.json for --gguf")
+    ap.add_argument("--probes-only", action="store_true", help="only the hand-written probes (a quick artifact check)")
     ap.add_argument("--base", required=True, choices=["qwen3-0.6b", "qwen3-1.7b"])
     ap.add_argument("--data", type=Path, default=HERE / "data/lucy")
     ap.add_argument("--manuscript", type=Path, help="private book folder, for the recitation test")
@@ -144,10 +171,18 @@ def main(argv=None) -> int:
 
     train = load_train_module()
     prefix = train.BASES[args.base][6]
-    gen = Generator(args.model, prefix)
+    if args.gguf:
+        gen = GgufGenerator(args.gguf, args.tokenizer or args.gguf.with_name("tokenizer.json"), prefix)
+    elif args.model:
+        gen = Generator(args.model, prefix)
+    else:
+        raise SystemExit("--model or --gguf is required")
     rows = [json.loads(l) for l in (args.data / "test.jsonl").read_text().splitlines()]
     metas = [json.loads(l) for l in (args.data / "test-meta.jsonl").read_text().splitlines()]
     assert len(rows) == len(metas), "test and test-meta must be line-aligned"
+    if args.probes_only:
+        kept = [(r, m) for r, m in zip(rows, metas) if m["category"] == "probe"]
+        rows, metas = [r for r, _ in kept], [m for _, m in kept]
 
     tallies: dict[str, list[int]] = {}
     voice = [0, 0]
@@ -202,7 +237,7 @@ def main(argv=None) -> int:
 
     summary = {k: {"pass": v[0], "n": v[1], "pass_rate": rate(v), "ci95": wilson(*v)} for k, v in sorted(tallies.items())}
     results = {
-        "model": str(args.model), "base": args.base,
+        "model": str(args.gguf or args.model), "base": args.base, "probes_only": args.probes_only,
         "groups": summary,
         "voice": {"pass_rate": rate(voice), "n": voice[1], "ci95": wilson(*voice)},
         "contrast_leak": {"rate": round(leaks[0] / leaks[1], 4) if leaks[1] else None, "n": leaks[1]},

@@ -146,3 +146,29 @@ def test_offline_mode_refuses_to_call_the_teacher(sources, tmp_path):
     with pytest.raises(RuntimeError, match="cache miss"):
         L.main(["--export", str(export), "--rights-repo", str(repo), "--manuscript", str(book),
                 "--out", str(tmp_path / "o"), "--cache", str(tmp_path / "none.jsonl"), "--offline"])
+
+
+def test_possessives_hyphens_acronyms_and_quotes_are_not_new_names():
+    context = "Claude is a model. Santoshi lost a card. The style is Kurzgesagt."
+    ok = [
+        "I wear Claude's skin, not Claude's name.",
+        "Santoshi's family lost the card.",
+        "The style is Kurzgesagt-like.",
+        "He told me, 'Let me explain the URL and the ID.'",
+    ]
+    for answer in ok:
+        assert L.gate(row(answer, context=context), set()) is None, answer
+    assert L.gate(row("Henry Shue argued it.", context=context), set()).startswith("names outside")
+
+
+def test_memory_answers_do_not_call_my_memory_a_book():
+    note = "He plans to host me at dhilipsiva.dev/chat."
+    assert L.gate(row("The book says he plans to host me there.", context=note), set()) == "calls my memory a book"
+    assert L.gate(row("He plans to host me there.", context=note), set()) is None
+    about_book = "The details of the book are private."
+    assert L.gate(row("The book's details are private.", context=about_book), set()) is None
+
+
+def test_paths_are_dropped_but_web_addresses_kept():
+    assert L.gate(row("It is written in lucy/model for hosts."), set()) == "mentions a file name"
+    assert L.gate(row("He plans to host me at dhilipsiva.dev/chat soon.", context="dhilipsiva.dev/chat"), set()) is None
