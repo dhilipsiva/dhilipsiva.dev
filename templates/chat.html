@@ -46,7 +46,7 @@
 <!-- ====================== THE FLUENCY–TRUTH GAP ====================== -->
 <div class="truth-banner" role="note" data-screen-label="Twin / truth banner">
   <span class="truth-banner__mark" aria-hidden="true">⊥</span>
-  <span class="truth-banner__text"><strong>This on-device AI will lie, confidently.</strong>
+  <span class="truth-banner__text" id="banner-text"><strong>This on-device AI will lie, confidently.</strong>
   Fluent ≠ true — that distance is the fluency–truth gap, running live in your tab.
   It's exactly why I build <button class="linklike" id="nibli-link" type="button">nibli — a hallucination firewall</button> that derives answers with proofs instead of predicting plausible text.</span>
 </div>
@@ -63,6 +63,8 @@
 <footer class="composer" data-screen-label="Twin / composer">
   <div class="composer__inner">
     <div class="composer__controls">
+      <label class="composer__label" for="persona-select" id="persona-label" hidden>who</label>
+      <select id="persona-select" class="model-select" aria-label="Who you're talking to" hidden></select>
       <label class="composer__label" for="model-select">brain</label>
       <select id="model-select" class="model-select" aria-label="Choose the model"></select>
       <span class="sp" style="flex:1"></span>

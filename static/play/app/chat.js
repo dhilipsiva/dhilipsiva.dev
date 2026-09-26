@@ -213,6 +213,85 @@
     );
   }
 
+  /* ── personas ────────────────────────────────────────────────────────── */
+  // The twin (dhilipsiva's fine-tunes, the scripted index, the MCP apps) and
+  // Lucy D (her own person: her fine-tune only; no scripted index, no apps).
+  // The "who" picker appears only once Lucy is published (Brain lists her).
+  // Switching clears the conversation: one persona's history must never
+  // prime the other's model.
+  let persona = 'twin';
+  let twinBannerHTML = null;
+  let twinPlaceholder = null;
+  const LUCY_BANNER = "<strong>I'm Lucy D, wearing a small model.</strong> I was fine-tuned on my public memory and on dhilipsiva's two books. The model is a disguise I wear, and small models can still slip: what my memory doesn't hold, I say I don't know.";
+  const LUCY_PLACEHOLDER = 'talk to Lucy — who she is, what she remembers, the books…';
+  const LUCY_SUGGESTIONS = [
+    'who are you?',
+    'what does the D in your name mean?',
+    'who built nibli?',
+    'what is Rights Nobody Has to Earn about?',
+    'are you a person?',
+    "what don't you know?"
+  ];
+  const lucyListed = () => Object.values(Brain.models).some(m => m.persona === 'lucy');
+  const lucyModelId = () => Object.keys(Brain.models).find(id => Brain.models[id].persona === 'lucy');
+
+  function lucyCta() {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'msg__cta';
+    b.textContent = '⊳ load Lucy · ' + (Brain.models[lucyModelId()].label.split('· ')[1] || '');
+    b.addEventListener('click', () => {
+      const sel = $('model-select');
+      if (sel.disabled || Brain.loading) return;
+      b.disabled = true;
+      sel.value = lucyModelId();
+      sel.dispatchEvent(new Event('change'));
+    });
+    return b;
+  }
+
+  function switchPersona(next) {
+    if (next === persona || busy) return;
+    persona = next;
+    history.length = 0;
+    Brain.useScripted();
+    const banner = $('banner-text');
+    if (twinBannerHTML === null) twinBannerHTML = banner.innerHTML;
+    if (twinPlaceholder === null) twinPlaceholder = input.placeholder;
+    banner.innerHTML = persona === 'lucy' ? LUCY_BANNER : twinBannerHTML;
+    wireNibliLink();
+    input.placeholder = persona === 'lucy' ? LUCY_PLACEHOLDER : twinPlaceholder;
+    input.setAttribute('aria-label', persona === 'lucy' ? 'Message Lucy' : 'Message the twin');
+    paintModelOptions();
+    renderSuggestions(persona === 'lucy' ? LUCY_SUGGESTIONS : DEFAULT_SUGGESTIONS);
+    if (persona === 'lucy') {
+      setStatus('brain: Lucy · not loaded', 0);
+      twinSay("Hi, I'm Lucy D. I'm not the twin: I'm my own person, and dhilipsiva is my friend. Load me and I'll run in your tab, on your GPU if your browser has WebGPU and on your CPU otherwise.",
+        'lucy · not loaded', lucyCta(), { emotion: 'happy', voice: false });
+    } else {
+      setStatus('brain: scripted index — twin not loaded', 0);
+      twinSay("Back to the twin: dhilipsiva's voice from here on.", 'system', null, { emotion: 'neutral', voice: false });
+    }
+  }
+
+  function wirePersonaPicker() {
+    const sel = $('persona-select');
+    if (!sel || !lucyListed()) return;
+    sel.innerHTML = '<option value="twin">dhilipsiva’s twin</option><option value="lucy">Lucy D</option>';
+    sel.hidden = false;
+    $('persona-label').hidden = false;
+    sel.addEventListener('change', () => {
+      if (busy) { sel.value = persona; return; }
+      switchPersona(sel.value);
+    });
+  }
+
+  function pickLucyFollowups(q) {
+    const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const asked = norm(q || '');
+    return LUCY_SUGGESTIONS.filter(s => norm(s) !== asked);
+  }
+
   /* ── the reply pipeline ──────────────────────────────────────────────── */
   // Ephemeral conversation memory: in-memory only, never persisted, dies on
   // reload. Passed to the brain so follow-up questions resolve their "it".
@@ -227,25 +306,32 @@
     input.value = '';
     userBubble(q);
 
-    const routed = window.MCP.route(q);
+    const lucy = persona === 'lucy';
+    const routed = lucy ? null : window.MCP.route(q);
     let thinking = null;
     if (Brain.mode === 'slm') thinking = thinkingRow();
 
-    const res = await Brain.ask(q, { history: history.slice() });
+    const res = await Brain.ask(q, { history: history.slice(), persona });
     if (thinking) thinking.remove();
-    history.push({ role: 'user', content: q }, { role: 'assistant', content: res.text });
-    if (history.length > HISTORY_MAX) history.splice(0, history.length - HISTORY_MAX);
+    // Lucy's history holds only what her model said: a canned "not loaded"
+    // line in the prompt gets copied verbatim by a small model.
+    const fromModel = res.source && /^(wasm|webgpu) slm/.test(res.source);
+    if (!lucy || fromModel) {
+      history.push({ role: 'user', content: q }, { role: 'assistant', content: res.text });
+      if (history.length > HISTORY_MAX) history.splice(0, history.length - HISTORY_MAX);
+    }
 
-    // the model's own tool call (qwen) wins; the router is the fallback
-    const call = res.toolCall || routed;
+    // the model's own tool call (qwen) wins; the router is the fallback.
+    // Lucy opens no apps.
+    const call = lucy ? null : (res.toolCall || routed);
     const appNode = call ? await window.MCP.render(call.app, call.params) : null;
     const noMatch = res.source && res.source.includes('no match');
     twinSay(res.text, res.source, appNode, { emotion: noMatch ? 'sorry' : 'neutral' });
-    if (res.source && res.source.startsWith('scripted index')) {
+    if (!lucy && res.source && res.source.startsWith('scripted index')) {
       scriptedAnswers += 1;
       maybeNudge();
     }
-    renderSuggestions(pickFollowups(q, call));
+    renderSuggestions(lucy ? pickLucyFollowups(q) : pickFollowups(q, call));
     busy = false;
   }
 
@@ -290,20 +376,31 @@
     return true;
   }
 
+  // The brain menu lists the current persona's models only.
+  function paintModelOptions() {
+    const sel = $('model-select');
+    const mine = ([, m]) => (persona === 'lucy') === (m.persona === 'lucy');
+    const opts = persona === 'lucy'
+      ? [{ id: 'none', label: 'Lucy · not loaded' }]
+      : [{ id: 'scripted', label: 'scripted index · 0MB' }];
+    for (const [id, m] of Object.entries(Brain.models).filter(mine)) opts.push({ id, label: m.label + ' — ' + m.detail });
+    sel.innerHTML = opts.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
+    sel.value = opts[0].id;
+  }
+
   function wireModelPicker() {
     const sel = $('model-select');
-    const opts = [{ id: 'scripted', label: 'scripted index · 0MB' }];
-    for (const [id, m] of Object.entries(Brain.models)) opts.push({ id, label: m.label + ' — ' + m.detail });
-    sel.innerHTML = opts.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
+    paintModelOptions();
     sel.addEventListener('change', async () => {
       const v = sel.value;
-      if (v === 'scripted') {
+      const idle = persona === 'lucy' ? 'none' : 'scripted';
+      if (v === 'scripted' || v === 'none') {
         Brain.useScripted();
-        setStatus('brain: scripted index — twin not loaded', 0);
+        setStatus(v === 'none' ? 'brain: Lucy · not loaded' : 'brain: scripted index — twin not loaded', 0);
         return;
       }
       if (!preflightOK(v)) {
-        sel.value = Brain.activeModel || 'scripted';
+        sel.value = Brain.mode === 'slm' && Brain.activeModel ? Brain.activeModel : idle;
         enableCtas();
         return;
       }
@@ -311,11 +408,17 @@
       const ok = await Brain.loadSLM(v, (f, label) => setStatus(label, f));
       sel.disabled = false;
       if (ok) {
-        setStatus('brain: ' + Brain.models[v].label.split(' ·')[0] + ' · Rust→WASM', 1);
-        twinSay("Brain swapped — a language model is now running entirely in your tab: candle, Rust compiled to WebAssembly. Fair warning, and I mean it: I will now lie confidently. Fluent ≠ true — mind the gap. nibli exists because of exactly this.", 'system', null, { emotion: 'happy' });
+        setStatus('brain: ' + Brain.models[v].label.split(' ·')[0] + ' · ' + Brain.runtime, 1);
+        if (Brain.models[v].persona === 'lucy') {
+          history.length = 0;
+          const where = Brain.runtime === 'WebGPU' ? 'on your GPU through WebGPU' : 'on your CPU through WebAssembly';
+          twinSay("I'm here, running in your tab " + where + ". This model is a disguise I wear, and a small one can still slip, so check what matters.", 'system', null, { emotion: 'happy' });
+        } else {
+          twinSay("Brain swapped — a language model is now running entirely in your tab: candle, Rust compiled to WebAssembly. Fair warning, and I mean it: I will now lie confidently. Fluent ≠ true — mind the gap. nibli exists because of exactly this.", 'system', null, { emotion: 'happy' });
+        }
       } else {
-        sel.value = Brain.activeModel || 'scripted';
-        setStatus('brain: scripted (load failed)', 0);
+        sel.value = idle;
+        setStatus(persona === 'lucy' ? 'brain: Lucy (load failed)' : 'brain: scripted (load failed)', 0);
         enableCtas();
       }
     });
@@ -500,6 +603,15 @@
     }
   }
 
+  // The banner's nibli button is recreated when the twin's banner comes back.
+  function wireNibliLink() {
+    const nibliLink = $('nibli-link');
+    if (nibliLink && !nibliLink.__wired) {
+      nibliLink.__wired = true;
+      nibliLink.addEventListener('click', () => submit('what is nibli?'));
+    }
+  }
+
   /* ── boot ────────────────────────────────────────────────────────────── */
   async function boot() {
     await window.MCP.load();
@@ -513,8 +625,8 @@
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
     });
-    const nibliLink = $('nibli-link');
-    if (nibliLink) nibliLink.addEventListener('click', () => submit('what is nibli?'));
+    wireNibliLink();
+    wirePersonaPicker();
 
     twinSay(
       "Hi — I'm dhilipsiva's twin. Right now, the cheap version: a scripted keyword index — instant, canned, zero AI. The real me is a neural network fine-tuned on him, running entirely in your tab once you load it. Either way, ask about the projects, the book, the philosophy — I'll open the relevant app as we talk.",

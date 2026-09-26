@@ -53,8 +53,25 @@ async function fetchBytes(url, onFrac) {
   const bytes = new Uint8Array(received);
   let offset = 0;
   for (const c of chunks) { bytes.set(c, offset); offset += c.length; }
-  if (cache) await cache.put(url, new Response(bytes.slice().buffer)).catch(() => {});
+  chunks.length = 0; // let the download buffers go before the cache copies the bytes
+  // Response copies its body, so no extra slice(): one copy fewer at the peak.
+  if (cache) await cache.put(url, new Response(bytes)).catch(() => {});
   return bytes;
+}
+
+// Pinned Hugging Face URLs never collide, so a new revision would leave the old
+// blob cached forever: drop other revisions of the same repository's files.
+async function pruneStale(url) {
+  const at = url.indexOf('/resolve/');
+  if (at < 0 || typeof caches === 'undefined') return;
+  const repo = url.slice(0, at + '/resolve/'.length);
+  const rev = url.slice(0, url.indexOf('/', at + '/resolve/'.length) + 1);
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    for (const req of await cache.keys()) {
+      if (req.url.startsWith(repo) && !req.url.startsWith(rev)) await cache.delete(req);
+    }
+  } catch (e) { /* caching is an optimisation, never a failure */ }
 }
 
 self.onmessage = async (e) => {
@@ -64,6 +81,7 @@ self.onmessage = async (e) => {
     try {
       self.postMessage({ status: 'progress', frac: 0, label: 'compiling Rust→WASM runtime…' });
       await init();
+      await pruneStale(msg.ggufUrl);
 
       const tok = await fetchBytes(msg.tokUrl, () => {});
       self.postMessage({ status: 'progress', frac: 0.02, label: 'downloading model — 0%' });

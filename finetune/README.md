@@ -29,6 +29,27 @@ The whole loop — edit facts → retrain → live on the site — takes ~15 min
   ```
   (It imports its `gguf` sibling package — already installed via pip above.)
 
+### On Linux / WSL instead of PowerShell
+
+The 5090 is visible from WSL (`/usr/lib/wsl/lib/nvidia-smi`), so the whole loop also
+runs there with Linux tooling:
+
+```bash
+cd finetune
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python torch --index-url https://download.pytorch.org/whl/cu130
+uv pip install --python .venv/bin/python transformers peft datasets accelerate gguf safetensors \
+    sentencepiece python-docx pytest huggingface_hub
+git clone --depth 1 https://github.com/ggml-org/llama.cpp ../.tools/llama.cpp
+```
+
+- **torch:** cu128 wheels stop at 2.11; cu130 carries sm_120 (tested: torch 2.14.0+cu130).
+- **transformers 5.x works.** `train.py` handles the renamed warmup argument, and it
+  writes a 4.x-style `rope_theta`/`torch_dtype` into merged configs so older converters
+  read them.
+- **llama.cpp's converter is now a package** (`conversion/`), not one file. Clone the
+  repository and run it with `PYTHONPATH=../.tools/llama.cpp/gguf-py`.
+
 ## 1. Update the facts
 
 The data layer is three files, edited in this order:
@@ -164,6 +185,78 @@ git add -A; git commit; git push   # Pages deploys from source
 Verify on the live site: pick `twin`, ask *"what editor do you use?"* (expect
 helix) and *"what's your phone number?"* (expect a refusal); pick `twinq`, ask
 *"show me your rust projects"* (expect the projects app to open).
+
+## Lucy — a second persona, fine-tuned the same way
+
+Lucy D is not the twin. Her memory is nibli text (the nibli repository's `lucy/`). She is
+fine-tuned on her public memory and on dhilipsiva's two books, and ships as **two models
+from one dataset**:
+- Qwen3-1.7B on WebGPU (WebLLM, `static/play/app/webgpu-worker.js`)
+- Qwen3-0.6B on the CPU (candle, `slm-wasm`, now with a `qwen3` branch that clears its
+  KV cache per prompt)
+
+1.7B cannot take the CPU path: its q8_0 load peaks near 4.9 GB, over wasm32's 4 GB.
+
+1. **Export her memory** in nibli, from a fresh clone. It refuses a folder that holds
+   any private file:
+   ```bash
+   git clone --depth 1 https://github.com/dhilipsiva/nibli /tmp/nibli-public
+   lucy dataset --home /tmp/nibli-public/lucy --out ~/.cache/lucy-slm/export
+   ```
+2. **Build the dataset.** The local teacher phrases the questions and answers; start
+   Ollama with `qwen3.8:27b`. Everything written is gitignored (`data/lucy/`,
+   `.cache/lucy/`), and `--offline` rebuilds from the cache byte for byte. The
+   manuscript is read only from its current chapter and appendix DOCX files, and only
+   paraphrases of it are kept: the gate drops any answer that shares 8 or more words
+   with it.
+   ```bash
+   .venv/bin/python lucy_dataset.py --export ~/.cache/lucy-slm/export \
+       --rights-repo ~/projects/dhilipsiva/rights-nobody-has-to-earn --rights-commit HEAD \
+       --manuscript ~/projects/dhilipsiva/nibli/book --workers 2
+   .venv/bin/python -m pytest test_lucy_dataset.py -q
+   ```
+3. **Train both sizes.** The pinned revisions live in `BASES`. `train.py` refuses any row
+   whose prompt differs from what `brain.js` builds: hand ChatML plus
+   `<think>\n\n</think>\n\n`, which keeps Qwen3 out of thinking mode.
+   ```bash
+   .venv/bin/python train.py --base qwen3-0.6b
+   .venv/bin/python train.py --base qwen3-1.7b
+   ```
+4. **Gate them** on the held-out test set (`lucy_eval.py`). Known facts ≥ 90%, unknowns
+   ≥ 90%, contrast leakage ≤ 5%, voice ≥ 95%, book answers ≥ 70%, and zero
+   recitations of the manuscript (200 sampled passages). Any failure means no upload.
+   ```bash
+   .venv/bin/python lucy_eval.py --model out/merged-lucy-0.6b --base qwen3-0.6b \
+       --manuscript ~/projects/dhilipsiva/nibli/book --report out/eval-lucy-0.6b.json
+   .venv/bin/python lucy_eval.py --model out/merged-lucy-1.7b --base qwen3-1.7b \
+       --manuscript ~/projects/dhilipsiva/nibli/book --report out/eval-lucy-1.7b.json
+   ```
+5. **Assemble, check, publish.** `lucy_publish.py` builds `out/lucy-release/`:
+   - the 0.6B GGUF
+   - the 1.7B MLC builds in q4f16_1 and q4f32_1, each tensor-checked against mlc-ai's
+     prebuilt build
+   - WebLLM's prebuilt libraries (mirrored)
+   - `system.txt`, Qwen's licence and the model card
+
+   It refuses a release holding any dataset file, and with `--upload` it pushes
+   everything to `dhilipsiva/lucy-slm` in **one commit**. The MLC tools live in their
+   own env, where `apache-tvm-ffi==0.1.13` avoids a converter crash:
+   ```bash
+   uv venv --python 3.12 .venv-mlc
+   uv pip install --python .venv-mlc/bin/python --prerelease allow -f https://mlc.ai/wheels \
+       mlc-llm-nightly-cpu mlc-ai-nightly-cpu psutil "apache-tvm-ffi==0.1.13" "numpy<2.3"
+   .venv/bin/python lucy_publish.py --cpu out/merged-lucy-0.6b --gpu out/merged-lucy-1.7b \
+       --system ~/.cache/lucy-slm/export/system.txt \
+       --eval out/eval-lucy-0.6b.json --eval out/eval-lucy-1.7b.json \
+       --nibli-commit <sha> --upload
+   ```
+6. **Wire and ship.** Set `LUCY_REV` in `static/play/app/brain.js` to the printed commit;
+   she only appears in /chat once it is set. The integrity hashes are in
+   `out/lucy-release-integrity.json`. Then `zola build`, commit, and push.
+   `system.txt` is fetched from the same revision as the weights, so the prompt can't
+   drift from the model. To test locally before publishing, open
+   `/chat/?lucyBase=<local url ending in /resolve/<x>>`; the override works on localhost
+   only.
 
 ## Deliberate exclusions — read before training
 

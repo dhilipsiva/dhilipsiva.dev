@@ -2,10 +2,11 @@
 //! WebAssembly. Two engines behind one small surface:
 //!
 //! * [`Model`] — quantized chat LLM (GGUF). The architecture is read from the
-//!   GGUF metadata and dispatched automatically: `llama` (SmolLM2 et al) or
-//!   `qwen2` (Qwen2.5). Streaming contract: `init_with_prompt` prefills and
-//!   returns the first text piece; `next_token` returns one piece per call
-//!   and the empty string once EOS / the token budget is reached (`is_eos`).
+//!   GGUF metadata and dispatched automatically: `llama` (SmolLM2 et al),
+//!   `qwen2` (Qwen2.5) or `qwen3` (Qwen3). Streaming contract:
+//!   `init_with_prompt` prefills and returns the first text piece;
+//!   `next_token` returns one piece per call and the empty string once EOS /
+//!   the token budget is reached (`is_eos`).
 //! * [`Whisper`] — quantized speech-to-text (whisper tiny.en, GGUF). Takes
 //!   16kHz mono f32 PCM, returns the transcript. Greedy decode, ported from
 //!   candle-wasm-examples/whisper.
@@ -20,6 +21,7 @@ use candle_nn::ops::softmax;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::quantized_llama;
 use candle_transformers::models::quantized_qwen2;
+use candle_transformers::models::quantized_qwen3;
 use candle_transformers::models::whisper::{self as wm, quantized_model, Config as WhisperConfig};
 use tokenizers::Tokenizer;
 use wasm_bindgen::prelude::*;
@@ -28,17 +30,14 @@ use wasm_bindgen::prelude::*;
 // candle-transformers' own audio module spawns std threads, which trap on wasm.
 mod audio;
 
-fn jserr<E: std::fmt::Display>(e: E) -> JsError {
-    JsError::new(&e.to_string())
-}
-
 /* ════════════════════════════════════════════════════════════════════════
-   Chat LLM — llama / qwen2 GGUF, auto-detected
+   Chat LLM — llama / qwen2 / qwen3 GGUF, auto-detected
    ════════════════════════════════════════════════════════════════════════ */
 
 enum Arch {
     Llama(quantized_llama::ModelWeights),
     Qwen2(quantized_qwen2::ModelWeights),
+    Qwen3(quantized_qwen3::ModelWeights),
 }
 
 impl Arch {
@@ -46,6 +45,15 @@ impl Arch {
         match self {
             Arch::Llama(m) => m.forward(x, index_pos),
             Arch::Qwen2(m) => m.forward(x, index_pos),
+            Arch::Qwen3(m) => {
+                // llama/qwen2 reset their KV cache when a prompt starts at position
+                // 0; candle's qwen3 cache only appends. Without this clear, the
+                // second question's mask no longer matches the cache and fails.
+                if index_pos == 0 {
+                    m.clear_kv_cache();
+                }
+                m.forward(x, index_pos)
+            }
         }
     }
 }
@@ -72,10 +80,42 @@ impl Model {
     #[wasm_bindgen(constructor)]
     pub fn new(gguf: Vec<u8>, tokenizer_json: Vec<u8>) -> Result<Model, JsError> {
         console_error_panic_hook::set_once();
+        Self::new_inner(&gguf, &tokenizer_json).map_err(|e| JsError::new(&e))
+    }
+
+    /// Prefill the (ChatML) prompt and sample the first token.
+    #[allow(clippy::too_many_arguments)]
+    pub fn init_with_prompt(
+        &mut self,
+        prompt: String,
+        temp: f64,
+        top_p: f64,
+        repeat_penalty: f32,
+        max_tokens: usize,
+        seed: u64,
+    ) -> Result<String, JsError> {
+        self.init_inner(prompt, temp, top_p, repeat_penalty, max_tokens, seed)
+            .map_err(|e| JsError::new(&e))
+    }
+
+    /// One decode step. Empty string when finished (check `is_eos`).
+    pub fn next_token(&mut self) -> Result<String, JsError> {
+        self.next_inner().map_err(|e| JsError::new(&e))
+    }
+
+    pub fn is_eos(&self) -> bool {
+        self.eos_hit
+    }
+}
+
+// The work lives in `_inner` methods with String errors (as `Whisper` does), so
+// native tests can drive a model: a JsError cannot be built off wasm32.
+impl Model {
+    fn new_inner(gguf: &[u8], tokenizer_json: &[u8]) -> Result<Model, String> {
         let device = Device::Cpu;
 
-        let mut cursor = Cursor::new(&gguf);
-        let content = gguf_file::Content::read(&mut cursor).map_err(jserr)?;
+        let mut cursor = Cursor::new(gguf);
+        let mut content = gguf_file::Content::read(&mut cursor).map_err(|e| e.to_string())?;
         let arch = content
             .metadata
             .get("general.architecture")
@@ -84,14 +124,28 @@ impl Model {
             .unwrap_or_else(|| "llama".to_string());
         let model = match arch.as_str() {
             "qwen2" => Arch::Qwen2(
-                quantized_qwen2::ModelWeights::from_gguf(content, &mut cursor, &device).map_err(jserr)?,
+                quantized_qwen2::ModelWeights::from_gguf(content, &mut cursor, &device)
+                    .map_err(|e| e.to_string())?,
             ),
+            "qwen3" => {
+                // candle builds qwen3's RoPE tables and mask in f16 unless the GGUF
+                // says otherwise (llama.cpp's converter never does). Ask for f32:
+                // activations are f32 on the CPU, so this also skips a per-step cast.
+                content
+                    .metadata
+                    .insert("general.dtype".to_string(), gguf_file::Value::U32(0));
+                Arch::Qwen3(
+                    quantized_qwen3::ModelWeights::from_gguf(content, &mut cursor, &device)
+                        .map_err(|e| e.to_string())?,
+                )
+            }
             _ => Arch::Llama(
-                quantized_llama::ModelWeights::from_gguf(content, &mut cursor, &device).map_err(jserr)?,
+                quantized_llama::ModelWeights::from_gguf(content, &mut cursor, &device)
+                    .map_err(|e| e.to_string())?,
             ),
         };
 
-        let tokenizer = Tokenizer::from_bytes(&tokenizer_json).map_err(jserr)?;
+        let tokenizer = Tokenizer::from_bytes(tokenizer_json).map_err(|e| e.to_string())?;
         let eos_tokens: Vec<u32> = ["<|im_end|>", "<|endoftext|>"]
             .iter()
             .filter_map(|t| tokenizer.token_to_id(t))
@@ -114,9 +168,7 @@ impl Model {
         })
     }
 
-    /// Prefill the (ChatML) prompt and sample the first token.
-    #[allow(clippy::too_many_arguments)]
-    pub fn init_with_prompt(
+    fn init_inner(
         &mut self,
         prompt: String,
         temp: f64,
@@ -124,7 +176,7 @@ impl Model {
         repeat_penalty: f32,
         max_tokens: usize,
         seed: u64,
-    ) -> Result<String, JsError> {
+    ) -> Result<String, String> {
         let temp = if temp <= 0.0 { None } else { Some(temp) };
         let top_p = if top_p <= 0.0 || top_p >= 1.0 { None } else { Some(top_p) };
         self.logits_processor = LogitsProcessor::new(seed, temp, top_p);
@@ -134,53 +186,50 @@ impl Model {
         self.eos_hit = false;
         self.emitted = String::new();
 
-        let encoding = self.tokenizer.encode(prompt, true).map_err(jserr)?;
+        let encoding = self.tokenizer.encode(prompt, true).map_err(|e| e.to_string())?;
         let prompt_tokens = encoding.get_ids().to_vec();
         if prompt_tokens.is_empty() {
-            return Err(JsError::new("empty prompt after tokenization"));
+            return Err("empty prompt after tokenization".to_string());
         }
         self.prompt_len = prompt_tokens.len();
         self.tokens = prompt_tokens;
 
         let input = Tensor::new(self.tokens.as_slice(), &Device::Cpu)
-            .map_err(jserr)?
-            .unsqueeze(0)
-            .map_err(jserr)?;
-        let logits = self.model.forward(&input, 0).map_err(jserr)?;
-        let logits = logits.squeeze(0).map_err(jserr)?;
+            .and_then(|t| t.unsqueeze(0))
+            .map_err(|e| e.to_string())?;
+        let logits = self
+            .model
+            .forward(&input, 0)
+            .and_then(|l| l.squeeze(0))
+            .map_err(|e| e.to_string())?;
         self.index_pos = self.tokens.len();
 
         self.sample(&logits)?;
         Ok(self.decode_delta())
     }
 
-    /// One decode step. Empty string when finished (check `is_eos`).
-    pub fn next_token(&mut self) -> Result<String, JsError> {
+    fn next_inner(&mut self) -> Result<String, String> {
         if self.eos_hit || self.generated >= self.max_tokens {
             self.eos_hit = true;
             return Ok(String::new());
         }
         let last = *self.tokens.last().expect("tokens never empty after init");
         let input = Tensor::new(&[last], &Device::Cpu)
-            .map_err(jserr)?
-            .unsqueeze(0)
-            .map_err(jserr)?;
-        let logits = self.model.forward(&input, self.index_pos).map_err(jserr)?;
-        let logits = logits.squeeze(0).map_err(jserr)?;
+            .and_then(|t| t.unsqueeze(0))
+            .map_err(|e| e.to_string())?;
+        let logits = self
+            .model
+            .forward(&input, self.index_pos)
+            .and_then(|l| l.squeeze(0))
+            .map_err(|e| e.to_string())?;
         self.index_pos += 1;
 
         self.sample(&logits)?;
         Ok(self.decode_delta())
     }
 
-    pub fn is_eos(&self) -> bool {
-        self.eos_hit
-    }
-}
-
-impl Model {
-    fn sample(&mut self, logits: &Tensor) -> Result<(), JsError> {
-        let logits = logits.to_dtype(DType::F32).map_err(jserr)?;
+    fn sample(&mut self, logits: &Tensor) -> Result<(), String> {
+        let logits = logits.to_dtype(DType::F32).map_err(|e| e.to_string())?;
         let logits = if self.repeat_penalty == 1.0 {
             logits
         } else {
@@ -197,9 +246,9 @@ impl Model {
                 self.repeat_penalty,
                 &self.tokens[start..],
             )
-            .map_err(jserr)?
+            .map_err(|e| e.to_string())?
         };
-        let next = self.logits_processor.sample(&logits).map_err(jserr)?;
+        let next = self.logits_processor.sample(&logits).map_err(|e| e.to_string())?;
         self.tokens.push(next);
         self.generated += 1;
         if self.eos_tokens.contains(&next) {
@@ -443,5 +492,28 @@ mod tests {
         }
         let text = w.transcribe_inner(&pcm).expect("transcribe runs");
         println!("transcript: {text:?}");
+    }
+
+    /// Two prompts in a row on one Qwen3 model: the second fails unless the KV
+    /// cache is cleared when a new prompt starts (see `Arch::forward`).
+    #[test]
+    #[ignore = "needs .tools/ref/qwen3/{model.gguf,tokenizer.json}; run with --ignored"]
+    fn qwen3_answers_two_prompts_in_a_row() {
+        let d = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.tools/ref/qwen3");
+        let gguf = std::fs::read(d.join("model.gguf")).expect("model.gguf");
+        let tok = std::fs::read(d.join("tokenizer.json")).expect("tokenizer.json");
+        let mut m = Model::new_inner(&gguf, &tok).expect("qwen3 loads");
+        assert!(matches!(m.model, Arch::Qwen3(_)), "GGUF must dispatch to qwen3");
+        for q in ["What is 2+2?", "Name one primary colour."] {
+            let prompt = format!(
+                "<|im_start|>user\n{q}<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
+            );
+            let mut text = m.init_inner(prompt, 0.0, 0.0, 1.0, 32, 1).expect("prefill");
+            while !m.is_eos() {
+                text.push_str(&m.next_inner().expect("decode"));
+            }
+            println!("{q} -> {text:?}");
+            assert!(!text.trim().is_empty(), "empty answer to {q:?}");
+        }
     }
 }

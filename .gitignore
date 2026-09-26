@@ -32,6 +32,10 @@
 /finetune/data
 /finetune/out
 /finetune/convert_hf_to_gguf.py
+# Lucy's teacher cache and the MLC export env (the cache holds text derived from a private manuscript)
+/finetune/.cache
+/finetune/.venv-mlc
+/.venv-setup.log
 /static/play/models
 __pycache__/
 

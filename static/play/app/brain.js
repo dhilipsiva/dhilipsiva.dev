@@ -74,13 +74,48 @@ window.Brain = (function () {
     // future: { ft: { label: 'dhilipsiva-ft', ... } } — the fine-tuned twin.
   };
 
+  // ── Lucy D ──────────────────────────────────────────────────────────────
+  // Her own persona, not the twin: fine-tuned on her public memory (nibli's
+  // `lucy dataset`) and on dhilipsiva's two books (finetune/lucy_dataset.py).
+  // One dataset, two models: Qwen3-1.7B on WebGPU (WebLLM), Qwen3-0.6B on the
+  // CPU (candle). Her system prompt ships as system.txt in the SAME Hugging
+  // Face revision as the weights, so prompt and model are paired by revision
+  // rather than by a hand-kept string. Until LUCY_REV is set she is not listed.
+  // After a retrain + re-upload (finetune/README.md, "Lucy"), bump LUCY_REV.
+  const LUCY_REV = ''; // dhilipsiva/lucy-slm
+  // Local testing only: ?lucyBase=<url ending in /resolve/<x>> on localhost.
+  const lucyDevBase = ['localhost', '127.0.0.1'].includes(location.hostname)
+    ? new URLSearchParams(location.search).get('lucyBase') : null;
+  const LUCY_BASE = lucyDevBase || (LUCY_REV ? `${HF}/dhilipsiva/lucy-slm/resolve/${LUCY_REV}` : '');
+  if (LUCY_BASE) {
+    MODELS.lucy = {
+      persona: 'lucy',
+      label: 'Lucy D · 640MB–1GB',
+      detail: 'her own person — 1.7B on WebGPU, else 0.6B on the CPU',
+      model: `${LUCY_BASE}/lucy-0.6b-q8_0.gguf`,
+      tokenizer: `${LUCY_BASE}/tokenizer.json`,
+      webgpu: {
+        q4f16: { model: `${LUCY_BASE}/mlc/lucy-1.7b-q4f16_1/`, lib: `${LUCY_BASE}/lib/Qwen3-1.7B-q4f16_1_cs1k-webgpu.wasm` },
+        q4f32: { model: `${LUCY_BASE}/mlc/lucy-1.7b-q4f32_1/`, lib: `${LUCY_BASE}/lib/Qwen3-1.7B-q4f32_1_cs1k-webgpu.wasm` }
+      },
+      systemUrl: `${LUCY_BASE}/system.txt`,
+      // Qwen3 opens a <think> block unless the prompt closes an empty one;
+      // finetune/train.py trains with exactly this prefix.
+      assistantPrefix: '<think>\n\n</think>\n\n',
+      tools: false,
+      sampling: { temp: 0.3, topP: 0.9, repeatPenalty: 1.05 }
+    };
+  }
+
   const WORKER_URL = '/play/app/slm-worker.js';
+  const WEBGPU_WORKER_URL = '/play/app/webgpu-worker.js';
   const NPREDICT = 140;
   const ASK_TIMEOUT_MS = 120000;
 
   let mode = 'scripted';        // 'scripted' | 'slm'
   let worker = null;
   let activeModel = null;       // key into MODELS once loaded
+  let runtime = null;           // 'WebGPU' | 'Rust→WASM' once loaded
   let loading = false;
   let askSeq = 0;
   const pending = new Map();
@@ -120,11 +155,16 @@ window.Brain = (function () {
   // opts.history = [{role:'user'|'assistant', content}] — ephemeral, session
   // only. opts.onToken(piece) streams pieces as they decode.
   async function ask(query, opts = {}) {
+    const spec = mode === 'slm' && worker ? MODELS[activeModel] : null;
+    const lucy = opts.persona === 'lucy' || (spec && spec.persona === 'lucy');
+    if (lucy && (!spec || spec.persona !== 'lucy')) {
+      // Lucy never answers from the twin's scripted index.
+      return { text: "I'm not loaded yet. Choose me in the brain menu and I'll load into your browser.", source: 'lucy · not loaded', toolCall: null };
+    }
     const scripted = window.KNOWLEDGE.answer(query);
-    if (mode !== 'slm' || !worker) {
+    if (!spec) {
       return { text: scripted.text, source: scripted.matched ? 'scripted index' : 'scripted index · no match', toolCall: null };
     }
-    const spec = MODELS[activeModel];
     try {
       // Fine-tunes carry their own (training-identical) system prompt; the
       // generic models get FACTS_PROMPT + the live tool menu.
@@ -135,7 +175,7 @@ window.Brain = (function () {
         '<|im_start|>system\n' + system + '<|im_end|>\n' +
         hist.map(m => '<|im_start|>' + m.role + '\n' + m.content + '<|im_end|>\n').join('') +
         '<|im_start|>user\n' + query.slice(0, 400) + '<|im_end|>\n' +
-        '<|im_start|>assistant\n';
+        '<|im_start|>assistant\n' + (spec.assistantPrefix || '');
       const id = ++askSeq;
       let out = await new Promise((resolve, reject) => {
         const timer = setTimeout(() => { pending.delete(id); reject(new Error('inference timeout')); }, ASK_TIMEOUT_MS);
@@ -148,7 +188,8 @@ window.Brain = (function () {
           seed: Date.now() >>> 0
         });
       });
-      out = out.split('<|im_end|>')[0].split('<|im_start|>')[0].trim();
+      out = out.split('<|im_end|>')[0].split('<|im_start|>')[0]
+        .replace(/<think>[\s\S]*?<\/think>/g, '').replace(/<\/?think>/g, '').trim();
       if (!out) throw new Error('empty completion');
       let toolCall = null;
       if (spec.tools && window.MCP) {
@@ -156,25 +197,48 @@ window.Brain = (function () {
         out = parsed.text || scripted.text;
         toolCall = parsed.call;
       }
-      return { text: out, source: 'wasm slm · ' + spec.label.split(' ·')[0] + ' (candle)', toolCall };
+      const engine = runtime === 'WebGPU' ? 'webgpu slm · ' + spec.label.split(' ·')[0] + ' (WebLLM)'
+        : 'wasm slm · ' + spec.label.split(' ·')[0] + ' (candle)';
+      return { text: out, source: engine, toolCall };
     } catch (err) {
       console.warn('[brain] slm inference failed, falling back:', err);
+      if (spec.persona === 'lucy') {
+        return { text: "I stumbled and have no answer this time. Ask me again?", source: 'lucy · model error', toolCall: null };
+      }
       return { text: scripted.text, source: 'scripted index (slm faltered)', toolCall: null };
     }
   }
 
   /* ── loadSLM(modelId, onProgress) ────────────────────────────────────── */
-  function loadSLM(modelId, onProgress) {
+  async function hasWebGPU() {
+    try { return !!(navigator.gpu && await navigator.gpu.requestAdapter()); } catch (e) { return false; }
+  }
+
+  async function loadSLM(modelId, onProgress) {
     const spec = MODELS[modelId];
-    if (!spec) return Promise.resolve(false);
-    if (worker && activeModel === modelId) { mode = 'slm'; return Promise.resolve(true); }
-    if (loading) return Promise.resolve(false);
+    if (!spec) return false;
+    if (worker && activeModel === modelId) { mode = 'slm'; return true; }
+    if (loading) return false;
     loading = true;
-    if (worker) { try { worker.terminate(); } catch (e) {} worker = null; activeModel = null; }
+    if (worker) { try { worker.terminate(); } catch (e) {} worker = null; activeModel = null; runtime = null; }
+    if (spec.systemUrl && !spec.system) {
+      try {
+        const res = await fetch(spec.systemUrl);
+        if (!res.ok) throw new Error('system.txt ' + res.status);
+        spec.system = (await res.text()).replace(/\n+$/, '');
+      } catch (err) {
+        console.warn('[brain] system prompt unavailable:', err);
+        loading = false;
+        onProgress(-1, 'load failed — system prompt unavailable');
+        return false;
+      }
+    }
+    const gpu = !!spec.webgpu && await hasWebGPU();
+    const label = gpu ? 'WebGPU' : 'Rust→WASM';
     return new Promise((resolve) => {
       let w;
       try {
-        w = new Worker(WORKER_URL, { type: 'module' });
+        w = new Worker(gpu ? WEBGPU_WORKER_URL : WORKER_URL, { type: 'module' });
       } catch (err) {
         console.warn('[brain] failed to spawn SLM worker:', err);
         loading = false;
@@ -194,15 +258,17 @@ window.Brain = (function () {
         const m = e.data;
         if (m.status === 'progress') onProgress(m.frac, m.label);
         else if (m.status === 'ready') {
-          worker = w; activeModel = modelId; mode = 'slm'; loading = false;
+          worker = w; activeModel = modelId; mode = 'slm'; loading = false; runtime = label;
           w.onmessage = handleMessage;
           w.onerror = (err) => console.warn('[brain] slm worker error:', err);
-          onProgress(1, spec.label.split(' ·')[0] + ' online — Rust→WASM');
+          onProgress(1, spec.label.split(' ·')[0] + ' online — ' + label + (m.variant ? ' · ' + m.variant : ''));
           resolve(true);
         } else if (m.status === 'error') fail(m.error);
       };
-      onProgress(0, 'spinning up the Rust→WASM brain…');
-      w.postMessage({ cmd: 'load', ggufUrl: spec.model, tokUrl: spec.tokenizer });
+      onProgress(0, gpu ? 'spinning up the WebGPU brain…' : 'spinning up the Rust→WASM brain…');
+      w.postMessage(gpu
+        ? { cmd: 'load', webgpu: spec.webgpu, keep: LUCY_BASE }
+        : { cmd: 'load', ggufUrl: spec.model, tokUrl: spec.tokenizer });
     });
   }
 
@@ -213,6 +279,7 @@ window.Brain = (function () {
     get mode() { return mode; },
     get loading() { return loading; },
     get activeModel() { return activeModel; },
+    get runtime() { return runtime; },
     get models() { return MODELS; }
   };
 })();
