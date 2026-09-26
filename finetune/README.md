@@ -255,8 +255,13 @@ from one dataset**:
    ≥ 90%, unknowns ≥ 90%, contrast leakage ≤ 5%, voice ≥ 95%, book answers ≥ 70%, and
    zero recitations of the manuscript (200 sampled passages). Any failure means no
    upload. Book answers are judged by key terms, which is strict: a right answer in other
-   words can miss them. `--teacher-judge` adds the teacher's own grading of known and
-   book answers next to it, as advice, in counts only.
+   words can miss them. `--teacher-judge` (with `--export` and `--rights-repo` for the
+   source material) adds the teacher's grading of the greedy answer to each known and book
+   question, as advice, in counts only. The judge reads the question's source first and
+   sets aside unfair items: a question that can't be answered without the passage in front
+   of you (the teacher wrote them with it in view, and only about one in six names its
+   book), or a reference that is wrong. The report also breaks out the book questions that
+   name their source (`book:names-its-source`).
    ```bash
    .venv/bin/python lucy_eval.py --model out/merged-lucy-0.6b --base qwen3-0.6b \
        --manuscript ~/projects/dhilipsiva/nibli/book --report out/eval-lucy-0.6b.json

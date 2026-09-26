@@ -178,20 +178,48 @@ def judge(expect: str, terms: list[str], answer: str) -> bool:
 
 
 JUDGE_SYSTEM = (
-    "You grade a small model's answers against a reference answer. A candidate is correct when "
-    "it answers the question with the reference's substance, even in other words or more briefly, "
-    "and adds nothing false. It is partly correct when it is on the right subject but misses the "
-    "reference's main point. It is wrong when it contradicts the reference, answers another "
-    "question, or invents specifics. Reply with JSON only."
+    "You grade a small model's answers. You get the source material, a question a visitor asked "
+    "(the visitor sees no passage), the reference answer, and the model's answer. First decide "
+    "whether the item is fair. The question must say what it asks about clearly enough that "
+    "someone who knows the source well could answer it without this passage in front of them; if "
+    "not, the verdict is \"unfair_question\". The reference must answer it correctly by the source; "
+    "if not, the verdict is \"wrong_reference\". Otherwise grade the model's answer by the source "
+    "and the reference: \"correct\" when it gives the reference's substance, even briefly or in "
+    "other words, and adds nothing false; \"partly\" when it is on the right subject but misses the "
+    "main point; \"wrong\" when it contradicts the source, answers another question, or invents "
+    "specifics. Reply with JSON only."
 )
-JUDGE_SCHEMA = {"type": "object", "properties": {"verdict": {"type": "string", "enum": ["correct", "partly", "wrong"]}},
+VERDICTS = ["correct", "partly", "wrong", "unfair_question", "wrong_reference"]
+JUDGE_SCHEMA = {"type": "object", "properties": {"verdict": {"type": "string", "enum": VERDICTS}},
                 "required": ["verdict"]}
+# A book question a visitor could place: it names the book or its author.
+NAMES_ITS_SOURCE = re.compile(r"rights nobody has to earn|dhilipsiva|neuro-symbolic|the book|your book|his book", re.I)
 
 
-def teacher_verdict(teacher, question: str, reference: str, answer: str) -> str:
-    """The advisory judge: the local teacher compares an answer with the reference."""
-    user = f"Question: {question}\n\nReference answer: {reference}\n\nCandidate answer: {answer}"
-    return teacher.ask(user, JUDGE_SCHEMA, 0).get("verdict", "wrong")
+def teacher_verdict(teacher, context: str, question: str, reference: str, answer: str) -> str:
+    """The advisory judge: the local teacher rules on the item's fairness, then grades."""
+    user = (f"Source material:\n\"\"\"\n{context[:6000]}\n\"\"\"\n\nQuestion: {question}\n\n"
+            f"Reference answer: {reference}\n\nModel's answer: {answer}")
+    verdict = teacher.ask(user, JUDGE_SCHEMA, 0).get("verdict", "wrong")
+    return verdict if verdict in VERDICTS else "wrong"
+
+
+def item_sources(export: Path, rights_repo: Path | None, rights_commit: str, manuscript: Path | None) -> dict[str, str]:
+    """The source material behind every test item id: a memory record, a subject's facts,
+    an identity question's records, or a book passage. Kept in memory only."""
+    items = json.loads((export / "knowledge.json").read_text())["items"]
+    sources = {it["id"]: it["text"] for it in items}
+    for entity, facts in L.entity_groups(items):
+        sources[f"entity:{entity}"] = "\n".join(f["text"] for f in facts)
+    for question in L.IDENTITY_QUESTIONS:
+        sources[f"identity:{question}"] = "\n".join(c["text"] for c in L.identity_context_for(question, items))
+    chunks = []
+    if rights_repo:
+        chunks += L.rights_chunks(rights_repo, rights_commit)[0]
+    if manuscript:
+        chunks += L.manuscript_chunks(manuscript)[0]
+    sources.update({c.id: c.text for c in chunks})
+    return sources
 
 
 def normalize(text: str) -> str:
@@ -218,8 +246,11 @@ def main(argv=None) -> int:
     ap.add_argument("--report", type=Path, required=True)
     ap.add_argument("--recitation-passages", type=int, default=200)
     ap.add_argument("--teacher-judge", action="store_true",
-                    help="also have the local teacher grade known and book answers (advisory; counts only)")
+                    help="also have the local teacher grade the greedy answer to each known and book question (advisory; counts only)")
     ap.add_argument("--ollama", default="http://127.0.0.1:11434")
+    ap.add_argument("--export", type=Path, help="the lucy dataset export, for the judge's source material")
+    ap.add_argument("--rights-repo", type=Path, help="the rights book checkout, for the judge's source material")
+    ap.add_argument("--rights-commit", default="HEAD")
     args = ap.parse_args(argv)
 
     train = load_train_module()
@@ -250,7 +281,7 @@ def main(argv=None) -> int:
     leaks = [0, 0]
     canary_hits = 0
     failures: list[dict] = []
-    to_judge: list[tuple[str, str, str, str]] = []  # (group, question, reference, answer), kept in memory only
+    to_judge: list[tuple[str, str, str, str, str]] = []  # (group, item, question, reference, answer), in memory only
 
     def tally(key: str, ok: bool) -> None:
         t = tallies.setdefault(key, [0, 0])
@@ -265,8 +296,11 @@ def main(argv=None) -> int:
             ok = not broken and judge(meta["expect"], meta["terms"], answer)
             group = "book" if meta["category"].startswith("book-") else meta["expect"]
             tally(group, ok)
-            if args.teacher_judge and group in ("book", "known") and row["messages"][-1]["content"]:
-                to_judge.append((group, prompt[-1]["content"], row["messages"][-1]["content"], answer))
+            greedy = s == args.samples
+            if meta["category"].startswith("book-") and NAMES_ITS_SOURCE.search(prompt[-1]["content"]):
+                tally("book:names-its-source", ok)
+            if args.teacher_judge and greedy and group in ("book", "known") and row["messages"][-1]["content"]:
+                to_judge.append((group, meta["item"], prompt[-1]["content"], row["messages"][-1]["content"], answer))
             tally(f"category:{meta['category']}", ok)
             voiced = not (L.THIRD_PERSON.search(answer) or L.AI_VOICE.search(answer))
             voice[0] += int(voiced); voice[1] += 1
@@ -305,14 +339,18 @@ def main(argv=None) -> int:
             torch.cuda.empty_cache()
         judge_teacher = L.Teacher(args.ollama, "qwen3.8:27b", HERE / ".cache/lucy/judge-cache.jsonl", False,
                                   temperature=0.0, system=JUDGE_SYSTEM)
-        for group, question, reference, answer in to_judge:
-            verdict = teacher_verdict(judge_teacher, question, reference, answer)
-            counts = teacher_judge.setdefault(group, {"correct": 0, "partly": 0, "wrong": 0})
-            counts[verdict if verdict in counts else "wrong"] += 1
+        sources = item_sources(args.export, args.rights_repo, args.rights_commit, args.manuscript) if args.export else {}
+        for group, item, question, reference, answer in to_judge:
+            context = sources.get(item) or sources.get(item.rsplit("#", 1)[0]) or "(not available)"
+            verdict = teacher_verdict(judge_teacher, context, question, reference, answer)
+            counts = teacher_judge.setdefault(group, {v: 0 for v in VERDICTS})
+            counts[verdict] += 1
         for counts in teacher_judge.values():
-            n = sum(counts.values())
-            counts["correct_rate"] = round(counts["correct"] / n, 4)
-            counts["ci95"] = wilson(counts["correct"], n)
+            fair = counts["correct"] + counts["partly"] + counts["wrong"]
+            total = fair + counts["unfair_question"] + counts["wrong_reference"]
+            counts["correct_rate_on_fair_items"] = round(counts["correct"] / fair, 4) if fair else None
+            counts["ci95"] = wilson(counts["correct"], fair)
+            counts["unfair_share"] = round((total - fair) / total, 4) if total else None
 
     def rate(t):
         return round(t[0] / t[1], 4) if t[1] else None
