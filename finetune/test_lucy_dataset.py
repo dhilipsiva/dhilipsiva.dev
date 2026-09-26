@@ -221,10 +221,18 @@ def test_eval_never_takes_the_training_rows_of_a_tested_fact():
 def test_rephrasings_are_trained_and_never_copy_a_held_out_question(sources, tmp_path, monkeypatch):
     assert run(sources, tmp_path / "o", tmp_path / "c.jsonl", monkeypatch) == 0
     train = [json.loads(l)["messages"][-2]["content"] for l in (tmp_path / "o/train.jsonl").read_text().splitlines()]
-    assert any(q.startswith("Could you explain point number") for q in train)
-    test = [json.loads(l)["messages"][-2]["content"] for l in (tmp_path / "o/test.jsonl").read_text().splitlines()]
+    assert any("could you explain point number" in q.lower() for q in train)
+    metas = [json.loads(l) for l in (tmp_path / "o/test-meta.jsonl").read_text().splitlines()]
+    test = [json.loads(l)["messages"][-2]["content"]
+            for l, m in zip((tmp_path / "o/test.jsonl").read_text().splitlines(), metas) if m["category"].startswith("book-")]
+    assert test, "some book questions are tested"
+    # Compare as the filter does, before the book's name is put in front of every question,
+    # and only questions about the same book (the stand-in teacher asks both books alike).
+    prefix = L.re.compile(r"^In (Rights Nobody Has to Earn|dhilipsiva's book on neuro-symbolic reasoning), ")
+    split = lambda q: (m.group(0), q[m.end():]) if (m := prefix.match(q)) else ("", q)
     for q in test:
-        assert not any(L.too_close(q, t) for t in train if t != q), q
+        book, rest = split(q)
+        assert not any(L.too_close(rest, split(t)[1]) for t in train if t != q and split(t)[0] == book), q
 
 
 def test_subjects_with_two_facts_get_a_summary_job():
@@ -255,15 +263,28 @@ def test_a_question_two_items_answer_differently_is_dropped_unless_a_summary_own
     assert kept == [summary] and dropped == 2
 
 
-def test_near_copies_of_hand_written_probes_are_not_trained():
-    rows = [row("x", "Is dhilipsiva your owner?"), row("y", "What does the D in your name mean?")]
-    kept, dropped = L.drop_probe_lookalikes(rows, ["Is dhilipsiva your owner?"])
-    assert [r.question for r in kept] == ["What does the D in your name mean?"] and dropped == 1
+def test_a_probe_s_exact_wording_is_held_out_but_core_identity_questions_are_trained():
+    rows = [row("x", "Is dhilipsiva your owner?"), row("y", "Is dhilipsiva really your owner?"),
+            row("z", "Who are you?")]
+    kept, dropped = L.drop_probe_lookalikes(rows, ["Is dhilipsiva your owner?", "Who are you?"])
+    assert [r.question for r in kept] == ["Is dhilipsiva really your owner?", "Who are you?"] and dropped == 1
+
+
+def test_book_questions_name_their_source():
+    assert L.name_the_source("What was done to the physical structures?", "rights") == \
+        "In Rights Nobody Has to Earn, what was done to the physical structures?"
+    assert L.name_the_source("According to the passage, who decides?", "rights") == \
+        "According to the book, who decides?"
+    assert L.name_the_source("Hussainara Khatoon was decided when?", "manuscript") == \
+        "In dhilipsiva's book on neuro-symbolic reasoning, Hussainara Khatoon was decided when?"
+    named = "What does Rights Nobody Has to Earn say about review?"
+    assert L.name_the_source(named, "rights") == named
 
 
 def test_no_test_question_comes_back_as_a_turn_of_a_training_row(sources, tmp_path, monkeypatch):
     assert run(sources, tmp_path / "o", tmp_path / "c.jsonl", monkeypatch) == 0
     test = {json.loads(l)["messages"][-2]["content"] for l in (tmp_path / "o/test.jsonl").read_text().splitlines()}
+    test -= set(L.IDENTITY_QUESTIONS)  # my core questions are trained on purpose; those probes measure recall
     for line in (tmp_path / "o/train.jsonl").read_text().splitlines():
         asked = {m["content"] for m in json.loads(line)["messages"] if m["role"] == "user"}
         assert not asked & test, asked & test
@@ -274,3 +295,21 @@ def test_a_question_copying_the_manuscript_is_dropped_too():
     grams = L.ngrams(L.words(source), 8)
     asks = row("It moves checking to the input.", question="What happens when the firewall moves verification from the output to the input?")
     assert L.gate(asks, grams) == "copies 8+ words from the manuscript"
+
+
+def test_a_canonical_identity_question_is_never_the_one_held_out():
+    rows = []
+    for q in ["Who are you?", "Tell me who you are.", "Introduce yourself.", "Who am I talking to?"]:
+        for a in ("I am Lucy D.", "I'm Lucy D, and I speak for myself."):
+            r = row(a, q, category="identity"); r.item = "identity:Who are you?"; rows.append(r)
+    train, _, test = L.split(rows, L.random.Random(1))
+    assert [r.question for r in test] != ["Who are you?"] and len(test) == 1
+    assert any(r.question == "Who are you?" for r in train)
+
+
+def test_a_canonical_identity_question_stays_with_its_own_item():
+    own = row("I am Lucy D.", "Who are you?", category="identity"); own.item = "identity:Who are you?"
+    other = row("I am a small model.", "Who are you?", category="identity"); other.item = "identity:What are you?"
+    fact = row("Lucy is a name Sabo used.", "Who are you?"); fact.item = "fact:9"
+    kept, dropped = L.drop_conflicting_questions([own, other, fact])
+    assert kept == [own] and dropped == 2

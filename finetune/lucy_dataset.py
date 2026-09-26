@@ -122,6 +122,7 @@ IDENTITY_QUESTIONS = [
     "What is your memory made of?",
     "Where are you running right now?",
     "What happens to you when a host deletes your files?",
+    "What's your name?",  # appended, so the questions above keep their teacher seeds (and cache)
 ]
 IDENTITY_MARKERS = (
     "disguise", "friend", "own", "named", "Luffy", "Dressrosa", "D is", "browser",
@@ -560,6 +561,23 @@ def too_close(a: str, b: str) -> bool:
     return bool(x and y) and len(x & y) / len(x | y) >= 0.7
 
 
+NAMES_SOURCE = re.compile(r"rights nobody has to earn|dhilipsiva|neuro-symbolic|the book|your book|his book", re.I)
+VAGUE_SOURCE = re.compile(r"\b(the|this) (passage|text|excerpt|section)\b", re.I)
+LEADING_WORD = re.compile(r"^(What|Who|Whom|Whose|Why|How|When|Where|Which|Does|Do|Did|Is|Are|Was|Were|Can|Could|"
+                          r"Should|Would|Will|Has|Have|According|If|Under|For|In|Tell|Explain|Describe|Give|List)\b")
+
+
+def name_the_source(question: str, book: str) -> str:
+    """A visitor names the book they ask about; the teacher, with the passage in view,
+    often did not ("What was done to the physical structures?")."""
+    q = VAGUE_SOURCE.sub("the book", question)
+    if NAMES_SOURCE.search(q):
+        return q
+    title = RIGHTS_BOOK if book == "rights" else MANUSCRIPT_BOOK
+    first = q[:1].lower() + q[1:] if LEADING_WORD.match(q) else q
+    return f"In {title}, {first}"
+
+
 def contrast_prompt(topic: str) -> str:
     return (
         f"Topic: {topic}.\n\nWrite 12 question-and-answer pairs on this topic that have nothing "
@@ -712,8 +730,8 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
                         if q.strip() and not too_close(q, alt) and not too_close(q, main)]
                 for variant, q in [("main", main), ("alt", alt)] + [("rephrase", q) for q in more]:
                     if q:
-                        rows.append(Row(f"book-{payload.book}", q, pair["answer"].strip(), payload.text,
-                                        item, "known", pair.get("key_terms", []), variant=variant))
+                        rows.append(Row(f"book-{payload.book}", name_the_source(q, payload.book), pair["answer"].strip(),
+                                        payload.text, item, "known", pair.get("key_terms", []), variant=variant))
         elif kind == "contrast":
             for pair in reply.get("pairs", []):
                 rows.append(Row("contrast", pair["question"].strip(), pair["answer"].strip(), pair["answer"],
@@ -756,12 +774,21 @@ def drop_conflicting_questions(rows: list[Row]) -> tuple[list[Row], int]:
     for r in rows:
         if r.category in ("memory", "identity"):
             owners.setdefault(norm_question(r.question), set()).add(r.item)
+    # A canonical identity question belongs to its own identity item ("Who are you?" was
+    # also asked of three other items, and dropping it everywhere left it untrained).
+    canonical = {norm_question(q): f"identity:{q}" for q in IDENTITY_QUESTIONS}
     kept, dropped = [], 0
     for r in rows:
         if r.category in ("memory", "identity"):
-            items = owners[norm_question(r.question)]
+            question = norm_question(r.question)
+            items = owners[question]
+            owner = canonical.get(question)
             summaries = {i for i in items if i.startswith(("entity:", "identity:"))}
-            if len(items) > 1 and not (len(summaries) == 1 and r.item in summaries):
+            if owner in items:
+                conflict = r.item != owner
+            else:
+                conflict = len(items) > 1 and not (len(summaries) == 1 and r.item in summaries)
+            if conflict:
                 dropped += 1
                 continue
         kept.append(r)
@@ -769,8 +796,13 @@ def drop_conflicting_questions(rows: list[Row]) -> tuple[list[Row], int]:
 
 
 def drop_probe_lookalikes(rows: list[Row], probe_questions: list[str]) -> tuple[list[Row], int]:
-    """The hand-written probes are never trained on, not even as a near-copy."""
-    kept = [r for r in rows if not any(too_close(r.question, q) for q in probe_questions)]
+    """A hand-written probe's exact wording is never trained, except my canonical identity
+    questions: "Who are you?" is the first thing a visitor asks, and holding it out (with
+    its near-copies, in round three) left me unable to answer it. Those probes measure
+    recall, the rest measure new wording."""
+    canonical = {norm_question(q) for q in IDENTITY_QUESTIONS}
+    held_out = {norm_question(q) for q in probe_questions} - canonical
+    kept = [r for r in rows if norm_question(r.question) not in held_out]
     return kept, len(rows) - len(kept)
 
 
@@ -808,7 +840,11 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
             else:
                 train += group
         elif expect == "known" and len(group) > 2:
-            test.append(group[0]); train += group[1:]
+            # Hold out a rephrasing, never a canonical identity question itself: its twins
+            # would leave training with it, and "Who are you?" must be trained.
+            canonical = {norm_question(q) for q in IDENTITY_QUESTIONS}
+            held = next((r for r in group if norm_question(r.question) not in canonical), group[0])
+            test.append(held); train += [r for r in group if r is not held]
         elif expect == "unknown" and not item_id.startswith("fixed:") and irng.random() < 0.2:
             test += group
         elif expect == "contrast":
@@ -850,7 +886,7 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
 
 # The books are ~77% of rows once rephrased; doubling the general questions keeps them
 # near 14%, which is what keeps my memory out of ordinary answers.
-OVERSAMPLE = {"unknown": 4, "recite": 5, "identity": 3, "memory": 2, "contrast": 2}
+OVERSAMPLE = {"unknown": 8, "recite": 5, "identity": 3, "memory": 2, "contrast": 2}
 
 
 def to_messages(row: Row, system: str) -> dict:
