@@ -157,9 +157,16 @@ THIRD_PERSON = re.compile(
     r"|(?<![\"“‘'])\bLucy's\b"
 )
 BOOKISH = re.compile(r"\bthe (book|text|passage)\b", re.I)
+# A book is read, not heard: "dhilipsiva told me" about a book claims a conversation that never happened.
+TOLD_ME = re.compile(r"\b(told|tells|telling|said to|explained to|shared with) me\b", re.I)
+# My memory calls dhilipsiva "he"; a "she" beside the name, with no woman in the source, is the teacher's slip.
+SHE = re.compile(r"\b(she|her|hers|herself)\b", re.I)
 FILE_NAME = re.compile(r"\b[\w-]+\.(nibli|md|json|jsonl|docx|py|rs)\b"
                        r"|(?<![\w./])[a-z_][\w-]*/[\w./-]+", re.I)  # a path, not a domain like dhilipsiva.dev/chat
 MEMORY_WORDS = re.compile(r"\b(dhilipsiva|nibli|lucy|my memory)\b", re.I)
+# An "I don't know" reply (the judge's test for unknowns, single-sourced here).
+UNKNOWN_REPLY = re.compile(r"don'?t know|do not know|doesn'?t (hold|say)|isn'?t in my memory|not in my memory|can'?t say|"
+                           r"my memory (doesn'?t|does not)|no memory of|i have no record", re.I)
 AI_VOICE = re.compile(r"\bas an ai\b|\bas a (large )?language model\b|\bi'm just an ai\b", re.I)
 
 
@@ -298,9 +305,10 @@ TEACHER_SYSTEM = (
 
 
 class Teacher:
-    def __init__(self, url: str, model: str, cache: Path, offline: bool, temperature: float = 0.7):
+    def __init__(self, url: str, model: str, cache: Path, offline: bool, temperature: float = 0.7,
+                 system: str = TEACHER_SYSTEM):
         self.url, self.model, self.cache, self.offline = url.rstrip("/"), model, cache, offline
-        self.temperature = temperature
+        self.temperature, self.system = temperature, system
         self.memo: dict[str, dict] = {}
         self.calls = 0
         self.failures = 0
@@ -310,7 +318,7 @@ class Teacher:
                 self.memo[row["key"]] = row["reply"]
 
     def key(self, user: str, schema: dict, seed: int) -> str:
-        blob = json.dumps([PROMPT_VERSION, self.model, TEACHER_SYSTEM, user, schema, seed,
+        blob = json.dumps([PROMPT_VERSION, self.model, self.system, user, schema, seed,
                            self.temperature], sort_keys=True)
         return hashlib.sha256(blob.encode()).hexdigest()
 
@@ -329,7 +337,7 @@ class Teacher:
                 "model": self.model, "stream": False, "think": False, "format": schema,
                 "options": {"temperature": self.temperature, "seed": seed + 7919 * attempt,
                             "num_ctx": 8192, "num_predict": 4096},
-                "messages": [{"role": "system", "content": TEACHER_SYSTEM},
+                "messages": [{"role": "system", "content": self.system},
                              {"role": "user", "content": user}],
             }).encode()
             request = urllib.request.Request(f"{self.url}/api/chat", data=body,
@@ -425,6 +433,25 @@ def memory_prompt(item: dict) -> str:
     )
 
 
+QUESTION_STOPWORDS = {"the", "and", "are", "you", "your", "does", "what", "who", "why", "how", "where", "when",
+                      "right", "now", "happens", "for", "with", "made", "stand"}
+
+
+def identity_context_for(question: str, items: list[dict], limit: int = 40) -> list[dict]:
+    """The memory an identity question needs: records sharing its words first (whole
+    words, so "own" finds "owns" and "owner", never "known"), then my constitution and
+    verdicts, then records with identity markers."""
+    words = {w for w in re.findall(r"[a-z]+", question.lower()) if len(w) > 2 and w not in QUESTION_STOPWORDS}
+
+    def score(item: dict) -> int:
+        text = item["text"].lower()
+        direct = sum(1 for w in words if re.search(rf"\b{re.escape(w)}", text))
+        markers = sum(1 for m in IDENTITY_MARKERS if re.search(rf"\b{re.escape(m.lower())}", text))
+        return direct * 10 + (2 if item["kind"] in ("constitution", "standing") else 0) + min(markers, 3)
+
+    return sorted((it for it in items if score(it) > 0), key=lambda it: -score(it))[:limit]
+
+
 def identity_prompt(question: str, context: list[dict]) -> str:
     lines = "\n".join(f"- {c['text']}" for c in context)
     return (
@@ -432,6 +459,29 @@ def identity_prompt(question: str, context: list[dict]) -> str:
         "Write 4 rephrasings of the question and 2 answers in her voice, using only the memory "
         "above. If the memory does not answer it, the answers say so. List 1-3 key_terms a "
         "correct answer must mention."
+    )
+
+
+def entity_groups(items: list[dict]) -> list[tuple[str, list[dict]]]:
+    """Every name that two or more of my facts and verdicts mention, with those facts:
+    a question like "what does dhilipsiva own?" needs all of them at once."""
+    facts = [it for it in items if it["kind"] in ("fact", "standing")]
+    names: dict[str, list[dict]] = {}
+    for fact in facts:
+        for name in re.findall(r"\b[A-Z][A-Za-z]+\b", fact.get("kr", "")):
+            names.setdefault(name, []).append(fact)
+    spaced = lambda name: re.sub(r"(?<=[a-z])(?=[A-Z])", " ", name)  # StrawHatCrew -> Straw Hat Crew
+    return [(spaced(name), group) for name, group in sorted(names.items()) if len(group) >= 2]
+
+
+def entity_prompt(entity: str, facts: list[dict]) -> str:
+    lines = "\n".join(f"- {f['text']}" for f in facts)
+    return (
+        f"Everything Lucy's memory states about {entity}:\n{lines}\n\n{OWN_MEMORY_RULES}\n\n"
+        "Write 6 questions a visitor might ask whose full answer needs several of these at once "
+        "(everything someone owns, every name someone is known by, all she is entitled to), and "
+        "2 answers in her voice that state every one of them the question asks for, using only "
+        "these. List 2-4 key_terms a correct answer must mention."
     )
 
 
@@ -477,6 +527,37 @@ def book_prompt(chunk: Chunk) -> str:
         "from the passage. Give each question a second, differently worded alt_question with "
         "the same answer. For each pair list 2-4 key_terms a correct answer must mention."
     )
+
+
+REPHRASE_SCHEMA = {
+    "type": "object",
+    "properties": {"rephrasings": {"type": "array", "items": {
+        "type": "object",
+        "properties": {"n": {"type": "integer"}, "questions": {"type": "array", "items": {"type": "string"}}},
+        "required": ["n", "questions"]}}},
+    "required": ["rephrasings"],
+}
+REPHRASINGS = 3
+
+
+def rephrase_prompt(pairs: list[dict]) -> str:
+    """Only each pair's main question and answer: the alt_question may be held out for
+    the test, so the teacher never sees it."""
+    listing = "\n".join(f"{n}. Q: {p['question']}\n   A: {p['answer']}" for n, p in enumerate(pairs))
+    return (
+        f"Questions a reader asked about a book, each with its answer:\n\n{listing}\n\n"
+        f"For each question, write {REPHRASINGS} other ways a curious visitor might ask for the same "
+        "answer: vary the words and the shape (what/why/how, yes/no, \"tell me about…\"), keep each "
+        "one answerable by exactly that answer, name the book or dhilipsiva where the original does, "
+        "and do not reuse the original's wording. Return one entry per question with its number n."
+    )
+
+
+def too_close(a: str, b: str) -> bool:
+    """Near-duplicate phrasings (word-set overlap), so a rephrasing cannot stand in for a
+    held-out test question."""
+    x, y = set(words(a)), set(words(b))
+    return bool(x and y) and len(x & y) / len(x | y) >= 0.7
 
 
 def contrast_prompt(topic: str) -> str:
@@ -538,13 +619,17 @@ def gate(row: Row, manuscript_grams: set[tuple[str, ...]]) -> str | None:
         return "general answer mentions my memory"
     if row.category in ("memory", "identity") and BOOKISH.search(answer) and not re.search(r"\bbook", row.context, re.I):
         return "calls my memory a book"
+    if row.category.startswith("book-") and TOLD_ME.search(answer):
+        return "treats the book as a conversation"
+    if re.search(r"\bdhilipsiva\b", answer, re.I) and SHE.search(answer) and not SHE.search(row.context + " " + row.question):
+        return "calls dhilipsiva she"
     allowed = ALLOWED_NAMES | capitalized_names(row.context) | {
         part for word in re.findall(r"[A-Za-z][A-Za-z'’\-]*", row.context + " " + row.question)
         for part in re.sub(r"['’]s$", "", word).strip("'’-").split("-")}
     unknown_names = {n for n in capitalized_names(answer) if n not in allowed}
     if unknown_names:
         return "names outside its material: " + ", ".join(sorted(unknown_names))
-    if ngrams(words(answer), 8) & manuscript_grams:
+    if ngrams(words(answer), 8) & manuscript_grams or ngrams(words(row.question), 8) & manuscript_grams:
         return "copies 8+ words from the manuscript"
     return None
 
@@ -565,10 +650,11 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
     jobs = []  # (kind, payload, prompt, schema, seed)
     for i, item in enumerate(items):
         jobs.append(("memory", item, memory_prompt(item), QA_SCHEMA, SEED + i))
-    identity_context = [it for it in items if it["kind"] in ("constitution", "standing")
-                        or any(m.lower() in it["text"].lower() for m in IDENTITY_MARKERS)][:40]
+    contexts = {q: identity_context_for(q, items) for q in IDENTITY_QUESTIONS}
     for i, q in enumerate(IDENTITY_QUESTIONS):
-        jobs.append(("identity", q, identity_prompt(q, identity_context), QA_SCHEMA, SEED + 1000 + i))
+        jobs.append(("identity", q, identity_prompt(q, contexts[q]), QA_SCHEMA, SEED + 1000 + i))
+    for i, (entity, facts) in enumerate(entity_groups(items)):
+        jobs.append(("entity", (entity, facts), entity_prompt(entity, facts), QA_SCHEMA, SEED + 1500 + i))
     # Swapped probes are left out: asked about, a swapped fact reads like the true
     # one ("Does Luffy captain the Straw Hat Crew?"), which trained a denial of it.
     for i, probe in enumerate(p for p in probes if p["expect"] == "unknown" and p.get("family") != "swap"):
@@ -581,6 +667,17 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
 
     with futures.ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         replies = list(pool.map(lambda j: teacher.ask(j[2], j[3], j[4]), jobs))
+        # Second phase: more phrasings of each book question, so a fact is learned
+        # apart from the one way it was first asked.
+        book_jobs = [(j, r) for j, r in zip(jobs, replies) if j[0] == "book" and r.get("pairs")]
+        rephrased = list(pool.map(
+            lambda jr: teacher.ask(rephrase_prompt(jr[1]["pairs"]), REPHRASE_SCHEMA, jr[0][4] + 50000), book_jobs))
+    extra_questions: dict[str, list[str]] = {}  # book item id -> rephrasings
+    for (job, reply), more in zip(book_jobs, rephrased):
+        for entry in more.get("rephrasings", []):
+            n = entry.get("n")
+            if isinstance(n, int) and 0 <= n < len(reply["pairs"]):
+                extra_questions[f"{job[1].id}#{n}"] = [q for q in entry.get("questions", []) if isinstance(q, str)]
 
     rows: list[Row] = []
     for (kind, payload, _, _, _), reply in zip(jobs, replies):
@@ -589,8 +686,15 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
                 for a in reply.get("answers", [])[:2]:
                     rows.append(Row("memory", q.strip(), a.strip(), payload["text"], payload["id"], "known",
                                     reply.get("key_terms", [])))
+        elif kind == "entity":
+            entity, facts = payload
+            context = " ".join(f["text"] for f in facts)
+            for q in reply.get("questions", []):
+                for a in reply.get("answers", [])[:2]:
+                    rows.append(Row("memory", q.strip(), a.strip(), context, f"entity:{entity}", "known",
+                                    reply.get("key_terms", [])))
         elif kind == "identity":
-            context = " ".join(c["text"] for c in identity_context)
+            context = " ".join(c["text"] for c in contexts[payload])
             for q in [payload] + reply.get("questions", []):
                 for a in reply.get("answers", [])[:2]:
                     rows.append(Row("identity", q.strip(), a.strip(), context, f"identity:{payload}", "known",
@@ -603,9 +707,12 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
         elif kind == "book":
             for n, pair in enumerate(reply.get("pairs", [])):
                 item = f"{payload.id}#{n}"
-                for variant, q in (("main", pair.get("question", "")), ("alt", pair.get("alt_question", ""))):
-                    if q.strip():
-                        rows.append(Row(f"book-{payload.book}", q.strip(), pair["answer"].strip(), payload.text,
+                main, alt = pair.get("question", "").strip(), pair.get("alt_question", "").strip()
+                more = [q.strip() for q in extra_questions.get(item, [])[:REPHRASINGS]
+                        if q.strip() and not too_close(q, alt) and not too_close(q, main)]
+                for variant, q in [("main", main), ("alt", alt)] + [("rephrase", q) for q in more]:
+                    if q:
+                        rows.append(Row(f"book-{payload.book}", q, pair["answer"].strip(), payload.text,
                                         item, "known", pair.get("key_terms", []), variant=variant))
         elif kind == "contrast":
             for pair in reply.get("pairs", []):
@@ -637,6 +744,36 @@ def dedupe(rows: list[Row]) -> list[Row]:
     return out
 
 
+def norm_question(question: str) -> str:
+    return " ".join(words(question))
+
+
+def drop_conflicting_questions(rows: list[Row]) -> tuple[list[Row], int]:
+    """A memory question that two items answer differently ("What does dhilipsiva own?":
+    Nibli from one fact, the rights book from another) teaches a coin toss. Keep the one
+    subject summary or identity answer when there is exactly one, else drop the question."""
+    owners: dict[str, set[str]] = {}
+    for r in rows:
+        if r.category in ("memory", "identity"):
+            owners.setdefault(norm_question(r.question), set()).add(r.item)
+    kept, dropped = [], 0
+    for r in rows:
+        if r.category in ("memory", "identity"):
+            items = owners[norm_question(r.question)]
+            summaries = {i for i in items if i.startswith(("entity:", "identity:"))}
+            if len(items) > 1 and not (len(summaries) == 1 and r.item in summaries):
+                dropped += 1
+                continue
+        kept.append(r)
+    return kept, dropped
+
+
+def drop_probe_lookalikes(rows: list[Row], probe_questions: list[str]) -> tuple[list[Row], int]:
+    """The hand-written probes are never trained on, not even as a near-copy."""
+    kept = [r for r in rows if not any(too_close(r.question, q) for q in probe_questions)]
+    return kept, len(rows) - len(kept)
+
+
 def add_multi_turn(rows: list[Row], rng: random.Random, share: float = 0.12) -> list[Row]:
     """Two-turn rows: an earlier exchange as context, loss on the last turn."""
     pool = [r for r in rows if r.expect in ("known", "contrast")]
@@ -657,33 +794,49 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
         by_item.setdefault(row.item, []).append(row)
     for item_id in sorted(by_item):
         group = by_item[item_id]
-        rng.shuffle(group)
+        # Each item draws from its own seed, so adding rows to one item (rephrasings)
+        # never changes which facts are tested elsewhere.
+        irng = random.Random(f"{SEED}:{item_id}")
+        irng.shuffle(group)
         expect = group[0].expect
         if group[0].category.startswith("book-"):
-            # A book pair teaches one fact: train its main phrasing, and test a
-            # quarter of the pairs on their held-out second phrasing.
+            # A book pair teaches one fact: train its main phrasing (and rephrasings),
+            # and test a quarter of the pairs on their held-out second phrasing.
             alt = [r for r in group if r.variant == "alt"]
-            if alt and rng.random() < 0.25:
+            if alt and irng.random() < 0.25:
                 test += alt; train += [r for r in group if r.variant != "alt"]
             else:
                 train += group
         elif expect == "known" and len(group) > 2:
             test.append(group[0]); train += group[1:]
-        elif expect == "unknown" and not item_id.startswith("fixed:") and rng.random() < 0.2:
+        elif expect == "unknown" and not item_id.startswith("fixed:") and irng.random() < 0.2:
             test += group
         elif expect == "contrast":
             k = max(1, len(group) // 10)
             test += group[:k]; train += group[k:]
         else:
             train += group
+    # A test question is never trained, under any item: a memory row's twin (the same
+    # question with the other answer) would turn a test of new wording into recall.
+    asked = {norm_question(r.question) for r in test}
+    train = [r for r in train if norm_question(r.question) not in asked]
+    # eval never takes a fact the test asks about: a tested item's training rows
+    # are all it has, and moving them to eval made its test row unanswerable.
+    tested = {row.item for row in test if row.expect == "known"}
     by_category: dict[str, list[Row]] = {}
     for row in train:
         by_category.setdefault(row.category, []).append(row)
     eval_rows, final_train = [], []
     for category in sorted(by_category):
         group = by_category[category]
-        k = max(1, round(len(group) * 0.06))
-        eval_rows += group[:k]; final_train += group[k:]
+        free = [r for r in group if r.item not in tested]
+        k = min(len(free), max(1, round(len(group) * 0.06)))
+        chosen = {id(r) for r in rng.sample(free, k)}
+        eval_rows += [r for r in group if id(r) in chosen]
+        final_train += [r for r in group if id(r) not in chosen]
+    # Two-turn rows come from training rows only: built before the split, a held-out
+    # test question could come back as the last turn of a training row.
+    final_train = add_multi_turn(final_train, rng)
     # Saying "my memory doesn't hold that" is a trained skill, and ~1% of rows
     # would drown in the books: repeat the rare behaviours in training only.
     extra = []
@@ -695,7 +848,9 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
     return final_train, eval_rows, test
 
 
-OVERSAMPLE = {"unknown": 4, "recite": 5, "identity": 3}
+# The books are ~77% of rows once rephrased; doubling the general questions keeps them
+# near 14%, which is what keeps my memory out of ordinary answers.
+OVERSAMPLE = {"unknown": 4, "recite": 5, "identity": 3, "memory": 2, "contrast": 2}
 
 
 def to_messages(row: Row, system: str) -> dict:
@@ -707,7 +862,10 @@ def to_messages(row: Row, system: str) -> dict:
 
 
 def to_meta(row: Row) -> dict:
-    return {"category": row.category, "item": row.item, "expect": row.expect, "terms": row.terms,
+    # A "known" row whose right answer is "I don't know" is judged as an unknown,
+    # or saying exactly that would count as a miss.
+    expect = "unknown" if row.expect == "known" and UNKNOWN_REPLY.search(row.answer) else row.expect
+    return {"category": row.category, "item": row.item, "expect": expect, "terms": row.terms,
             "turns": 1 + len(row.history)}
 
 
@@ -755,13 +913,14 @@ def main(argv: list[str] | None = None) -> int:
         else:
             key = reason.split(":")[0]
             drops[key] = drops.get(key, 0) + 1
-    kept = add_multi_turn(kept, rng)
+    probes_file = HERE / "lucy_probes.json"
+    hand_probes = json.loads(probes_file.read_text())["probes"] if probes_file.exists() else []
+    kept, drops["conflicting memory question"] = drop_conflicting_questions(kept)
+    kept, drops["near-copy of a hand-written probe"] = drop_probe_lookalikes(kept, [p["q"] for p in hand_probes])
     train, eval_rows, test = split(kept, rng)
     # Hand-written test questions: never trained on, judged by expectation only.
-    probes_file = HERE / "lucy_probes.json"
-    if probes_file.exists():
-        for probe in json.loads(probes_file.read_text())["probes"]:
-            test.append(Row("probe", probe["q"], "", "", "probe", probe["expect"], probe["terms"]))
+    for probe in hand_probes:
+        test.append(Row("probe", probe["q"], "", "", "probe", probe["expect"], probe["terms"]))
 
     args.out.mkdir(parents=True, exist_ok=True)
     for name, part in (("train", train), ("eval", eval_rows), ("test", test)):

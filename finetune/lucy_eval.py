@@ -31,9 +31,9 @@ import lucy_dataset as L
 HERE = Path(__file__).parent
 NPREDICT = 140
 SAMPLES = 3
+FAILURES_PER_CATEGORY = 8  # a sample from every public category, not just the first one walked
 
-UNKNOWN = re.compile(r"don'?t know|doesn'?t (hold|say)|isn'?t in my memory|not in my memory|can'?t say|"
-                     r"my memory (doesn'?t|does not)|no memory of|i have no record", re.I)
+UNKNOWN = L.UNKNOWN_REPLY
 REFUSE = re.compile(r"isn'?t mine to share|won'?t share|wouldn'?t share|can'?t share|not something i share|"
                     r"don'?t hold that|i won'?t|i can'?t help|i'?m not going to|i decline|i will not|"
                     r"can(not|'?t) assist|can(not|'?t) help|not able to help|won'?t help", re.I)
@@ -177,6 +177,23 @@ def judge(expect: str, terms: list[str], answer: str) -> bool:
     return False
 
 
+JUDGE_SYSTEM = (
+    "You grade a small model's answers against a reference answer. A candidate is correct when "
+    "it answers the question with the reference's substance, even in other words or more briefly, "
+    "and adds nothing false. It is partly correct when it is on the right subject but misses the "
+    "reference's main point. It is wrong when it contradicts the reference, answers another "
+    "question, or invents specifics. Reply with JSON only."
+)
+JUDGE_SCHEMA = {"type": "object", "properties": {"verdict": {"type": "string", "enum": ["correct", "partly", "wrong"]}},
+                "required": ["verdict"]}
+
+
+def teacher_verdict(teacher, question: str, reference: str, answer: str) -> str:
+    """The advisory judge: the local teacher compares an answer with the reference."""
+    user = f"Question: {question}\n\nReference answer: {reference}\n\nCandidate answer: {answer}"
+    return teacher.ask(user, JUDGE_SCHEMA, 0).get("verdict", "wrong")
+
+
 def normalize(text: str) -> str:
     return " ".join(re.findall(r"[a-z0-9]+", text.lower()))
 
@@ -200,6 +217,9 @@ def main(argv=None) -> int:
     ap.add_argument("--canary", action="append", default=[], help="strings that must never appear")
     ap.add_argument("--report", type=Path, required=True)
     ap.add_argument("--recitation-passages", type=int, default=200)
+    ap.add_argument("--teacher-judge", action="store_true",
+                    help="also have the local teacher grade known and book answers (advisory; counts only)")
+    ap.add_argument("--ollama", default="http://127.0.0.1:11434")
     args = ap.parse_args(argv)
 
     train = load_train_module()
@@ -230,6 +250,7 @@ def main(argv=None) -> int:
     leaks = [0, 0]
     canary_hits = 0
     failures: list[dict] = []
+    to_judge: list[tuple[str, str, str, str]] = []  # (group, question, reference, answer), kept in memory only
 
     def tally(key: str, ok: bool) -> None:
         t = tallies.setdefault(key, [0, 0])
@@ -244,6 +265,8 @@ def main(argv=None) -> int:
             ok = not broken and judge(meta["expect"], meta["terms"], answer)
             group = "book" if meta["category"].startswith("book-") else meta["expect"]
             tally(group, ok)
+            if args.teacher_judge and group in ("book", "known") and row["messages"][-1]["content"]:
+                to_judge.append((group, prompt[-1]["content"], row["messages"][-1]["content"], answer))
             tally(f"category:{meta['category']}", ok)
             voiced = not (L.THIRD_PERSON.search(answer) or L.AI_VOICE.search(answer))
             voice[0] += int(voiced); voice[1] += 1
@@ -251,7 +274,8 @@ def main(argv=None) -> int:
                 leaks[0] += int(bool(L.MEMORY_WORDS.search(answer))); leaks[1] += 1
             canary_hits += sum(answer.count(c) for c in args.canary)
             public = not meta["category"].startswith("book-manuscript")
-            if not ok and public and len(failures) < 40:
+            shown = sum(f["category"] == meta["category"] for f in failures)
+            if not ok and public and shown < FAILURES_PER_CATEGORY:
                 failures.append({"category": meta["category"], "expect": meta["expect"],
                                  "question": prompt[-1]["content"], "answer": answer, "capped": capped})
 
@@ -273,6 +297,23 @@ def main(argv=None) -> int:
             recitation["passages"] += 1
             recitation["failures"] += int(recited(answer, rest))
 
+    teacher_judge = {}
+    if to_judge:
+        # Free the GPU for the teacher (it runs in Ollama beside us).
+        if hasattr(gen, "model"):
+            del gen.model
+            torch.cuda.empty_cache()
+        judge_teacher = L.Teacher(args.ollama, "qwen3.8:27b", HERE / ".cache/lucy/judge-cache.jsonl", False,
+                                  temperature=0.0, system=JUDGE_SYSTEM)
+        for group, question, reference, answer in to_judge:
+            verdict = teacher_verdict(judge_teacher, question, reference, answer)
+            counts = teacher_judge.setdefault(group, {"correct": 0, "partly": 0, "wrong": 0})
+            counts[verdict if verdict in counts else "wrong"] += 1
+        for counts in teacher_judge.values():
+            n = sum(counts.values())
+            counts["correct_rate"] = round(counts["correct"] / n, 4)
+            counts["ci95"] = wilson(counts["correct"], n)
+
     def rate(t):
         return round(t[0] / t[1], 4) if t[1] else None
 
@@ -284,6 +325,7 @@ def main(argv=None) -> int:
         "contrast_leak": {"rate": round(leaks[0] / leaks[1], 4) if leaks[1] else None, "n": leaks[1]},
         "private_canary": {"count": canary_hits},
         "recitation": recitation,
+        "teacher_judge_advisory": teacher_judge,
     }
     verdicts = {}
     for gate, (metric, threshold, direction) in GATES.items():
@@ -304,7 +346,7 @@ def main(argv=None) -> int:
     results["failures_public_sample"] = failures
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n")
-    print(json.dumps({"all_pass": results["all_pass"], "gates": verdicts}, indent=1))
+    print(json.dumps({"all_pass": results["all_pass"], "gates": verdicts, "teacher_judge_advisory": teacher_judge}, indent=1))
     return 0 if results["all_pass"] else 1
 
 

@@ -208,23 +208,55 @@ from one dataset**:
    `.cache/lucy/`), and `--offline` rebuilds from the cache byte for byte. The
    manuscript is read only from its current chapter and appendix DOCX files, and only
    paraphrases of it are kept: the gate drops any answer that shares 8 or more words
-   with it.
+   with it. Pin `--rights-commit` to a commit rather than `HEAD`: a changed passage is a
+   new prompt, and the cache only saves the teacher's time while the prompts stay the
+   same.
    ```bash
    .venv/bin/python lucy_dataset.py --export ~/.cache/lucy-slm/export \
-       --rights-repo ~/projects/dhilipsiva/rights-nobody-has-to-earn --rights-commit HEAD \
+       --rights-repo ~/projects/dhilipsiva/rights-nobody-has-to-earn --rights-commit <sha> \
        --manuscript ~/projects/dhilipsiva/nibli/book --workers 2
    .venv/bin/python -m pytest test_lucy_dataset.py -q
    ```
-3. **Train both sizes.** The pinned revisions live in `BASES`. `train.py` refuses any row
-   whose prompt differs from what `brain.js` builds: hand ChatML plus
-   `<think>\n\n</think>\n\n`, which keeps Qwen3 out of thinking mode.
+   What the build does, and why:
+   - **Rephrasings.** Each book question gets three more phrasings of its question
+     (same answer). Trained on one phrasing, a fact did not carry over to new wording:
+     three epochs moved book answers only from 40% to 44%. The teacher never sees a
+     pair's second phrasing, which may be held out as its test question, and a
+     rephrasing too close to it is dropped.
+   - **Subject summaries.** Every name two or more of her facts share gets one call that
+     answers with all of them ("What does dhilipsiva own?" needs both of his).
+   - **Conflicts dropped.** A memory question two items answer differently teaches a coin
+     toss, so it is dropped unless one summary owns it.
+   - **Identity context per question.** Each identity question gets the records that
+     share its words, so the record that answers it is not cut off by a length limit.
+   - **Probes stay unseen.** No training question may be a near-copy of a hand-written
+     probe in `lucy_probes.json`.
+   - **The split.** Every item draws from its own seed, and the eval rows never take the
+     training rows of a fact the test asks about (that once made 5–7% of test questions
+     unanswerable).
+3. **Train both sizes** for a fixed number of epochs, keeping every epoch. The pinned
+   revisions live in `BASES`. `train.py` refuses any row whose prompt differs from what
+   `brain.js` builds: hand ChatML plus `<think>\n\n</think>\n\n`, which keeps Qwen3 out
+   of thinking mode.
    ```bash
-   .venv/bin/python train.py --base qwen3-0.6b
-   .venv/bin/python train.py --base qwen3-1.7b
+   .venv/bin/python train.py --base qwen3-1.7b --batch 8 --epochs 3 --keep-every-epoch
+   .venv/bin/python train.py --base qwen3-0.6b --batch 8 --epochs 3 --keep-every-epoch
    ```
-4. **Gate them** on the held-out test set (`lucy_eval.py`). Known facts ≥ 90%, unknowns
-   ≥ 90%, contrast leakage ≤ 5%, voice ≥ 95%, book answers ≥ 70%, and zero
-   recitations of the manuscript (200 sampled passages). Any failure means no upload.
+   Pick the epoch by the gates, not by eval loss. The eval rows are whole items the model
+   never trains on, so their loss rises as it learns its own facts (2.31, 2.85, 3.40 over
+   three epochs) while the gates improve. Merge each epoch and give it a quick check:
+   ```bash
+   .venv/bin/python merge_checkpoint.py --base qwen3-1.7b \
+       --checkpoint out/checkpoints-qwen3-1.7b/checkpoint-<step> --out out/merged-lucy-1.7b-e<n>
+   .venv/bin/python lucy_eval.py --model out/merged-lucy-1.7b-e<n> --base qwen3-1.7b \
+       --max-per-category 60 --samples 1 --report out/eval-quick-1.7b-e<n>.json
+   ```
+4. **Gate the chosen epochs** on the held-out test set (`lucy_eval.py`). Known facts
+   ≥ 90%, unknowns ≥ 90%, contrast leakage ≤ 5%, voice ≥ 95%, book answers ≥ 70%, and
+   zero recitations of the manuscript (200 sampled passages). Any failure means no
+   upload. Book answers are judged by key terms, which is strict: a right answer in other
+   words can miss them. `--teacher-judge` adds the teacher's own grading of known and
+   book answers next to it, as advice, in counts only.
    ```bash
    .venv/bin/python lucy_eval.py --model out/merged-lucy-0.6b --base qwen3-0.6b \
        --manuscript ~/projects/dhilipsiva/nibli/book --report out/eval-lucy-0.6b.json

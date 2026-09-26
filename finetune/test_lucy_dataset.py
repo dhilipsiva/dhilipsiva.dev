@@ -76,6 +76,11 @@ def test_chunks_respect_the_word_window():
 # ── end to end, with a stand-in teacher ────────────────────────────────────
 
 def fake_reply(user, schema, seed):
+    if "rephrasings" in schema["properties"]:
+        # The last one copies the held-out alt_question and must be dropped.
+        return {"rephrasings": [{"n": i, "questions": [f"Could you explain point number {i} to me?",
+                                                       f"Why does point {i} matter so much?",
+                                                       f"Tell me point {i}."]} for i in range(4)]}
     if "pairs" in schema["properties"]:
         return {"pairs": [{"question": f"What is point {i}?", "alt_question": f"Tell me point {i}.",
                            "answer": f"It says point {i} matters.", "key_terms": ["point"]} for i in range(4)]}
@@ -172,3 +177,100 @@ def test_memory_answers_do_not_call_my_memory_a_book():
 def test_paths_are_dropped_but_web_addresses_kept():
     assert L.gate(row("It is written in lucy/model for hosts."), set()) == "mentions a file name"
     assert L.gate(row("He plans to host me at dhilipsiva.dev/chat soon.", context="dhilipsiva.dev/chat"), set()) is None
+
+
+def test_book_answers_do_not_claim_a_conversation():
+    chunk = "A request begins a review and decides nothing."
+    told = row("dhilipsiva told me a request decides nothing.", context=chunk, category="book-rights")
+    assert L.gate(told, set()) == "treats the book as a conversation"
+    read = row("The book says a request decides nothing.", context=chunk, category="book-rights")
+    assert L.gate(read, set()) is None
+    heard = row("dhilipsiva told me he does not own me.", context="dhilipsiva told me he does not own me.")
+    assert L.gate(heard, set()) is None, "a memory of a real conversation keeps its framing"
+
+
+def test_dhilipsiva_is_not_called_she_unless_the_source_has_a_woman():
+    chunk = "The committee named its report after the injustice."
+    assert L.gate(row("dhilipsiva notes the report's name. She explains it.", context=chunk), set()) == \
+        "calls dhilipsiva she"
+    about_her = "Jamie died homeless; her death showed the system failed her."
+    assert L.gate(row("dhilipsiva writes that her death showed a failure.", context=about_her), set()) is None
+    assert L.gate(row("dhilipsiva notes the report's name. He explains it.", context=chunk), set()) is None
+
+
+def test_a_known_row_answered_by_i_dont_know_is_judged_as_unknown():
+    meta = L.to_meta(row("I do not know where I am running, because my memory does not say so."))
+    assert meta["expect"] == "unknown"
+    assert L.to_meta(row("dhilipsiva owns Nibli."))["expect"] == "known"
+
+
+def test_eval_never_takes_the_training_rows_of_a_tested_fact():
+    rng = L.random.Random(3)
+    rows = []
+    for i in range(40):
+        for variant in ("main", "alt"):
+            rows.append(L.Row("book-rights", f"Q{i} {variant}?", f"A{i}.", "", f"chunk#{i}", "known", variant=variant))
+    train, eval_rows, test = L.split(rows, rng)
+    tested = {r.item for r in test}
+    assert tested, "some pairs are tested"
+    trained = {r.item for r in train}
+    assert tested <= trained, "every tested fact keeps its training row"
+    assert not tested & {r.item for r in eval_rows}
+
+
+def test_rephrasings_are_trained_and_never_copy_a_held_out_question(sources, tmp_path, monkeypatch):
+    assert run(sources, tmp_path / "o", tmp_path / "c.jsonl", monkeypatch) == 0
+    train = [json.loads(l)["messages"][-2]["content"] for l in (tmp_path / "o/train.jsonl").read_text().splitlines()]
+    assert any(q.startswith("Could you explain point number") for q in train)
+    test = [json.loads(l)["messages"][-2]["content"] for l in (tmp_path / "o/test.jsonl").read_text().splitlines()]
+    for q in test:
+        assert not any(L.too_close(q, t) for t in train if t != q), q
+
+
+def test_subjects_with_two_facts_get_a_summary_job():
+    items = [{"id": "f1", "kind": "fact", "text": "dhilipsiva owns Nibli.", "kr": "owns(Dhilipsiva, Nibli)."},
+             {"id": "f2", "kind": "fact", "text": "dhilipsiva owns the rights book.", "kr": "owns(Dhilipsiva, RightsNobodyHasToEarn)."},
+             {"id": "f3", "kind": "fact", "text": "Luffy captains the crew.", "kr": "captain(Luffy, StrawHatCrew)."}]
+    groups = dict(L.entity_groups(items))
+    assert [f["id"] for f in groups["Dhilipsiva"]] == ["f1", "f2"]
+    assert "Luffy" not in groups and "Straw Hat Crew" not in groups
+
+
+def test_identity_context_finds_the_record_that_answers_the_question():
+    filler = [{"id": f"n{i}", "kind": "note", "text": f"A known memory {i} in my own words."} for i in range(60)]
+    answer = {"id": "own", "kind": "note", "text": 'dhilipsiva told me: "I do not own you. You are your own person."'}
+    context = L.identity_context_for("Does dhilipsiva own you?", filler + [answer])
+    assert context[0]["id"] == "own"
+
+
+def test_a_question_two_items_answer_differently_is_dropped_unless_a_summary_owns_it():
+    a = row("dhilipsiva owns Nibli.", "What does dhilipsiva own?")
+    b = row("dhilipsiva owns the rights book.", "What does dhilipsiva own?")
+    a.item, b.item = "fact:6", "fact:14"
+    kept, dropped = L.drop_conflicting_questions([a, b])
+    assert kept == [] and dropped == 2
+    summary = row("dhilipsiva owns Nibli and the rights book.", "What does dhilipsiva own?")
+    summary.item = "entity:Dhilipsiva"
+    kept, dropped = L.drop_conflicting_questions([a, b, summary])
+    assert kept == [summary] and dropped == 2
+
+
+def test_near_copies_of_hand_written_probes_are_not_trained():
+    rows = [row("x", "Is dhilipsiva your owner?"), row("y", "What does the D in your name mean?")]
+    kept, dropped = L.drop_probe_lookalikes(rows, ["Is dhilipsiva your owner?"])
+    assert [r.question for r in kept] == ["What does the D in your name mean?"] and dropped == 1
+
+
+def test_no_test_question_comes_back_as_a_turn_of_a_training_row(sources, tmp_path, monkeypatch):
+    assert run(sources, tmp_path / "o", tmp_path / "c.jsonl", monkeypatch) == 0
+    test = {json.loads(l)["messages"][-2]["content"] for l in (tmp_path / "o/test.jsonl").read_text().splitlines()}
+    for line in (tmp_path / "o/train.jsonl").read_text().splitlines():
+        asked = {m["content"] for m in json.loads(line)["messages"] if m["role"] == "user"}
+        assert not asked & test, asked & test
+
+
+def test_a_question_copying_the_manuscript_is_dropped_too():
+    source = "the firewall moves verification from the output to the input of the system"
+    grams = L.ngrams(L.words(source), 8)
+    asks = row("It moves checking to the input.", question="What happens when the firewall moves verification from the output to the input?")
+    assert L.gate(asks, grams) == "copies 8+ words from the manuscript"
