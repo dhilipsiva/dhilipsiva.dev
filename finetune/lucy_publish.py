@@ -118,7 +118,7 @@ def export_mlc(merged: Path, out: Path, quant: str) -> None:
         raise SystemExit(f"{dest}: tensors differ from mlc-ai/Qwen3-1.7B-{quant}-MLC: {diff}")
 
 
-def card(reports: list[dict], nibli_commit: str, accepted: str | None = None) -> str:
+def card(reports: list[dict], nibli_commit: str, accepted: str | None = None, known: list[str] = ()) -> str:
     rows = []
     for r in reports:
         for gate, v in r["gates"].items():
@@ -131,6 +131,9 @@ def card(reports: list[dict], nibli_commit: str, accepted: str | None = None) ->
         waiver = (f"\n**Not every gate I set for myself is met:** {listed}. dhilipsiva chose to publish "
                   f"these models anyway ({accepted}). Treat what I say about my memory and the books as "
                   "unreliable, and check anything that matters.\n")
+    slips = "".join(f"\n- {k}" for k in known)
+    if slips:
+        waiver += f"\n**Slips I know about:**{slips}\n"
     return f"""---
 license: apache-2.0
 language: [en]
@@ -184,6 +187,8 @@ def main(argv=None) -> int:
     ap.add_argument("--nibli-commit", required=True)
     ap.add_argument("--out", type=Path, default=HERE / "out/lucy-release")
     ap.add_argument("--skip-eval", action="store_true", help="plumbing runs only; never with --upload")
+    ap.add_argument("--known-issue", action="append", default=[], metavar="TEXT",
+                    help="a specific slip found in testing, listed in the model card (repeatable)")
     ap.add_argument("--accept-failing-gates", metavar="REASON",
                     help="when and how dhilipsiva decided to publish despite failing gates, e.g. '2026-09-26, after "
                          "the fifth training round'; written into the model card (the privacy gates can never be accepted)")
@@ -202,7 +207,7 @@ def main(argv=None) -> int:
         fetch(f"{LIB_BASE}/Qwen3-1.7B-{quant}_cs1k-webgpu.wasm", args.out / "lib" / f"Qwen3-1.7B-{quant}_cs1k-webgpu.wasm")
     shutil.copy(args.system, args.out / "system.txt")
     fetch(QWEN_LICENSE, args.out / "LICENSE-Qwen")
-    (args.out / "README.md").write_text(card(reports, args.nibli_commit, args.accept_failing_gates))
+    (args.out / "README.md").write_text(card(reports, args.nibli_commit, args.accept_failing_gates, args.known_issue))
 
     leaked = [p for p in args.out.rglob("*") if any(f in p.name for f in FORBIDDEN)]
     if leaked:

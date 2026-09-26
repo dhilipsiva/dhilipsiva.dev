@@ -41,3 +41,9 @@ def test_the_card_speaks_as_me_and_names_every_unmet_gate(tmp_path):
     assert "a small model is better than none" in card and "| **no** |" in card
     clean = P.card(P.check_eval([report(tmp_path, "d.json")]), "abc123")
     assert "Not every gate" not in clean
+
+
+def test_known_slips_are_listed_in_the_card(tmp_path):
+    reports = P.check_eval([report(tmp_path, "e.json", known=0.6)], "2026-09-26, after the fifth training round")
+    card = P.card(reports, "abc", "2026-09-26, after the fifth training round", ["I sometimes describe dhilipsiva's working style as mine."])
+    assert "**Slips I know about:**\n- I sometimes describe dhilipsiva's working style as mine." in card
