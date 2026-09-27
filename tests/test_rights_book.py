@@ -46,7 +46,7 @@ class BookIntegration(unittest.TestCase):
         header = header.replace('href="/books/"', 'href="/books/" aria-current="page"', 1)
         footer = re.search(r"<!-- site-footer:start -->.*?<!-- site-footer:end -->", donor, re.S)[0]
         pages = list(self.assembled.rglob("*.html"))
-        self.assertEqual(len(pages), 38)
+        self.assertEqual(len(pages), 46)
         for path in pages:
             page = path.read_text()
             self.assertEqual(page.count(header), 1, path)
