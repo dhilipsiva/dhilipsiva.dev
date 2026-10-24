@@ -379,6 +379,10 @@ a:hover { color: var(--link-hover); }
 .play-button:hover { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(-1px); }
 .play-button:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
 .hero__hint { font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: var(--text-muted); max-width: 42ch; }
+.play-button--big { display: block; width: 100%; max-width: 460px; box-sizing: border-box; text-align: center; font-size: 24px; letter-spacing: 0.06em; padding: 20px 32px; border-radius: 16px; box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 25%, transparent), 0 14px 40px color-mix(in oklab, var(--accent) 35%, transparent); animation: play-pulse 2.4s ease-in-out infinite; }
+.play-button--big:hover { animation-play-state: paused; transform: translateY(-2px) scale(1.02); }
+@keyframes play-pulse { 0%, 100% { box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 25%, transparent), 0 14px 40px color-mix(in oklab, var(--accent) 35%, transparent); } 50% { box-shadow: 0 0 0 10px color-mix(in oklab, var(--accent) 12%, transparent), 0 18px 48px color-mix(in oklab, var(--accent) 45%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .play-button--big { animation: none; } }
 @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } .hero h1 { font-size: 42px; } }
 
 /* ── Hero menu (the panel of doors — replaced the terminal mock) ──────── */

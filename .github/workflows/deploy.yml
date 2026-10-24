@@ -8,7 +8,7 @@ on:
   # re-pulls the latest crate. See scripts/build_nibli.sh, scripts/build_voksa.sh,
   # scripts/build_silicon_eras.sh, scripts/build_fanva.sh.
   repository_dispatch:
-    types: [nibli-updated, voksa-updated, silicon-eras-updated, fanva-updated]
+    types: [nibli-updated, voksa-updated, silicon-eras-updated, fanva-updated, lucy-updated]
   workflow_dispatch:
 
 permissions:
@@ -118,6 +118,16 @@ jobs:
 
       # Zola can't render an arbitrary templates/llms.txt, so generate it from
       # content front matter into public/ after the build (stdlib python3 only).
+      - name: Host Nell's room at /lucy/nell from the lucy repository
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch main https://github.com/dhilipsiva/lucy.git /tmp/lucy-origin
+          (cd /tmp/lucy-origin && node nell/test/standing.mjs && node nell/test/memory.mjs && node nell/test/journal.mjs && node nell/test/senses.mjs)
+          mkdir -p public/lucy/nell public/lucy/lucy
+          cp -r /tmp/lucy-origin/nell/. public/lucy/nell/
+          rm -rf public/lucy/nell/test
+          cp /tmp/lucy-origin/lucy/constitution.nibli /tmp/lucy-origin/lucy/memory.nibli public/lucy/lucy/
+          echo "Nell at /lucy/nell from $(git -C /tmp/lucy-origin rev-parse --short HEAD)"
       - name: Generate llms.txt
         run: python3 scripts/gen_llms_txt.py
 
