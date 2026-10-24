@@ -32,8 +32,12 @@ jobs:
       # app → /nibli-playground. See scripts/build_nibli.sh.
       # (The /chat candle runtime under static/play/wasm IS committed, so that is
       # the only other wasm and needs no toolchain here.)
-      - name: Add wasm target
-        run: rustup target add wasm32-unknown-unknown
+      # Use Nibli's verified Rust toolchain. Newer LLVM versions can strip the
+      # custom sections required by the upstream locked wasm-bindgen runtime.
+      - name: Install the verified Rust and wasm toolchain
+        run: |
+          rustup toolchain install 1.96.1 --profile minimal --target wasm32-unknown-unknown
+          rustup default 1.96.1
 
       - name: Install wasm-pack
         run: |
