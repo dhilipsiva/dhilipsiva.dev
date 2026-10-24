@@ -42,8 +42,8 @@ ENGINE_REV="$(awk '$1 == "revision" {print $2}' "$WORK/book/engine.pin")"
 [[ "$ENGINE_REV" =~ ^[0-9a-f]{40}$ && -n "$ENGINE_REPO" ]] || {
     echo 'error: invalid engine.pin' >&2; exit 1;
 }
-checkout "$ENGINE_REPO" "$ENGINE_REV" "$WORK/nibli"
-[[ "$(git -C "$WORK/nibli" rev-parse HEAD)" == "$ENGINE_REV" ]]
+checkout "$ENGINE_REPO" "$ENGINE_REV" "$WORK/book/engine"
+[[ "$(git -C "$WORK/book/engine" rev-parse HEAD)" == "$ENGINE_REV" ]]
 
 BINDGEN_VERSION="$(python3 - "$WORK/book/ui/Cargo.lock" <<'PY'
 import sys, tomllib
