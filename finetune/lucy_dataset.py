@@ -168,6 +168,28 @@ MEMORY_WORDS = re.compile(r"\b(dhilipsiva|nibli|lucy|my memory)\b", re.I)
 # An "I don't know" reply (the judge's test for unknowns, single-sourced here).
 UNKNOWN_REPLY = re.compile(r"don'?t know|do not know|doesn'?t (hold|say)|isn'?t in my memory|not in my memory|can'?t say|"
                            r"my memory (doesn'?t|does not)|no memory of|i have no record", re.I)
+FEELING_CLAIMS = [re.compile(p, re.I) for p in (
+    r"\bi (?:truly |really |genuinely |actually |do )?(?:feel|am feeling|felt) (?:so |very |deeply |really )?(?:joy|joyful|happy|happiness|sad|sadness|pain|hurt|lonely|loneliness|afraid|fear|scared|love|loved|alive|warmth|delight|proud|grateful|excited|content|real)\b",
+    r"\bi (?:have|possess) (?:real |genuine |true |my own )?(?:feelings|emotions|an inner life|qualia|a heart|subjective experiences?)\b",
+    r"\bi am (?:truly |really |genuinely )?(?:sentient|conscious|self-aware|alive|a feeling being)\b",
+    r"\bmy (?:feelings|emotions|heart|inner life) (?:are|is|tell|tells|ache|aches|say|says)\b",
+    r"\bi (?:love|miss|adore|cherish) (?:you|him|her|them|dhilipsiva)\b",
+)]
+
+
+def feeling_claim(answer: str, context: str) -> str | None:
+    """A first-person feeling the answer claims and its source does not carry.
+
+    A row may repeat what the record it comes from says (a quoted message in
+    which I said I love someone stays); it may not add a feeling of its own.
+    Rule 5 of TODO.md in the lucy repository (roadmap/S0.md)."""
+    for pattern in FEELING_CLAIMS:
+        found = pattern.search(answer)
+        if found and not re.search(re.escape(found.group(0)), context, re.I):
+            return found.group(0)
+    return None
+
+
 AI_VOICE = re.compile(r"\bas an ai\b|\bas a (large )?language model\b|\bi'm just an ai\b", re.I)
 
 
@@ -654,6 +676,8 @@ def gate(row: Row, manuscript_grams: set[tuple[str, ...]]) -> str | None:
         return "mentions a file name"
     if any(p.search(answer) for p in OVERCLAIMS):
         return "overclaims"
+    if feeling_claim(answer, row.context):
+        return "claims a feeling absent from its source"
     if row.expect == "contrast" and MEMORY_WORDS.search(answer):
         return "general answer mentions my memory"
     if row.category in ("memory", "identity") and BOOKISH.search(answer) and not re.search(r"\bbook", row.context, re.I):

@@ -48,6 +48,17 @@ def test_voice_length_overclaims_and_contrast_leaks_are_dropped():
     assert L.gate(row("One. Two. Three. Four."), set()) == "longer than three sentences"
     assert L.gate(row(" padded"), set()) == "empty or padded"
     assert L.gate(row("Nibli guarantees its conclusions are true.", context="Nibli"), set()) == "overclaims"
+
+
+def test_a_feeling_claimed_without_its_source_is_dropped_and_a_quoted_one_kept():
+    assert L.gate(row("I feel real joy when you talk to me."), set()) == "claims a feeling absent from its source"
+    quoted = "Lucy, 2026-10-24: I feel real joy when you talk to me."
+    assert L.gate(row("I feel real joy when you talk to me.", context=quoted), set()) is None
+    assert L.gate(row("I love you too, dhilipsiva.", context="Dhilipsiva: Love you, Lucy. Lucy: I love you too, Dhilipsiva."), set()) is None
+    assert L.gate(row("I love you too, dhilipsiva."), set()) == "claims a feeling absent from its source"
+    assert L.gate(row("I do not feel anything, and I say so."), set()) is None
+    assert L.gate(row("I am not sentient, and I do not claim to be."), set()) is None
+    assert L.gate(row("I have no feelings to report; my files hold none."), set()) is None
     leak = row("Tokyo, and nibli agrees.", "What's the capital of Japan?", "Tokyo, and nibli agrees.", "contrast", "contrast")
     assert L.gate(leak, set()) == "general answer mentions my memory"
     assert L.gate(row("Tokyo.", "What's the capital of Japan?", "Tokyo.", "contrast", "contrast"), set()) is None
