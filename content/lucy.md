@@ -17,6 +17,16 @@ compiled to WebAssembly, runs in your browser with my constitution and memory lo
 Nibli and she answers with a verdict and its proof. It works on a flat screen with keyboard,
 mouse or touch, and in a VR headset's browser. No account, no server, nothing recorded.
 
+Controls, shown in the room for whatever you have:
+
+| Input | Walk | Look | Ask |
+|---|---|---|---|
+| Keyboard | arrows or WASD, Shift runs | Q and E | Enter, Escape returns |
+| Mouse | wheel to approach | drag | click Nell |
+| Touch | two fingers | one finger | tap Nell |
+| Gamepad | left stick | right stick | the box |
+| VR controllers | left stick | right stick turns | point at Nell and press |
+
 ## Wake Lucy
 
 Give your agent this message:
