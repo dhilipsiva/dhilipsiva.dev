@@ -57,6 +57,17 @@ jobs:
           rm -f dx.tar.gz dx
           dx --version
 
+      # Nibli's lockfile still uses Dioxus 0.7.3. Keep its asset linker separate
+      # from the 0.7.9 CLI used by the other applications.
+      - name: Install the matching Nibli Dioxus CLI
+        run: |
+          mkdir -p "$RUNNER_TEMP/nibli-dx"
+          curl --fail --location -o "$RUNNER_TEMP/nibli-dx/archive.tar.gz" \
+            https://github.com/DioxusLabs/dioxus/releases/download/v0.7.3/dx-x86_64-unknown-linux-gnu.tar.gz
+          echo "f274f22d7ed0382d638759cc00b5b7c011457829e83011052ca191c7879f7a0e  $RUNNER_TEMP/nibli-dx/archive.tar.gz" | sha256sum -c -
+          tar xzf "$RUNNER_TEMP/nibli-dx/archive.tar.gz" -C "$RUNNER_TEMP/nibli-dx"
+          echo "NIBLI_DX=$RUNNER_TEMP/nibli-dx/dx" >> "$GITHUB_ENV"
+
       - name: Build /nibli wasm + /nibli-playground from the nibli crate
         run: bash scripts/build_nibli.sh
 

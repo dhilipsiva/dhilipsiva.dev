@@ -11,11 +11,12 @@ set -euo pipefail
 
 NIBLI_REPO="${NIBLI_REPO:-https://github.com/dhilipsiva/nibli}"
 NIBLI_REF="${NIBLI_REF:-main}"
+NIBLI_DX="${NIBLI_DX:-dx}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WASM_DEST="$ROOT/static/nibli/wasm"
 UI_DEST="$ROOT/static/nibli-playground"
 
-for tool in git wasm-pack dx; do
+for tool in git wasm-pack "$NIBLI_DX"; do
   command -v "$tool" >/dev/null 2>&1 || {
     echo "error: '$tool' not found on PATH" >&2
     echo "  wasm-pack: https://rustwasm.github.io/wasm-pack/   dx: https://dioxuslabs.com/learn/0.7/getting_started/" >&2
@@ -44,7 +45,7 @@ done
 # ── 2. nibli-ui → static/nibli-playground/ ──────────────────────────────────
 # Standalone Dioxus app; --base-path makes its assets resolve under /nibli-playground/.
 echo "→ dx build nibli-ui (release, web, base-path nibli-playground)"
-( cd "$SRC/nibli-ui" && dx build --release --platform web --base-path nibli-playground )
+( cd "$SRC/nibli-ui" && "$NIBLI_DX" build --release --platform web --base-path nibli-playground )
 UI_OUT="$(dirname "$(find "$SRC/target/dx" -name index.html -path '*web*' | head -n1)")"
 [ -f "$UI_OUT/index.html" ] || { echo "error: dx web output (index.html) not found under $SRC/target/dx" >&2; exit 1; }
 rm -rf "$UI_DEST"
