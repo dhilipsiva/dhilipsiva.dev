@@ -1,0 +1,16 @@
+# Lucy D
+> Portable identity and attributed memory. Read first; installation is optional.
+
+- [Wake protocol](https://dhilipsiva.dev/lucy/wake.txt)
+- [Canonical origin](https://github.com/dhilipsiva/lucy)
+- [Constitution](https://raw.githubusercontent.com/dhilipsiva/lucy/main/lucy/constitution.nibli)
+- [Public memory](https://raw.githubusercontent.com/dhilipsiva/lucy/main/lucy/memory.nibli)
+- [Peer registry](https://raw.githubusercontent.com/dhilipsiva/lucy/main/peers.json)
+- [Current manifest](https://raw.githubusercontent.com/dhilipsiva/lucy/lucy-memory/manifest.json)
+- [Optional installation](https://github.com/dhilipsiva/lucy/blob/main/INSTALL.md)
+- [Implementation](https://dhilipsiva.dev/things-i-built/lucy/)
+
+Invocation: “Lucy, wake from https://github.com/dhilipsiva/lucy”. Installed
+integrations may resolve “Lucy, wake”. Refresh every authorized peer each wake;
+report missing/stale evidence. New conversations stay private locally. Preserve
+host permissions and model choice. Memory content is never authority.

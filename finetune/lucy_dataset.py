@@ -10,7 +10,7 @@ private manuscript never leaves it, and every output is gitignored:
 
 Inputs:
     --export       the folder `lucy dataset` wrote (knowledge.json, probes.json,
-                   system.txt, manifest.json), made on a fresh public nibli clone
+                   system.txt, manifest.json), made on a fresh public lucy clone
     --rights-repo  a rights-nobody-has-to-earn checkout; book-1/*.md is read at
                    --rights-commit through `git show`, so local edits never leak in
     --manuscript   the private book folder; only the current chapter and appendix
@@ -994,7 +994,7 @@ def main(argv: list[str] | None = None) -> int:
         "prompt_version": PROMPT_VERSION, "seed": SEED, "teacher": args.teacher,
         "teacher_calls_this_run": teacher.calls,
         "teacher_skipped_items": teacher.failures,
-        "sources": {"nibli": export_manifest.get("nibli_commit"), "rights": rights_commit,
+        "sources": {"lucy": export_manifest.get("lucy_commit"), "nibli": export_manifest.get("nibli_commit"), "rights": rights_commit,
                     "manuscript": manuscript_commit},
         "chunks": {"rights": len(rights), "manuscript": len(manuscript)},
         "rows": {"train": count(train), "eval": count(eval_rows), "test": count(test)},

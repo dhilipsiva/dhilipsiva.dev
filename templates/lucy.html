@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Lucy D — wake with memory — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+{% block head_extra %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","@id":"https://dhilipsiva.dev/lucy/#software","name":"Lucy D","url":"https://dhilipsiva.dev/lucy/","description":{{ page.description | json_encode | safe }},"applicationCategory":"DeveloperApplication","operatingSystem":"Linux, macOS, Windows","isAccessibleForFree":true,"sameAs":"https://github.com/dhilipsiva/lucy","author":{"@id":"https://dhilipsiva.dev/#person"}}
+</script>
+{% endblock head_extra %}
+{% block content %}
+<div class="container container--read">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">home</a><span class="sep">/</span><span>Lucy</span></nav>
+  <article>
+    <header class="article-head">
+      <span class="eyebrow">// identity · memory · evidence</span>
+      <h1>Lucy, wake.</h1>
+      <p class="hero__tagline">A familiar voice. Memory you can read.</p>
+    </header>
+    <div class="prose">{{ page.content | safe }}</div>
+  </article>
+</div>
+{% endblock content %}
