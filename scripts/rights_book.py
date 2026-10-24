@@ -134,7 +134,11 @@ def validate(book):
         if name.endswith(".wasm") and (book / name).read_bytes()[:4] != b"\0asm":
             raise ValueError(f"Invalid Wasm artifact: {name}")
     html = {name for name in files if name.endswith(".html")}
-    routes = {"index.html", "read/index.html", "search/index.html", "cases/index.html", "constitution/index.html"}
+    routes = {
+        "index.html", "read/index.html", "search/index.html", "cases/index.html",
+        "constitution/index.html", "start/index.html", "second-engine/index.html",
+        "limits/index.html", "design/index.html", "reconsider/index.html",
+    }
     content = read_json(book / "content.json")
     if len(content["pages"]) != 40:
         raise ValueError("Expected 40 reading inputs")
@@ -144,8 +148,8 @@ def validate(book):
             raise ValueError(f"Invalid canonical: {page['canonical']}")
         path = local_path(url.path).path.removeprefix(PREFIX)
         routes.add(path + "index.html")
-    if len(routes) != 45 or html != routes | {"404.html"}:
-        raise ValueError("Expected exactly 45 HTML routes and a separate 404 document")
+    if len(routes) != 50 or html != routes | {"404.html"}:
+        raise ValueError("Expected exactly 50 HTML routes and a separate 404 document")
     for route in routes:
         if str(Path(route).with_suffix(".md")) not in files:
             raise ValueError(f"Missing Markdown alternate: {route}")
@@ -155,7 +159,7 @@ def validate(book):
             raise ValueError(f"Redirect target is absent: {rule}")
     if (book / "assets/engine/constitution.bin.gz").read_bytes()[:2] != b"\x1f\x8b":
         raise ValueError("Invalid constitution gzip")
-    return {"routes": 45, "reading_inputs": 40, "error_documents": 1, "files": len(files),
+    return {"routes": 50, "reading_inputs": 40, "error_documents": 1, "files": len(files),
             "engine_revision": read_json(book / "cases.json")["engine_revision"]}
 
 
