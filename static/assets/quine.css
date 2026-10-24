@@ -374,6 +374,11 @@ a:hover { color: var(--link-hover); }
 .hero h1 em { font-style: normal; color: var(--accent); }
 .hero__tagline { font-family: var(--font-serif); font-style: italic; font-size: 19px; line-height: 1.5; color: var(--text-body); max-width: 46ch; margin: 0 0 18px; border-left: 2px solid var(--accent); padding-left: 16px; }
 .hero__intro { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; color: var(--text-muted); max-width: 48ch; margin: 0 0 28px; }
+.hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; margin: 0 0 24px; }
+.play-button { display: inline-block; font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.04em; text-decoration: none; color: var(--bg, #0b0d12); background: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 11px 20px; transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+.play-button:hover { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(-1px); }
+.play-button:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
+.hero__hint { font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: var(--text-muted); max-width: 42ch; }
 @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } .hero h1 { font-size: 42px; } }
 
 /* ── Hero menu (the panel of doors — replaced the terminal mock) ──────── */
