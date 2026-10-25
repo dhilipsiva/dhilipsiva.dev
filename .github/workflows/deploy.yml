@@ -127,7 +127,7 @@ jobs:
           mkdir -p public/lucy/nell public/lucy/lucy public/lucy/room/pkg
           cp -r /tmp/lucy-origin/nell/. public/lucy/nell/
           rm -rf public/lucy/nell/test
-          cp /tmp/lucy-origin/room/index.html /tmp/lucy-origin/room/styles.css public/lucy/room/
+          cp /tmp/lucy-origin/room/index.html /tmp/lucy-origin/room/worker.js /tmp/lucy-origin/room/styles.css public/lucy/room/
           cp -r /tmp/lucy-origin/room/tokens /tmp/lucy-origin/room/assets public/lucy/room/
           cp /tmp/lucy-origin/room/pkg/lucy_room.js /tmp/lucy-origin/room/pkg/lucy_room_bg.wasm public/lucy/room/pkg/
           cp /tmp/lucy-origin/lucy/constitution.nibli /tmp/lucy-origin/lucy/memory.nibli public/lucy/lucy/
