@@ -383,6 +383,9 @@ a:hover { color: var(--link-hover); }
 .play-button--big:hover { animation-play-state: paused; transform: translateY(-2px) scale(1.02); }
 @keyframes play-pulse { 0%, 100% { box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 25%, transparent), 0 14px 40px color-mix(in oklab, var(--accent) 35%, transparent); } 50% { box-shadow: 0 0 0 10px color-mix(in oklab, var(--accent) 12%, transparent), 0 18px 48px color-mix(in oklab, var(--accent) 45%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .play-button--big { animation: none; } }
+.wake-button { font-size: 19px; letter-spacing: 0.02em; overflow-wrap: anywhere; }
+.wake-button.is-copied { background: var(--phosphor-500); border-color: var(--phosphor-500); color: #0b0d12; }
+@media (max-width: 520px) { .wake-button { font-size: 15px; padding: 16px 18px; } }
 @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } .hero h1 { font-size: 42px; } }
 
 /* ── Hero menu (the panel of doors — replaced the terminal mock) ──────── */

@@ -33,3 +33,19 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncToggle);
   else syncToggle();
 })();
+/* The wake button on /lucy/: one click copies the agent instruction it carries and, being a
+   link, opens the room. Without a clipboard the link still opens the room. */
+(function () {
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-copy]');
+    if (!b) return;
+    var text = b.getAttribute('data-copy'), label = b.textContent;
+    var done = function () {
+      b.textContent = b.getAttribute('data-copied') || 'copied';
+      b.classList.add('is-copied');
+      setTimeout(function () { b.textContent = label; b.classList.remove('is-copied'); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done);
+    else done();
+  });
+})();
