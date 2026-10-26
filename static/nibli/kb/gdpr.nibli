@@ -14,9 +14,9 @@
 # Predicate conventions (proxy predicates for second-order legal concepts; see
 # Chapter 20, "Honest Boundaries"):
 #   permitted(X)                        -> "X's processing has a lawful basis" (Art 6)
-#   obligated(X, event { <E>() })       -> "X is under a legal obligation that E"
+#   obliged(X, event { <E>() })       -> "X is under a legal obligation that E"
 #   permitted(X, event { <E>() })       -> "X has the right that E"
-#   obligated(X, event { removes() })   -> "X's data must be erased" (Art 17)
+#   obliged(X, event { removes() })   -> "X's data must be erased" (Art 17)
 
 # ─── Article 4 / 9: categories of personal data ───────────────────
 # Names and addresses are personal data.
@@ -29,16 +29,16 @@ data(every nation data).
 
 # ─── Article 5: principles relating to processing ─────────────────
 # Personal data must be accurate.
-obligated(every data, event { correct() }).
+obliged(every data, event { correct() }).
 # Personal data must be kept secure.
-obligated(every data, event { shelter() }).
+obliged(every data, event { shelter() }).
 # Data minimisation: processing must be limited to what is necessary.
-obligated(every data, event { necessary() }).
+obliged(every data, event { necessary() }).
 
 # ─── Article 9: special categories need a stricter, specific basis ─
-obligated(every healthy data, event { exact() }).
-obligated(every religion data, event { exact() }).
-obligated(every nation data, event { exact() }).
+obliged(every healthy data, event { exact() }).
+obliged(every religion data, event { exact() }).
+obliged(every nation data, event { exact() }).
 
 # ─── Article 6(1): lawful basis for processing ────────────────────
 # (a) A consenting data subject's processing has a lawful basis.
@@ -60,7 +60,7 @@ permitted(every person, event { data discovers() }).
 
 # ─── Article 33: breach notification ──────────────────────────────
 # A controller that has suffered a breach is obliged to notify.
-obligated(every data governs where flaw, event { message() }).
+obliged(every data governs where flaw, event { message() }).
 
 # ─── Scenario ─────────────────────────────────────────────────────
 # Adam is a data subject.
@@ -83,4 +83,4 @@ flaw(Akmes).
 # belief-revision demo retracts consent to make it flip from FALSE to TRUE.
 # (Defined after the scenario so loading it leaves the fact ids above stable —
 # a rule's position in the file does not affect reasoning.)
-obligated(every person where ~approves, event { removes() }).
+obliged(every person where ~approves, event { removes() }).

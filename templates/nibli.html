@@ -119,12 +119,12 @@
       the source says <em>“Every person who has not consented must have their data erased.”</em></p>
     <div class="nibli-catch">
       <div><span class="nibli-catch__label">LLM draft</span>
-        <code>obligated(some person where ~approves, event { removes() }).</code>
+        <code>obliged(some person where ~approves, event { removes() }).</code>
         <span class="nibli-catch__gloss">→ “<mark>some</mark> person who has not consented must be erased …”</span>
         <span class="nibli-badge nibli-badge--false">REJECTED</span>
         <span class="comment">“some” ≠ “every” — a quantifier the eye catches instantly in the gloss</span></div>
       <div><span class="nibli-catch__label">Corrected</span>
-        <code>obligated(every person where ~approves, event { removes() }).</code>
+        <code>obliged(every person where ~approves, event { removes() }).</code>
         <span class="nibli-catch__gloss">→ “<mark>every</mark> person who has not consented must be erased …”</span>
         <span class="nibli-badge nibli-badge--true">ACCEPTED</span>
         <span class="comment">the human verifies the gloss, never the model's confidence</span></div>
