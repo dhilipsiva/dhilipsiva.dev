@@ -5,7 +5,7 @@
 # One clone, two builds. CI runs this on every deploy so both always track the latest
 # engine; run it locally to refresh your dev copies.
 #
-# Requires: git, Rust + the wasm32-unknown-unknown target, wasm-pack, and dx (dioxus-cli).
+# Requires: git, Node.js, Rust + the wasm32-unknown-unknown target, wasm-pack, and dx (dioxus-cli).
 # Override the source with the NIBLI_REPO / NIBLI_REF environment variables.
 set -euo pipefail
 
@@ -16,7 +16,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WASM_DEST="$ROOT/static/nibli/wasm"
 UI_DEST="$ROOT/static/nibli-playground"
 
-for tool in git wasm-pack "$NIBLI_DX"; do
+for tool in git node wasm-pack "$NIBLI_DX"; do
   command -v "$tool" >/dev/null 2>&1 || {
     echo "error: '$tool' not found on PATH" >&2
     echo "  wasm-pack: https://rustwasm.github.io/wasm-pack/   dx: https://dioxuslabs.com/learn/0.7/getting_started/" >&2
@@ -41,6 +41,9 @@ mkdir -p "$WASM_DEST"
 for f in nibli_wasm.js nibli_wasm_bg.wasm nibli_wasm.d.ts; do
   cp "$SRC/nibli-wasm/pkg/$f" "$WASM_DEST/$f"
 done
+
+# Check the page's actual presets against the engine this build will publish.
+node "$ROOT/tests/nibli.mjs"
 
 # ── 2. nibli-ui → static/nibli-playground/ ──────────────────────────────────
 # Standalone Dioxus app; --base-path makes its assets resolve under /nibli-playground/.
