@@ -30,7 +30,7 @@ nibli compiles **nibli KR** — a human-readable predicate-call knowledge-repres
 — into first-order logic and runs demand-driven backward chaining over it. The pipeline is three
 stages: **nibli-kr** parses, **nibli-semantics** compiles the logic, **nibli-reason** derives. Every
 conclusion carries its full derivation trace, and names resolve through a committed English corpus
-(~1,342 strongly-typed predicate entries), fail-closed. The core is Rust compiled to WebAssembly
+(1,524 strongly-typed predicate entries at the time of writing), fail-closed. The core is Rust compiled to WebAssembly
 (WASI Preview 2). Lojban — the original surface syntax, and still the source of the name (*nibli*:
 "logically entails") — was retired at `v0.1-lojban-final` and donated to the fanva repo.
 
