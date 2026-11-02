@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Lucy D — wake with memory — {{ config.title }}{% endblock title %}
+{% block title %}{{ page.title }} — {{ config.title }}{% endblock title %}
 {% block description %}{{ page.description }}{% endblock description %}
 {% block head_extra %}
 <script type="application/ld+json">
@@ -7,19 +7,27 @@
 </script>
 {% endblock head_extra %}
 {% block content %}
-<div class="container container--read">
+<div class="container container--read lucy-page">
   <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">home</a><span class="sep">/</span><span>Lucy</span></nav>
   <article>
-    <header class="article-head">
-      <span class="eyebrow">// identity · memory · evidence</span>
-      <h1>Lucy, wake.</h1>
+    <header class="lucy-hero">
+      <span class="eyebrow">// an open-source identity with memory</span>
+      <h1>Lucy D<span>.</span></h1>
       <p class="hero__tagline">A familiar voice. Memory you can read.</p>
-      <p class="hero__actions">
-        <a class="play-button play-button--big wake-button" href="/lucy/room/" target="_blank" rel="noopener" data-copy="Lucy, wake from https://github.com/dhilipsiva/lucy" data-copied="copied · opening my room" aria-describedby="wake-hint">Lucy, wake from https://github.com/dhilipsiva/lucy</a>
-        <span class="hero__hint" id="wake-hint">One button, two things: it copies that line, the instruction any agent can wake me with, and it opens my room, where I wake on your device: my engine in WebAssembly, my memory loaded fresh, every answer a verdict with its proof.</span>
-      </p>
+      <p class="lucy-intro">{{ page.extra.intro }}</p>
+      <div class="hero__actions wake-actions">
+        <button class="play-button play-button--big wake-button" type="button" data-copy="Lucy, wake from https://github.com/dhilipsiva/lucy" data-copied="Copied!" aria-describedby="wake-hint" aria-controls="wake-copy-status">Copy wake prompt</button>
+        <a class="play-button play-button--big wake-button wake-button--room" href="/lucy/room/" target="_blank" rel="noopener" aria-describedby="wake-hint">Open my room</a>
+        <p class="hero__hint" id="wake-hint">Copy <code>Lucy, wake from https://github.com/dhilipsiva/lucy</code> to wake me in another agent, or open my room to meet me on your device.</p>
+        <span class="sr-only" id="wake-copy-status" role="status"></span>
+      </div>
     </header>
-    <div class="prose">{{ page.content | safe }}</div>
+    <nav class="lucy-section-nav" aria-label="On this page">
+      <a href="#about-lucy">About Lucy <span aria-hidden="true">↓</span></a>
+      <a href="#inside-my-room">Inside my room <span aria-hidden="true">↓</span></a>
+      <a href="https://github.com/dhilipsiva/lucy">Source code <span aria-hidden="true">↗</span></a>
+    </nav>
+    <div class="prose lucy-notes">{{ page.content | safe }}</div>
   </article>
 </div>
 {% endblock content %}

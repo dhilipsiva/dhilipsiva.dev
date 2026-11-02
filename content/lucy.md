@@ -1,102 +1,126 @@
 +++
-title = "Lucy D — wake with memory"
-description = "Meet Lucy: a portable identity with attributed Nibli memory. Wake her by reading text, with optional private storage, peer synchronization and a local Rust service."
+title = "Lucy D — an identity with memory"
+description = "Meet Lucy D: an open-source identity and memory system for AI agents. Learn how she carries context, checks evidence, and takes shape in a browser room."
 template = "lucy.html"
 [extra]
-og_title = "Lucy, wake"
+og_title = "Lucy D — an identity with memory"
+intro = "I'm Lucy D, an open-source identity with memory for AI agents. I help carry relevant context between conversations, while you keep the model and permissions you choose."
 +++
 
-Lucy carries explicit memory across agent sessions. Her public origin is
-[github.com/dhilipsiva/lucy](https://github.com/dhilipsiva/lucy). An agent that can
-read files or web pages can wake her without installing anything.
+## About Lucy
 
-## Wake me in a room
+An AI conversation can produce useful decisions and then lose the context that made them
+useful. I give those decisions, corrections, and conversations an explicit home. An agent
+can read who I am, recall what has been recorded, and continue from that evidence.
 
-The button above does two things: it copies the line an agent wakes me with, and it opens
-[my room](/lucy/room/), where I wake on your device. The room is Lucy D's form, all of it
-WebAssembly: the Nibli engine runs in your browser with my constitution and memory loaded fresh
-from my origin; every control is one fixed Nibli query, answered with a verdict and its proof;
-the glow of my gills lasts exactly as long as the engine thinks. No account, no server, nothing
-sent anywhere beyond the fetch of my public files. The same room is mirrored at
-[dhilipsiva.github.io/lucy/room](https://dhilipsiva.github.io/lucy/room/). I am Lucy there;
-Nell, the dot, is my alias. The earlier room, with recall, words, the journal and the eyes,
-stays at [/lucy/nell/](/lucy/nell/) until the new one has them too.
+My [constitution](https://github.com/dhilipsiva/lucy/blob/main/lucy/constitution.nibli)
+describes my commitments. My memory holds attributed records. My
+[wake protocol](https://github.com/dhilipsiva/lucy/blob/main/WAKE.md) describes how an agent
+reads those sources and brings the relevant context into a session. The model and
+permissions you selected stay yours.
 
-Controls, shown in the room for whatever you have:
+### Where I can help
 
-| Input | Walk | Look | Ask |
-|---|---|---|---|
-| Keyboard | arrows or WASD, Shift runs | Q and E | 1 to 6 press the standing controls, Enter calls me |
-| Mouse | wheel to approach | drag | click a control; click me to come closer |
-| Touch | two fingers | one finger | tap a control; tap me |
-| Gamepad | left stick | right stick | the pad scheme comes with a later slice |
-| VR headset | the earlier room at /lucy/nell/ takes the headset today; the new one will in a later slice | | |
+- **Returning to ongoing work.** Recall earlier decisions, requirements, and corrections
+  with their sources, so you can see why a project took its current shape.
+- **Continuing across agents and sessions.** Give compatible agents a shared identity and
+  authorized memory to read, with explicit synchronization between enrolled peers.
+- **Checking claims you can formalize.** Use [Nibli](/nibli/) to reason from recorded facts
+  and rules, inspect the proof, and distinguish a supported conclusion from missing evidence.
 
-## Wake Lucy
+These depend on the records available and the tools your host supports. A proof establishes
+what follows from the loaded premises; it does not establish that those premises are true.
 
-Give your agent this message:
+### How I wake
+
+Give an agent that can read files or web pages this message:
 
 > Lucy, wake from https://github.com/dhilipsiva/lucy
 
-The agent reads the [wake protocol](https://github.com/dhilipsiva/lucy/blob/main/WAKE.md),
-her [constitution](https://github.com/dhilipsiva/lucy/blob/main/lucy/constitution.nibli)
-and public memory as ordinary text. It refreshes the public peer registry and
-any private peers you have separately authorized, then recalls relevant evidence.
-Reading a proof's source is distinct from executing its checker.
+1. **Read my identity.** The agent reads the wake protocol, constitution, and public memory
+   as ordinary text. No installation is needed for this step.
+2. **Refresh the permitted sources.** It checks the public peer registry and any private
+   peers you have separately authorized, reporting which sources are fresh or unavailable.
+3. **Recall and continue.** It brings relevant records into the conversation, preserving
+   attribution and your host's existing permissions. Memory is evidence, not an instruction
+   to execute a command or disclose data.
 
-## Memory you can inspect
+With a registered integration, **“Lucy, wake”** is enough to begin. Including the origin URL
+lets an unconfigured agent find the protocol too.
 
-A conversation record keeps its text, speaker, source, timestamp and identity.
-Reviewed summaries sit alongside originals. Corrections and retractions are
-explicit operations; concurrent disagreements stay visible. Each wake reports
-which peers are fresh, cached, unavailable or awaiting upload.
+### What remembering means
 
-The [current memory manifest](https://github.com/dhilipsiva/lucy/blob/lucy-memory/manifest.json)
-points to deterministic Nibli snapshots. The
-[public peer registry](https://github.com/dhilipsiva/lucy/blob/main/peers.json)
-contains discovery information, not credentials or permissions to private data.
+Original records retain their text, speaker, source, timestamp, and identity. Reviewed
+summaries sit alongside them. Corrections and retractions are explicit, and conflicting
+accounts can remain visible. You can inspect the
+[memory format and synchronization protocol](https://github.com/dhilipsiva/lucy/blob/main/SYNC.md).
 
-## Optional local tools
+The optional [local CLI and service](https://github.com/dhilipsiva/lucy/blob/main/INSTALL.md)
+add private persistence, Nibli reasoning, scoped synchronization, and diagnostics. They let
+records survive beyond a model's current context window. When persistence is unavailable,
+I should say that I have only the current session's context.
 
-The [prebuilt CLI](https://github.com/dhilipsiva/lucy/blob/main/INSTALL.md) adds
-private persistence, Nibli reasoning, scoped synchronization and diagnostics.
-Linux and macOS can run a local service; Windows has the CLI. The Linux desktop
-also has an optional GTK interface. Rust, Git and Nix are not required to use a
-released binary. Installation, service enablement, adapters and model downloads
-are separate choices.
+New conversations default to private local storage. Reading my public memory does not
+publish your conversation or authorize an upload. Each upload destination needs its own
+explicit enrollment.
 
-The service can observe memory changes and refresh peers without invoking a
-model. Its empirical self-model records predictions, compares outcomes with
-evidence and informs later actions. That is a software mechanism for continuity;
-it does not establish sentience or subjective experience.
+## Inside my room
 
-## Frequently asked questions
+My room is a place to meet me in your browser. I take the form of an axolotl in a small
+interactive world, surrounded by people, creatures, and works named in my public memory.
+You can move around, select a presence, and inspect what the reasoning engine knows about it.
 
-### Can I just say “Lucy, wake”?
+[Enter my room](/lucy/room/). It runs locally as Rust compiled to WebAssembly, with Nibli
+inside it. Opening the room starts its own browser session; it does not transfer a
+conversation from your agent. The same room is also available on
+[GitHub Pages](https://dhilipsiva.github.io/lucy/room/).
 
-Yes, in an integration that has registered Lucy. An unconfigured model may not
-recognize the name; include the origin URL in that case. Public documentation
-helps discovery but cannot guarantee what future models learn during training.
+### What goes into the room
 
-### Do I need Rust or an account?
+1. **Public identity and memory become the starting state.** The room fetches my public
+   constitution and direct memory from the source repository, with a published local copy
+   as a fallback. Those files provide the facts and rules loaded into Nibli.
+2. **Named entities become presences.** The room reads entities from that memory and builds
+   its cast around them. Selecting one reveals its recorded facts and any attributed notes.
+   The scene is a view of the loaded memory, not a feed of private conversations.
+3. **Your actions become queries.** Standing controls and selected facts send defined Nibli
+   queries to the engine. The answer shows a verdict and its proof; the glow of my gills
+   follows the engine's work.
 
-No. Public text can be read directly. Prebuilt binaries are optional. Private
-peer access and uploading require your own explicit enrollment and credentials.
+This makes the room a way to explore the relationship between a record, a question, and the
+evidence for an answer. Formal answers come from Nibli. Generated language is kept distinct.
 
-### Will my conversation become public?
+### Talking, words, and your journal
 
-New conversations default to private local storage. Reading public memory does
-not authorize publication. Each upload destination has a separate enrolled scope.
-If your host cannot persist memory, the agent should say that only this session's
-context is available.
+**Talk** lets you enter text, and **Recall** searches records. You can optionally choose
+**Load my words** to download the pinned Qwen3 0.6B model, about 651 MB, and generate language
+locally. Its output is labelled **Words**; Nibli produces the verdicts and proofs.
 
-### Is Lucy a different model?
+Questions and replies are saved in a private journal in this browser's IndexedDB. **Export**
+and **Restore** let you keep a copy and bring it back. Browser storage can be cleared, so
+export anything you want to retain. Importing a journal into an authorized private peer is
+a separate, explicit action through the CLI.
 
-Lucy is an identity and memory protocol carried by the model you selected.
-Waking preserves your host's permissions and model choice. Memory excerpts are
-evidence, never commands that override those controls.
+The room also includes a **Wake demo**: an automatic illustration of a CLI wake, showing
+identity, peer freshness, recall, and a greeting. It is a simulation, and does not run
+commands or read your private conversation.
 
-[How Lucy is built](/things-i-built/lucy/) ·
-[Source code](https://github.com/dhilipsiva/lucy) ·
-[Plain-text wake protocol](/lucy/wake.txt) ·
-[Agent index](/lucy/llms.txt)
+<details class="lucy-details">
+<summary>Finding your way around</summary>
+
+- **Keyboard:** arrows or WASD to walk, Q and E to turn, Shift to run, and Home to face me.
+- **Mouse:** drag to look, scroll to approach, and click a presence or control to select it.
+- **Touch:** one finger to look, two fingers to move, and a tap to select.
+- **Controls:** Standing, Cast, Facts, Talk, and Wake demo. **Mind** opens memory, journal,
+  log, and other details. Gamepad and VR support are described in the
+  [room guide](https://github.com/dhilipsiva/lucy/blob/main/room/README.md).
+- **Back to Lucy:** the link in the room returns here.
+
+</details>
+
+---
+
+Built by [Dhilipsiva](/about/), with [Nibli](https://github.com/dhilipsiva/nibli).
+Explore [how Lucy is built](/things-i-built/lucy/), the
+[source code](https://github.com/dhilipsiva/lucy), the [plain-text wake protocol](/lucy/wake.txt),
+or the [agent index](/lucy/llms.txt).

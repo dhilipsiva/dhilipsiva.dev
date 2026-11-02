@@ -33,19 +33,26 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncToggle);
   else syncToggle();
 })();
-/* The wake button on /lucy/: one click copies the agent instruction it carries and, being a
-   link, opens the room. Without a clipboard the link still opens the room. */
+/* Copy the wake prompt independently of the room link. */
 (function () {
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-copy]');
     if (!b) return;
-    var text = b.getAttribute('data-copy'), label = b.textContent;
-    var done = function () {
-      b.textContent = b.getAttribute('data-copied') || 'copied';
-      b.classList.add('is-copied');
-      setTimeout(function () { b.textContent = label; b.classList.remove('is-copied'); }, 1800);
+    var text = b.getAttribute('data-copy');
+    var label = b.getAttribute('data-copy-label') || b.textContent;
+    var status = document.getElementById(b.getAttribute('aria-controls'));
+    b.setAttribute('data-copy-label', label);
+    clearTimeout(b.copyResetTimer);
+    var done = function (copied) {
+      b.disabled = false;
+      b.textContent = copied ? (b.getAttribute('data-copied') || 'Copied!') : 'Copy failed';
+      b.classList.toggle('is-copied', copied);
+      if (status) status.textContent = copied ? 'Wake prompt copied.' : 'Copy failed. Select and copy the prompt below.';
+      b.copyResetTimer = setTimeout(function () { b.textContent = label; b.classList.remove('is-copied'); }, 1800);
     };
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done);
-    else done();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      b.disabled = true;
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } else done(false);
   });
 })();
