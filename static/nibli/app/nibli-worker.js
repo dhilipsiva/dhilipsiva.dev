@@ -8,14 +8,26 @@
 import init, { Session, back_translate_ir } from '/nibli/wasm/nibli_wasm.js';
 
 let session = null;
+let activeRevision = null;
+let requestedRevision = 0;
 const ready = init();
 
 self.onmessage = async (e) => {
-  const { id, op } = e.data;
-  await ready;
+  const { id, op, revision } = e.data;
+  if (op === 'load') {
+    if (!Number.isSafeInteger(revision) || revision <= requestedRevision) {
+      self.postMessage({ id, revision, ok: false, error: 'Stale knowledge-base revision.' });
+      return;
+    }
+    requestedRevision = revision;
+    activeRevision = null;
+  }
+  let candidate = null;
   try {
+    await ready;
     if (op === 'load') {
-      session = new Session();
+      if (revision !== requestedRevision) throw new Error('Stale knowledge-base revision.');
+      candidate = new Session();
       // ── classify the KB's comments instead of dumping them all into "Source" ──
       //   preamble  = the leading doc block (scope, predicate table, honest boundaries)
       //   section   = a `─── … ───` divider → a full-width row label
@@ -26,12 +38,12 @@ self.onmessage = async (e) => {
       const cleanLabel = s => s.replace(/─+/g, ' ').replace(/\s+/g, ' ').trim();
 
       const items = [], preamble = [];
-      let facts = 0, errors = 0, descBuf = [], inPreamble = true;
+      let facts = 0, descBuf = [], inPreamble = true;
       const flushNote = () => {
         if (descBuf.length) { items.push({ kind: 'note', text: descBuf.join(' ') }); descBuf = []; }
       };
 
-      for (const raw of e.data.text.split('\n')) {
+      for (const [lineIndex, raw] of e.data.text.split('\n').entries()) {
         const line = raw.trim();
         const isComment = line.startsWith('#');
 
@@ -50,29 +62,43 @@ self.onmessage = async (e) => {
         }
 
         const entry = { kind: 'fact', text: line, source: descBuf.join(' '),
-                        factId: null, retracted: false, gloss: back_translate_ir(line) };
+                        factId: null, retracted: false, gloss: '' };
         descBuf = [];
         try {
           // assert_text returns the minted fact ids (one per root sentence;
           // our KB files are one sentence per line, so take the first).
-          entry.factId = Number(session.assert_text(line)[0]);
-          facts++;
+          const ids = candidate.assert_text(line);
+          entry.factId = Number(ids[0]);
+          entry.gloss = back_translate_ir(line);
+          facts += ids.length;
         } catch (err) {
-          entry.error = String(err && err.message || err);
-          errors++;
+          throw new Error(`Knowledge base not loaded — line ${lineIndex + 1} was rejected: ${String(err && err.message || err)}`);
         }
         items.push(entry);
       }
       flushNote();
-      self.postMessage({ id, ok: true, items, preamble, facts, errors });
+      if (session) session.free();
+      session = candidate;
+      candidate = null;
+      activeRevision = revision;
+      self.postMessage({ id, revision, ok: true, items, preamble, facts, errors: 0 });
     } else if (op === 'query') {
+      if (!session || activeRevision === null || revision !== activeRevision) {
+        throw new Error('Knowledge base not loaded for this revision.');
+      }
       const res = JSON.parse(session.query_with_proof(e.data.q));
-      self.postMessage({ id, ok: true, res });
+      self.postMessage({ id, revision, ok: true, res });
     } else if (op === 'retract') {
+      if (!session || activeRevision === null || revision !== activeRevision) {
+        throw new Error('Knowledge base not loaded for this revision.');
+      }
       session.retract_fact(BigInt(e.data.factId));
-      self.postMessage({ id, ok: true });
+      self.postMessage({ id, revision, ok: true });
+    } else {
+      throw new Error('Unknown engine operation.');
     }
   } catch (err) {
-    self.postMessage({ id, ok: false, error: String(err && err.message || err) });
+    if (candidate) candidate.free();
+    self.postMessage({ id, revision, ok: false, error: String(err && err.message || err) });
   }
 };

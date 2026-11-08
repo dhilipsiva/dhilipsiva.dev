@@ -30,34 +30,55 @@ function call(op, payload) {
 let currentKb = 'syllogism';
 let kbItems = [];
 let busy = false;
+let draftRevision = 0;
+let loadedRevision = null;
 
 const statusEl = $('nibli-status');
 function setStatus(text) { statusEl.textContent = text; }
 function setBusy(b, label) {
   busy = b;
   document.querySelectorAll('.nibli-qbtn, .nibli-sbtn, .nibli-tab, .nibli-tour-btn')
-    .forEach(el => { el.disabled = b; });
+    .forEach(el => { el.disabled = b || (loadedRevision === null &&
+      el.matches('.nibli-qbtn, .nibli-sbtn')); });
   if (b && label) setStatus(label);
 }
 
 /* ── KB loading ─────────────────────────────────────────────────────────── */
 async function loadExample(name) {
+  const revision = ++draftRevision;
+  loadedRevision = null;
   currentKb = name;
   document.querySelectorAll('.nibli-tab').forEach(b =>
     b.setAttribute('aria-selected', String(b.dataset.kb === name)));
   $('nibli-scenario').textContent = EXAMPLES[name].scenario;
   $('nibli-result').hidden = true;
+  kbItems = [];
+  renderTriad();
+  $('nibli-queries').textContent = '';
+  $('nibli-scenarios').textContent = '';
+  renderAbout([]);
 
   setBusy(true, 'engine: parsing + asserting…');
-  const text = await (await fetch(`/nibli/kb/${name}.nibli`)).text();
-  const r = await call('load', { name, text });
-  setBusy(false);
-  if (!r.ok) { setStatus('engine: load failed — ' + r.error); return; }
-  kbItems = r.items;
-  renderAbout(r.preamble);
-  renderTriad();
-  renderControls();
-  setStatus(`engine: live · ${r.facts} facts asserted${r.errors ? ` · ${r.errors} errors` : ''}`);
+  try {
+    const response = await fetch(`/nibli/kb/${name}.nibli`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const text = await response.text();
+    if (revision !== draftRevision) return;
+    const r = await call('load', { name, text, revision });
+    if (revision !== draftRevision || r.revision !== revision) return;
+    if (!r.ok) throw new Error(r.error);
+    loadedRevision = revision;
+    kbItems = r.items;
+    renderAbout(r.preamble);
+    renderTriad();
+    renderControls();
+    setStatus(r.facts ? `engine: live · provided example · ${r.facts} facts asserted` :
+      'engine: empty knowledge base loaded · provided example');
+  } catch (err) {
+    if (revision === draftRevision) setStatus('engine: knowledge base not loaded — ' + String(err.message || err));
+  } finally {
+    if (revision === draftRevision) setBusy(false);
+  }
 }
 
 /* ── the "about this KB" disclosure (preamble: scope, predicate table, notes) ── */
@@ -145,11 +166,13 @@ function renderControls() {
 }
 
 async function runScenario(sc, btn) {
-  if (busy) return;
+  if (busy || loadedRevision === null) return;
+  const revision = loadedRevision;
   const target = kbItems.find(i => i.kind === 'fact' && !i.retracted && !i.error && sc.match(i.text));
   if (!target) return;
   setBusy(true, `engine: retracting fact #${target.factId}…`);
-  const r = await call('retract', { factId: target.factId });
+  const r = await call('retract', { factId: target.factId, revision });
+  if (revision !== loadedRevision || r.revision !== revision) return;
   setBusy(false);
   if (!r.ok) { setStatus('engine: retract failed — ' + r.error); return; }
   target.retracted = true;
@@ -162,10 +185,12 @@ async function runScenario(sc, btn) {
 
 /* ── running a query + rendering the proof tree ─────────────────────────── */
 async function runQuery(q) {
-  if (busy) return;
+  if (busy || loadedRevision === null) return;
+  const revision = loadedRevision;
   setBusy(true, 'engine: proving… (real backward chaining, depth-limited)');
   const t0 = performance.now();
-  const r = await call('query', { q });
+  const r = await call('query', { q, revision });
+  if (revision !== loadedRevision || r.revision !== revision) return;
   const ms = Math.max(1, Math.round(performance.now() - t0));
   setBusy(false);
   const res = r.ok ? r.res : { status: 'ERROR', proof_text: r.error, proof: null };
@@ -254,18 +279,18 @@ const TOUR = [
   {
     text: 'A slice of the GDPR, formalized. Left: what a human wrote. Middle: nibli KR, ' +
       'compiled to logic and asserted into the live engine. Right: the mechanical gloss ' +
-      'a reviewer verifies. Twenty-four facts, in your tab.',
+      'a reviewer can inspect. A complete provided example runs in your tab.',
     run: () => loadExample('gdpr'),
   },
   {
-    text: 'Adam consented, so the engine PROVES his processing has a lawful basis — expand ' +
-      'the derivation below. A badge, a proof chain, no confidence score.',
-    run: () => runQuery('permitted(Adam).'),
+    text: 'This processing case has reviewed consent evidence. Inspect the permission ' +
+      'for ControllerA and CaseA, including its stated Article6Consent criterion.',
+    run: () => runQuery('permits(ControllerA, CaseA, Article6Consent).'),
   },
   {
-    text: 'Now Adam withdraws consent. One fact retracted, and the verdicts flip — erasure ' +
-      'becomes an obligation. The ⚑ flag is the engine disclosing this rests on the ' +
-      'closed-world assumption.',
+    text: 'Remove the accepted consent evidence and inspect the changed support. ' +
+      'Missing consent evidence alone is not a withdrawal record and does not trigger ' +
+      'the modeled erasure duty. The rule requires separate reviewed prerequisites.',
     run: async () => {
       const sc = EXAMPLES.gdpr.scenarios[0];
       const btn = [...document.querySelectorAll('.nibli-sbtn')]
@@ -274,8 +299,9 @@ const TOUR = [
     },
   },
   {
-    text: 'That’s the whole trick: derivation, not prediction. Every answer is TRUE with a ' +
-      'proof, FALSE, or an honest UNKNOWN. Try the other examples — or Reset and break this one.',
+    text: 'Inspect the supported result, its source records and any missing review evidence. ' +
+      'FALSE, UNKNOWN and RESOURCE_EXCEEDED have different meanings and next steps. ' +
+      'Try the other examples or reset this one.',
     run: () => {},
   },
 ];
