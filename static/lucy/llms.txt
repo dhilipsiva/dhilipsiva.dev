@@ -1,5 +1,10 @@
 # Lucy D
-> Portable identity and attributed memory. Read first; installation is optional.
+> AI memory. With a personality. Peer-to-peer, cross-agent, and model-agnostic.
+
+Lucy carries her memories and identity across sessions. Her saved records live
+outside model weights and can be supplied to different LLMs by compatible hosts.
+Model and host capabilities affect recall; capture, sync, and retrieval can have
+gaps. Read first; installation is optional.
 
 - [Wake protocol](https://dhilipsiva.dev/lucy/wake.txt)
 - [Canonical origin](https://github.com/dhilipsiva/lucy)

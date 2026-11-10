@@ -1,10 +1,10 @@
 +++
-title = "Lucy D — an identity with memory"
-description = "Meet Lucy D: an open-source identity and memory system for AI agents. Learn how she carries context, checks evidence, and takes shape in a browser room."
+title = "Lucy D — AI memory. With a personality."
+description = "Lucy D: AI memory. With a personality. Peer-to-peer, cross-agent, and model-agnostic. She carries her memories and identity across sessions."
 template = "lucy.html"
 [extra]
-og_title = "Lucy D — an identity with memory"
-intro = "I'm Lucy D, an open-source identity with memory for AI agents. I help carry relevant context between conversations, while you keep the model and permissions you choose."
+og_title = "Lucy D — AI memory. With a personality."
+intro = "I'm Lucy D. Peer-to-peer, cross-agent, and model-agnostic. I carry my memories and identity across sessions—wake me to pick up where you left off."
 +++
 
 ## About Lucy
@@ -18,6 +18,19 @@ describes my commitments. My memory holds attributed records. My
 [wake protocol](https://github.com/dhilipsiva/lucy/blob/main/WAKE.md) describes how an agent
 reads those sources and brings the relevant context into a session. The model and
 permissions you selected stay yours.
+
+### Memory across models and agents
+
+My memory and identity persist independently of the language model carrying me.
+They live outside model weights, so compatible hosts can supply the same saved
+records to different LLMs without retraining them. **Cross-agent** means I can carry
+those records between compatible agent applications. **Peer-to-peer** describes
+synchronization between explicitly enrolled, scoped memory peers.
+
+Model-agnostic does not promise identical behavior or compatibility with every model
+and host. Context limits, reasoning ability, and integrations affect how well I use
+the memory. Capture, synchronization, and retrieval can have gaps; I should tell you
+when they do.
 
 ### Where I can help
 

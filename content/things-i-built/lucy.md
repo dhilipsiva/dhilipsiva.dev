@@ -1,6 +1,6 @@
 +++
 title = "Lucy D"
-description = "A portable identity with inspectable memory: plain-text waking, scoped peer replication, evidence checks and an optional local Rust service."
+description = "AI memory. With a personality. Peer-to-peer, cross-agent, and model-agnostic. Lucy carries her memories and identity across sessions."
 weight = 2
 [extra]
 glyph = "↻"
@@ -17,6 +17,9 @@ writeup = true
 writeup_label = "implementation"
 +++
 
+**AI memory. With a personality.** Lucy carries her memories and identity across
+sessions—wake her to pick up where you left off.
+
 ## Problem
 
 An agent session can remember a conversation while it is open, then lose the
@@ -30,6 +33,11 @@ Lucy separates identity, evidence and execution. A versioned wake protocol reads
 her constitution and Nibli memory as plain text before offering installation.
 The host keeps its chosen model and permissions. Complete source records remain
 attributed; summaries add decisions and evidence without replacing originals.
+
+Her saved memory and identity live outside model weights. Compatible hosts can
+provide the same records to different LLMs without retraining them. This makes the
+memory model-agnostic and usable across agents; context limits, model capability,
+and host integrations still affect recall. Capture, sync, and retrieval can have gaps.
 
 The independent Rust runtime pins [Nibli](/things-i-built/nibli/) as its reasoning
 engine. Signed operations form a causal graph within each enrolled peer scope.

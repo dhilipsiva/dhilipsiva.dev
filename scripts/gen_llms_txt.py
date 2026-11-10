@@ -65,8 +65,9 @@ def main() -> int:
     L += ["", "## Projects"]
     L += [line(base, "things-i-built", s, fm) for s, fm in pages("things-i-built")]
 
-    L += ["", "## Lucy — identity and memory",
-          f"- [Wake Lucy]({base}/lucy/): text-only activation; optional local tools.",
+    L += ["", "## Lucy D — AI memory. With a personality.",
+          "Peer-to-peer, cross-agent, and model-agnostic memory and identity across sessions.",
+          f"- [Wake Lucy]({base}/lucy/): continue from saved memory; text-only activation and optional local tools.",
           f"- [Wake protocol]({base}/lucy/wake.txt): read before activation.",
           f"- [Lucy agent index]({base}/lucy/llms.txt): canonical sources and current peer manifests."]
     L += ["", "## Books"]
