@@ -101,7 +101,7 @@
     <p class="post-item__excerpt">{{ page.description | default(value=page.summary) }}</p>
     <div class="post-item__foot">
       {% if page.taxonomies.tags %}<span class="tag-row">{% for t in page.taxonomies.tags %}<a class="pill" href="/tags/{{ t | slugify }}/"><span class="pill__hash">#</span>{{ t }}</a>{% endfor %}</span>{% endif %}
-      <span class="post-item__rt">{{ page.reading_time }} min read</span>
+      <span class="post-item__rt">{{ page.extra.reading_time | default(value=page.reading_time) }} min read</span>
     </div>
   </div>
 </article>

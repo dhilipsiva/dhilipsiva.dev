@@ -149,6 +149,12 @@ jobs:
       - name: Check Lucy discovery pages
         run: python3 -m unittest discover -s tests -p 'test_lucy.py'
 
+      # Math essays are generated before commit (scripts/render_math.py). This
+      # checks the built page against its source and its numbers script; it
+      # needs no pandoc (stdlib only).
+      - name: Check math essays against their sources and numbers
+        run: python3 -m unittest discover -s tests -p 'test_musing_math.py'
+
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: public
