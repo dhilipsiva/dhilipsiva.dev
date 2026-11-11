@@ -33,7 +33,7 @@ Mathematics cannot show that an idea like this is true. It can show which parts 
 - Claim 4 survives in a changed form, and physicists had published that form years before your post.
 - Claim 5 got its facts wrong and landed near something real.
 
-Some symbols. $G$, $c$, $\hbar$ and $k_B$ are the usual constants, and $M_\odot$ is the mass of the Sun. A black hole of mass $M$ has Schwarzschild radius $r_s = 2GM/c^2$. The Planck length is $\ell_p = \sqrt{G\hbar/c^3}$, about $1.6\times10^{-35}$ m. Every formula below is for a black hole that does not spin. Real ones do, and I have not redone the sums with spin.
+Some symbols. $G$, $c$, $\hbar$ and $k_B$ are the usual constants, and $M_\odot$ is the mass of the Sun. A black hole of mass $M$ has Schwarzschild radius $r_s = 2GM/c^2$. The Planck length is $\ell_p = \sqrt{G\hbar/c^3}$, about $1.6\times10^{-35}$ m. Every formula below is for a black hole that does not spin. Real ones do, and I have not redone the sums with spin. Section 7 ends with what spin changes.
 
 ## 1. Why a bubble wall runs at light speed
 
@@ -112,7 +112,7 @@ The construction itself is real physics. It is the gravastar of Mazur and Mottol
 
 ### A vacuum with lower energy
 
-This is what you meant in 2024. A vacuum whose energy density is lower than ours by $\epsilon$ pulls inward. Space filled with it is called anti-de Sitter space, and it comes with a length, $\ell = \sqrt{3c^4/(8\pi G\epsilon)}$. The deeper the vacuum, the shorter the length. Take $\epsilon = E^4/(\hbar c)^3$ for an energy scale $E$. At 0.2 GeV, the scale of the strong force, $\ell$ is [[n:ell_qcd_km]] km. At 100 GeV, the scale of the Higgs field, it is [[n:ell_ew_cm]] cm. My worked example below uses $\ell = 10^{-18}$ m, which goes with about [[n:ell_scale_gev]] GeV, far beyond any accelerator.
+This is what you meant in 2024. A vacuum whose energy density is lower than ours by $\epsilon$ has gravity that pulls inward. Space filled with it is called anti-de Sitter space, and it comes with a length, $\ell = \sqrt{3c^4/(8\pi G\epsilon)}$. The deeper the vacuum, the shorter the length. Take $\epsilon = E^4/(\hbar c)^3$ for an energy scale $E$. At 0.2 GeV, the scale of the strong force, $\ell$ is [[n:ell_qcd_km]] km. At 100 GeV, the scale of the Higgs field, it is [[n:ell_ew_cm]] cm. My worked example below uses $\ell = 10^{-18}$ m, which goes with about [[n:ell_scale_gev]] GeV, far beyond any accelerator.
 
 Now the wall matters, and I need one result that I cannot derive in a page. In general relativity a thin spherical shell at rest at radius $R$, with energy $\sigma$ per unit area, must satisfy the junction condition that Werner Israel found in 1966:
 
@@ -124,7 +124,7 @@ Put anti-de Sitter space inside, and take a hole much bigger than $\ell$, so tha
 
 $$\sigma \approx \frac{c^4}{4\pi G\,\ell} - \frac{c^4}{4\pi G R}\sqrt{1 - \frac{r_s}{R}} .$$
 
-The first term is the wall holding back the inward pull of the vacuum behind it. I will call it the critical tension. It knows nothing about the hole. In the worked example it amounts to [[n:sigma_c]] kg on every square meter. The mass of the hole appears only in the second term, which is smaller by about $\ell/R$. For a $3\,M_\odot$ hole in the worked example that is a factor of [[n:wall_fraction]]. A wall that is nothing but the boundary between two vacua has one fixed $\sigma$, set by particle physics. It cannot tune itself in the twenty-second decimal place to suit each black hole.
+Measured against our vacuum, the vacuum behind the wall has negative energy. The first term is the energy the wall needs to cancel it. I will call it the critical tension. It knows nothing about the hole. In the worked example it amounts to [[n:sigma_c]] kg on every square meter. The mass of the hole appears only in the second term, which is smaller by about $\ell/R$. For a $3\,M_\odot$ hole in the worked example that is a factor of [[n:wall_fraction]]. A wall that is nothing but the boundary between two vacua has one fixed $\sigma$, set by particle physics. It cannot tune itself in the twenty-second decimal place to suit each black hole.
 
 What does a wall with fixed tension do, then? Its radius obeys an energy equation, which is in the script, and the result is blunt:
 
@@ -257,6 +257,16 @@ So a hard surface at $\tfrac98\,r_s$ would fail. The black-shell authors argue, 
 
 Two objections from theory apply to any object that has a surface where a horizon would be, and the black-shell papers acknowledge both. Such an object has a second place where light can orbit, a stable one, and waves trapped there may make it unstable over long times (Cunha, Berti and Herdeiro 2017). And once it spins fast enough, it tends to be unstable (Friedman 1978).
 
+### If the hole spins
+
+Every formula in this essay is for a hole that does not spin, and real ones do. I have not redone the sums, but most of the argument does not need them.
+
+- **The scale argument holds.** Roy Kerr found the solution for a spinning black hole in 1963. It has two numbers in it, the mass and the spin. From $G$, $c$ and the mass you can build one length, $GM/c^2$. The spin enters as a fraction of the most a hole of that mass can have. At a given fraction, every length is still a multiple of $GM/c^2$, so a spinning hole has no natural size either.
+- **The tests were made on spinning objects.** A merger leaves a remnant that spins. So the echo searches and the ringing of GW250114 already test spinning objects, and the last objection above exists only because of spin.
+- **The shell algebra does not carry over.** Sections 3 and 4 use the symmetry of a sphere. Danielsson and Giri worked out a slowly spinning black shell in 2018. The space outside it is not quite that of a spinning black hole. The difference shows in the quadrupole moment, which measures how much the spin flattens the object's gravity. For a black hole, the mass and the spin fix that number. For the shell it came out 32% larger. Their 2021 re-examination added conditions for stability and, "given some physical assumptions," prefers 7% less. They name the Event Horizon Telescope, stars in close orbits around Sgr A\*, and the planned LISA detector as promising ways to tell a shell from a black hole.
+
+I see nothing in spin that would rescue one of the five claims. It gives the shell one more number that can be measured and found wrong.
+
 None of this rules a fabric out. All of it says that if one exists, it is very good at looking like a horizon.
 
 ## 8. Scorecard
@@ -298,13 +308,16 @@ Vacuum decay and bubble walls
 Shells, gravastars and black shells
 
 - W. Israel, "Singular hypersurfaces and thin shells in general relativity," *Il Nuovo Cimento B* 44, 1 (1966). [doi:10.1007/BF02710419](https://doi.org/10.1007/BF02710419)
+- R. P. Kerr, "Gravitational field of a spinning mass as an example of algebraically special metrics," *Phys. Rev. Lett.* 11, 237 (1963). [doi:10.1103/PhysRevLett.11.237](https://doi.org/10.1103/PhysRevLett.11.237)
 - H. A. Buchdahl, "General relativistic fluid spheres," *Phys. Rev.* 116, 1027 (1959). [doi:10.1103/PhysRev.116.1027](https://doi.org/10.1103/PhysRev.116.1027)
 - H. Andréasson, "Sharp bounds on 2m/r of general spherically symmetric static objects," *J. Differential Equations* 245, 2243 (2008). [arXiv:gr-qc/0702137](https://arxiv.org/abs/gr-qc/0702137)
 - G. Chapline, E. Hohlfeld, R. B. Laughlin and D. I. Santiago, "Quantum phase transitions and the breakdown of classical general relativity" (2000). [arXiv:gr-qc/0012094](https://arxiv.org/abs/gr-qc/0012094)
 - P. O. Mazur and E. Mottola, "Gravitational condensate stars: An alternative to black holes" (2001). [arXiv:gr-qc/0109035](https://arxiv.org/abs/gr-qc/0109035)
 - S. D. Mathur, "The fuzzball proposal for black holes: an elementary review" (2005). [arXiv:hep-th/0502050](https://arxiv.org/abs/hep-th/0502050)
 - U. H. Danielsson, G. Dibitetto and S. Giri, "Black holes as bubbles of AdS," *JHEP* 10, 171 (2017). [arXiv:1705.10172](https://arxiv.org/abs/1705.10172)
+- U. Danielsson and S. Giri, "Observational signatures from horizonless black shells imitating rotating black holes," *JHEP* 07, 070 (2018). [arXiv:1712.00511](https://arxiv.org/abs/1712.00511)
 - U. Danielsson, L. Lehner and F. Pretorius, "Dynamics and observational signatures of shell-like black hole mimickers" (2021). [arXiv:2109.09814](https://arxiv.org/abs/2109.09814)
+- U. Danielsson and S. Giri, "Re-examining the stability of rotating horizonless black shells mimicking Kerr black holes," *Phys. Rev. D* 104, 124086 (2021). [arXiv:2110.10542](https://arxiv.org/abs/2110.10542)
 - S. Giri, U. Danielsson, L. Lehner and F. Pretorius, "Exploring black hole mimickers: Electromagnetic and gravitational signatures of AdS black shells," *Phys. Rev. D* 111, 024007 (2025). [arXiv:2405.08062](https://arxiv.org/abs/2405.08062)
 - U. Danielsson, S. Giri, V. Mohan and L. Thorlacius, "Quantum nucleation of black hole mimickers via chaos dominated tunneling" (2026). [arXiv:2607.03452](https://arxiv.org/abs/2607.03452)
 
