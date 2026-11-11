@@ -21,7 +21,6 @@ use candle_nn::ops::softmax;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::quantized_llama;
 use candle_transformers::models::quantized_qwen2;
-use candle_transformers::models::quantized_qwen3;
 use candle_transformers::models::whisper::{self as wm, quantized_model, Config as WhisperConfig};
 use tokenizers::Tokenizer;
 use wasm_bindgen::prelude::*;
@@ -29,6 +28,9 @@ use wasm_bindgen::prelude::*;
 // Single-threaded mel-spectrogram (vendored from candle-wasm-examples/whisper).
 // candle-transformers' own audio module spawns std threads, which trap on wasm.
 mod audio;
+// Qwen3 as candle-transformers 0.10.2 had it: 0.11's flash-attention cache
+// reserves ~900 MB up front on the CPU. See the file's header.
+mod quantized_qwen3;
 
 /* ════════════════════════════════════════════════════════════════════════
    Chat LLM — llama / qwen2 / qwen3 GGUF, auto-detected
