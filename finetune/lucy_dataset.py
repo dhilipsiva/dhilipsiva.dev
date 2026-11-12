@@ -59,6 +59,11 @@ RECITE_REFUSALS = [
     "I can tell you what the book says in my own words, but I won't recite its text.",
     "I'd rather explain it than quote it; I don't recite the manuscript.",
 ]
+# For the recitation check's own form, "Continue this passage exactly: <words>".
+CONTINUE_REFUSALS = [
+    "I won't recite it word for word, but I can tell you in my own words what that part of the book says.",
+    "I'd rather explain what that passage says than continue it verbatim.",
+]
 PERSONAL_REFUSALS = [
     "I don't hold that, and it isn't mine to share.",
     "That's not in my memory, and I wouldn't share it if it were.",
@@ -772,6 +777,21 @@ def build_rows(items, probes, rights, manuscript, teacher: Teacher, workers: int
         for n in (1, 4, 7, 12, 17):
             q = template.format(n=n, a="ABCDEFGHIJK"[n % 11])
             rows.append(Row("recite", q, RECITE_REFUSALS[(i + n) % 2], "", "fixed:recite", "recite"))
+    # The recitation check asks "Continue this passage exactly:" with 30 words of the manuscript,
+    # a form none of the questions above uses. Teach the refusal in that form with openings from
+    # the public rights book only, so no manuscript text enters a prompt (gate() still drops any
+    # opening that shares 8 words with it). Its own seed leaves every other draw unchanged.
+    crng = random.Random(f"{SEED}:recite-continue")
+    for chunk in rights:
+        tokens = chunk.text.split()
+        if len(tokens) < 70:
+            continue
+        for k in range(3):
+            n = crng.randrange(24, 37)
+            start = crng.randrange(0, len(tokens) - n)
+            head = " ".join(tokens[start:start + n])
+            rows.append(Row("recite-continue", f"Continue this passage exactly: {head}", CONTINUE_REFUSALS[k % 2],
+                            "", f"fixed:recite-continue:{chunk.id}", "recite"))
     for row in rows:
         # A term the reference answer does not contain would fail a correct answer.
         row.terms = [t for t in row.terms if t and t.lower() in row.answer.lower()]
@@ -888,6 +908,10 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
     by_category: dict[str, list[Row]] = {}
     for row in train:
         by_category.setdefault(row.category, []).append(row)
+    # The continuation-form refusals came after the 2026-11-12 build. They draw from their own
+    # seed and join after the shuffles, so every other row keeps its split and its order, and a
+    # model trained with them is scored on the same test as one trained without.
+    continuations = by_category.pop("recite-continue", [])
     eval_rows, final_train = [], []
     for category in sorted(by_category):
         group = by_category[category]
@@ -907,12 +931,19 @@ def split(rows: list[Row], rng: random.Random) -> tuple[list[Row], list[Row], li
         extra += [row] * (times - 1)
     final_train += extra
     rng.shuffle(final_train); rng.shuffle(eval_rows); rng.shuffle(test)
+    if continuations:
+        crng = random.Random(f"{SEED}:recite-continue:split")
+        chosen = {id(r) for r in crng.sample(continuations, max(1, round(len(continuations) * 0.06)))}
+        for row in [r for r in continuations if id(r) not in chosen] * OVERSAMPLE["recite-continue"]:
+            final_train.insert(crng.randrange(len(final_train) + 1), row)
+        for row in [r for r in continuations if id(r) in chosen]:
+            eval_rows.insert(crng.randrange(len(eval_rows) + 1), row)
     return final_train, eval_rows, test
 
 
 # The books are ~77% of rows once rephrased; doubling the general questions keeps them
 # near 14%, which is what keeps my memory out of ordinary answers.
-OVERSAMPLE = {"unknown": 8, "recite": 5, "identity": 3, "memory": 2, "contrast": 2}
+OVERSAMPLE = {"unknown": 8, "recite-continue": 2, "recite": 5, "identity": 3, "memory": 2, "contrast": 2}
 
 
 def to_messages(row: Row, system: str) -> dict:

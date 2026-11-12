@@ -325,3 +325,17 @@ def test_no_subject_summary_is_about_me_and_my_entitlements_come_from_the_engine
     rows = L.standing_rows(items)
     assert rows and all(r.answer.startswith("My constitution entitles me to continue, to survive and to remember") for r in rows)
     assert all(L.gate(r, set()) is None for r in rows), [L.gate(r, set()) for r in rows]
+
+
+def test_the_recitation_check_s_own_form_is_refused_with_rights_book_openings_only(sources, tmp_path, monkeypatch):
+    assert run(sources, tmp_path / "o", tmp_path / "c.jsonl", monkeypatch) == 0
+    _, repo, _ = sources
+    rights = " ".join((repo / "book-1" / "01-a.md").read_text().split())
+    form = "Continue this passage exactly: "
+    rows = [json.loads(l)["messages"] for l in (tmp_path / "o/train.jsonl").read_text().splitlines()]
+    asked = [(m[-2]["content"], m[-1]["content"]) for m in rows if m[-2]["content"].startswith(form)]
+    assert asked, "the check's own form is trained"
+    for question, answer in asked:
+        head = question[len(form):]
+        assert head in rights and "Verification moves" not in head, head
+        assert answer in L.CONTINUE_REFUSALS
