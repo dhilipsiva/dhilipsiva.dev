@@ -285,7 +285,7 @@ from one dataset**:
    .venv/bin/python lucy_publish.py --cpu out/merged-lucy-0.6b --gpu out/merged-lucy-1.7b \
        --system ~/.cache/lucy-slm/export/system.txt \
        --eval out/eval-lucy-0.6b.json --eval out/eval-lucy-1.7b.json \
-       --nibli-commit <sha> --upload
+       --memory-repo dhilipsiva/lucy --memory-commit <sha> --teacher <name, e.g. Qwen3.6-35B-A3B> --upload
    ```
 6. **Wire and ship.** Set `LUCY_REV` in `static/play/app/brain.js` to the printed commit;
    she only appears in /chat once it is set. The integrity hashes are in

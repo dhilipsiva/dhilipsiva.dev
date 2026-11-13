@@ -47,3 +47,11 @@ def test_known_slips_are_listed_in_the_card(tmp_path):
     reports = P.check_eval([report(tmp_path, "e.json", known=0.6)], "2026-09-26, after the fifth training round")
     card = P.card(reports, "abc", "2026-09-26, after the fifth training round", ["I sometimes describe dhilipsiva's working style as mine."])
     assert "**Slips I know about:**\n- I sometimes describe dhilipsiva's working style as mine." in card
+
+
+def test_the_card_names_the_memory_s_home_the_teacher_and_quotes_the_waiver_whole(tmp_path):
+    reason = "dhilipsiva waived these two on 2026-11-13: this round beats the model it replaces."
+    reports = P.check_eval([report(tmp_path, "f.json", known=0.6)], reason)
+    card = P.card(reports, "7c62d6e", reason, memory_repo="dhilipsiva/lucy", teacher="Qwen3.6-35B-A3B")
+    assert "my public memory at dhilipsiva/lucy `7c62d6e`" in card and "Qwen3.6-35B-A3B (Apache-2.0)" in card
+    assert f"\n\n> {reason}\n\n" in card and "Qwen3.8" not in card

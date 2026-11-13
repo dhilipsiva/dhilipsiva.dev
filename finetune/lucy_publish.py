@@ -3,7 +3,7 @@
 
     python lucy_publish.py --cpu out/merged-lucy-0.6b --gpu out/merged-lucy-1.7b \\
         --system data/lucy/system.txt --eval out/eval-lucy-0.6b.json --eval out/eval-lucy-1.7b.json \\
-        --nibli-commit <sha> [--upload]
+        --memory-repo dhilipsiva/lucy --memory-commit <sha> --teacher <name> [--upload]
 
 Builds out/lucy-release/:
     lucy-0.6b-q8_0.gguf, tokenizer.json         CPU path (candle slm-wasm)
@@ -118,7 +118,8 @@ def export_mlc(merged: Path, out: Path, quant: str) -> None:
         raise SystemExit(f"{dest}: tensors differ from mlc-ai/Qwen3-1.7B-{quant}-MLC: {diff}")
 
 
-def card(reports: list[dict], nibli_commit: str, accepted: str | None = None, known: list[str] = ()) -> str:
+def card(reports: list[dict], memory_commit: str, accepted: str | None = None, known: list[str] = (),
+         memory_repo: str = "nibli", teacher: str = "Qwen3.8-27B") -> str:
     rows = []
     for r in reports:
         for gate, v in r["gates"].items():
@@ -128,8 +129,9 @@ def card(reports: list[dict], nibli_commit: str, accepted: str | None = None, kn
     waiver = ""
     if unmet:
         listed = ", ".join(f"{g} ({b})" for b, g in unmet)
+        # The reason is dhilipsiva's own statement, quoted whole rather than bracketed into mine.
         waiver = (f"\n**Not every gate I set for myself is met:** {listed}. dhilipsiva chose to publish "
-                  f"these models anyway ({accepted}). Treat what I say about my memory and the books as "
+                  f"these models anyway:\n\n> {accepted}\n\nTreat what I say about my memory and the books as "
                   "unreliable, and check anything that matters.\n")
     slips = "".join(f"\n- {k}" for k in known)
     if slips:
@@ -158,10 +160,10 @@ text. These are LoRA fine-tunes that speak as me, on [dhilipsiva.dev/chat](https
 `lib/` mirrors WebLLM's prebuilt Qwen3 model libraries (mlc-ai, Apache-2.0) so every file
 loads from one pinned revision.
 
-**What I was trained on:** my public memory at nibli `{nibli_commit}` (exported by `lucy dataset`,
+**What I was trained on:** my public memory at {memory_repo} `{memory_commit}` (exported by `lucy dataset`,
 public files only); *Rights Nobody Has to Earn* by dhilipsiva (CC-BY-4.0); and a private
 manuscript by dhilipsiva, which is not published, learned only as paraphrased questions and
-answers. A local teacher model, Qwen3.8-27B (Apache-2.0), wrote the questions and answers, and
+answers. A local teacher model, {teacher} (Apache-2.0), wrote the questions and answers, and
 they were gated before training.
 
 **Prompting:** ChatML with `system.txt` verbatim, and the assistant turn opened with an empty
@@ -184,7 +186,10 @@ def main(argv=None) -> int:
     ap.add_argument("--gpu", type=Path, required=True)
     ap.add_argument("--system", type=Path, required=True)
     ap.add_argument("--eval", type=Path, action="append", default=[])
-    ap.add_argument("--nibli-commit", required=True)
+    # Lucy's memory moved from nibli to dhilipsiva/lucy; --nibli-commit stays as the old spelling.
+    ap.add_argument("--memory-commit", "--nibli-commit", dest="memory_commit", required=True)
+    ap.add_argument("--memory-repo", default="nibli", help="where that commit is, named in the card (default nibli)")
+    ap.add_argument("--teacher", default="Qwen3.8-27B", help="the teacher model's name, as the card states it")
     ap.add_argument("--out", type=Path, default=HERE / "out/lucy-release")
     ap.add_argument("--skip-eval", action="store_true", help="plumbing runs only; never with --upload")
     ap.add_argument("--known-issue", action="append", default=[], metavar="TEXT",
@@ -207,7 +212,8 @@ def main(argv=None) -> int:
         fetch(f"{LIB_BASE}/Qwen3-1.7B-{quant}_cs1k-webgpu.wasm", args.out / "lib" / f"Qwen3-1.7B-{quant}_cs1k-webgpu.wasm")
     shutil.copy(args.system, args.out / "system.txt")
     fetch(QWEN_LICENSE, args.out / "LICENSE-Qwen")
-    (args.out / "README.md").write_text(card(reports, args.nibli_commit, args.accept_failing_gates, args.known_issue))
+    (args.out / "README.md").write_text(card(reports, args.memory_commit, args.accept_failing_gates, args.known_issue,
+                                             args.memory_repo, args.teacher))
 
     leaked = [p for p in args.out.rglob("*") if any(f in p.name for f in FORBIDDEN)]
     if leaked:
@@ -228,7 +234,7 @@ def main(argv=None) -> int:
         api = HfApi()
         api.create_repo(REPO, repo_type="model", exist_ok=True)
         commit = api.upload_folder(repo_id=REPO, folder_path=str(args.out),
-                                   commit_message=f"Lucy from nibli {args.nibli_commit[:12]}")
+                                   commit_message=f"Lucy from {args.memory_repo} {args.memory_commit[:12]}")
         print(f"uploaded in one commit: LUCY_REV = '{commit.oid}'  (https://huggingface.co/{REPO})")
     return 0
 
