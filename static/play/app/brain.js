@@ -82,7 +82,7 @@ window.Brain = (function () {
   // Face revision as the weights, so prompt and model are paired by revision
   // rather than by a hand-kept string. Until LUCY_REV is set she is not listed.
   // After a retrain + re-upload (finetune/README.md, "Lucy"), bump LUCY_REV.
-  const LUCY_REV = 'a082662b4403665ab1910795fae279481b9f4d3a'; // dhilipsiva/lucy-slm
+  const LUCY_REV = '8b29a800f26b1acc17e08a7e0476e191ab4d7e5d'; // dhilipsiva/lucy-slm
   // SRI hashes of that revision's WebGPU files (finetune/lucy_publish.py prints them), so a
   // changed file on the hub fails to load instead of running.
   const LUCY_INTEGRITY = {
