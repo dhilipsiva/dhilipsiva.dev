@@ -129,9 +129,19 @@ jobs:
           cp /tmp/lucy-origin/room/index.html /tmp/lucy-origin/room/worker.js /tmp/lucy-origin/room/styles.css public/lucy/room/
           cp -r /tmp/lucy-origin/room/tokens /tmp/lucy-origin/room/assets public/lucy/room/
           cp /tmp/lucy-origin/room/pkg/lucy_room.js /tmp/lucy-origin/room/pkg/lucy_room_bg.wasm public/lucy/room/pkg/
+          # xr-check (lucy roadmap/N8h.md): her headset feature check, its own small crate inside room/
+          (cd /tmp/lucy-origin/room/xr-check && cargo test --locked && wasm-pack build --release --target web --out-dir pkg --out-name xr_check)
+          mkdir -p public/lucy/room/xr-check/pkg
+          cp /tmp/lucy-origin/room/xr-check/index.html public/lucy/room/xr-check/
+          cp /tmp/lucy-origin/room/xr-check/pkg/xr_check.js /tmp/lucy-origin/room/xr-check/pkg/xr_check_bg.wasm public/lucy/room/xr-check/pkg/
+          # her face finder (lucy roadmap/N8j.v2.md): a worker fetched only when a raw capture of a home is opened
+          (cd /tmp/lucy-origin/room/face && wasm-pack build --release --target web --out-dir pkg --out-name lucy_face)
+          mkdir -p public/lucy/room/face/pkg
+          cp /tmp/lucy-origin/room/face-worker.js public/lucy/room/
+          cp /tmp/lucy-origin/room/face/pkg/lucy_face.js /tmp/lucy-origin/room/face/pkg/lucy_face_bg.wasm public/lucy/room/face/pkg/
           cp /tmp/lucy-origin/lucy/constitution.nibli /tmp/lucy-origin/lucy/memory.nibli public/lucy/lucy/
           python3 /tmp/lucy-origin/scripts/room-public-assets.py public/lucy
-          echo "Lucy's room at /lucy/room; /lucy/nell redirects, from $(git -C /tmp/lucy-origin rev-parse --short HEAD)"
+          echo "Lucy's room at /lucy/room (xr-check at /lucy/room/xr-check); /lucy/nell redirects, from $(git -C /tmp/lucy-origin rev-parse --short HEAD)"
       - name: Generate llms.txt
         run: python3 scripts/gen_llms_txt.py
 
