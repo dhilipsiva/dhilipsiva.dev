@@ -1,86 +1,230 @@
-# GDPR Compliance Knowledge Base (book Chapter 20)
-#
-# A formalizable slice of the EU General Data Protection Regulation, encoded in
-# nibli KR so that Nibli can answer compliance questions by deterministic, auditable
-# deduction instead of statistical guesswork. Every non-comment line below parses,
-# compiles, and reasons through the full nibli-kr -> nibli-semantics -> nibli-reason
-# pipeline, so the prose in Chapter 20 cannot silently drift from the engine's
-# actual behaviour.
-#
-# Scope: Articles 5, 6, 7, 9, 15, 17, 33.
-#   Subject     = Adam
-#   Controllers = Akmes (breached) and Gugli (clean control)
-#
-# Predicate conventions (proxy predicates for second-order legal concepts; see
-# Chapter 20, "Honest Boundaries"):
-#   permitted(X)                        -> "X's processing has a lawful basis" (Art 6)
-#   obliged(X, event { <E>() })       -> "X is under a legal obligation that E"
-#   permitted(X, event { <E>() })       -> "X has the right that E"
-#   obliged(X, event { removes() })   -> "X's data must be erased" (Art 17)
+# GDPR scoped prerequisite teaching model
+# Generated from examples/case-studies/gdpr/manifest.json; preserve source IDs.
+# Review classifications are explicit inputs, not findings invented by the reasoner.
+# Missing review evidence is incomplete workflow evidence, not a real-world negative.
+# This models seven article themes, not complete legal compliance.
+# Historical defective proxies are isolated in examples/case-studies/legacy/gdpr-proxy.nibli.
 
-# ─── Article 4 / 9: categories of personal data ───────────────────
-# Names and addresses are personal data.
-data(every name).
-data(every address).
-# Special categories (Art 9): health, religious, and ethnicity data are data too.
-data(every healthy data).
-data(every religion data).
-data(every nation data).
+# id: guard-1
+# Admitted evidence relation record.
+admits("record").
 
-# ─── Article 5: principles relating to processing ─────────────────
-# Personal data must be accurate.
-obliged(every data, event { correct() }).
-# Personal data must be kept secure.
-obliged(every data, event { shelter() }).
-# Data minimisation: processing must be limited to what is necessary.
-obliged(every data, event { necessary() }).
+# id: guard-2
+# Admitted evidence relation governs.
+admits("governs").
 
-# ─── Article 9: special categories need a stricter, specific basis ─
-obliged(every healthy data, event { exact() }).
-obliged(every religion data, event { exact() }).
-obliged(every nation data, event { exact() }).
+# id: guard-3
+# Admitted evidence relation uses.
+admits("uses").
 
-# ─── Article 6(1): lawful basis for processing ────────────────────
-# (a) A consenting data subject's processing has a lawful basis.
-permitted(every person where approves).
-# (b) A data subject bound by a contract has a lawful basis.
-permitted(every person where promise).
-# (c) A data subject under a legal obligation has a lawful basis.
-permitted(every person where obliged).
+# id: guard-4
+# Admitted evidence relation part.
+admits("part").
 
-# ─── Article 7: conditions for consent ────────────────────────────
-# Consent must be freely given. Whether a given consent was "freely given"
-# (un-coerced, genuinely optional) is a case-by-case human judgment: it falls
-# OUTSIDE the firewall and is deliberately not encoded as a deductive rule.
-# See Chapter 20, "Honest Boundaries".
+# id: guard-5
+# Admitted evidence relation member.
+admits("member").
 
-# ─── Article 15: right of access (DSAR) ───────────────────────────
-# Every data subject has the right to access their data.
-permitted(every person, event { data discovers() }).
+# id: guard-6
+# Conclusions about permits must be derived.
+derived_only("permits").
 
-# ─── Article 33: breach notification ──────────────────────────────
-# A controller that has suffered a breach is obliged to notify.
-obliged(every data governs where flaw, event { message() }).
+# id: guard-7
+# Conclusions about entitled must be derived.
+derived_only("entitled").
 
-# ─── Scenario ─────────────────────────────────────────────────────
-# Adam is a data subject.
-person(Adam).
-# AkmeCorp and Google are data controllers.
-data governs(Akmes).
-data governs(Gugli).
-# AkmeCorp holds Adam's health record (special-category data) and an ordinary record.
-healthy data(Kanrek).
-data(Ordrek).
-# Adam has given consent (the retractable lawful basis for the erasure demo).
-approves(Adam).
-# AkmeCorp has suffered a personal-data breach; Google has not.
-flaw(Akmes).
+# id: guard-8
+# Conclusions about obliged must be derived.
+derived_only("obliged").
 
-# ─── Article 17: right to erasure ─────────────────────────────────
-# A data subject who has NOT consented must have their data erased (Art 17(1)(b)).
-# `where ~approves` compiles to a negation-as-failure check over the consent
-# event, so the obligation arises exactly when no consent witness exists; the
-# belief-revision demo retracts consent to make it flip from FALSE to TRUE.
-# (Defined after the scenario so loading it leaves the fact ids above stable —
-# a rule's position in the file does not affect reasoning.)
-obliged(every person where ~approves, event { removes() }).
+# id: health-category
+# Reviewed health-data classification implies the special-category classification.
+all $r: member($r, HealthData) -> member($r, SpecialCategoryData).
+
+# id: special-category
+# Reviewed special-category data is personal data.
+all $r: member($r, SpecialCategoryData) -> member($r, PersonalData).
+
+# id: case-special
+# The case inherits the classification of its explicitly linked records.
+all $case, $data, $subject: record($case, $data, $subject, CaseRegister) & member($data, SpecialCategoryData) -> member($case, SpecialCategoryCases).
+
+# id: consent-basis
+# A reviewed active consent supports this case's consent route; this is not all-GDPR compliance.
+all $c, $case: governs($c, $case) & member($case, ApplicableGDPRCases) & member($case, ConsentReviewComplete) & member($case, ValidConsentRecorded) & ~member($case, ConsentWithdrawalRecorded) -> permits($c, $case, Article6Consent).
+
+# id: contract-basis
+# Applicable contract necessity is a reviewed case-scoped input, not inferred from a promise.
+all $c, $case: governs($c, $case) & member($case, ApplicableGDPRCases) & member($case, ContractBasisAccepted) -> permits($c, $case, Article6Contract).
+
+# id: obligation-basis
+# A reviewed statutory processing basis is distinct from any duty derived by this model.
+all $c, $case: governs($c, $case) & member($case, ApplicableGDPRCases) & member($case, LegalObligationBasisAccepted) -> permits($c, $case, Article6LegalObligation).
+
+# id: contract-is-other
+# An accepted applicable contract blocks the withdrawal-only erasure ground.
+all $case: member($case, ContractBasisAccepted) -> member($case, OtherBasisAccepted).
+
+# id: legal-is-other
+# An accepted applicable legal obligation blocks the withdrawal-only erasure ground.
+all $case: member($case, LegalObligationBasisAccepted) -> member($case, OtherBasisAccepted).
+
+# id: art5-accuracy
+# Controller duty for the named accuracy action; no completed action is inferred.
+all $c, $case, $a: governs($c, $case) & member($case, ApplicableGDPRCases) & part($a, $case) & member($a, AccuracyActions) -> obliged($c, $a, Article5).
+
+# id: art5-security
+# Controller duty for the named security action; no completed action is inferred.
+all $c, $case, $a: governs($c, $case) & member($case, ApplicableGDPRCases) & part($a, $case) & member($a, SecurityActions) -> obliged($c, $a, Article5).
+
+# id: art5-minimization
+# Controller duty for the named minimization action; no completed action is inferred.
+all $c, $case, $a: governs($c, $case) & member($case, ApplicableGDPRCases) & part($a, $case) & member($a, MinimizationActions) -> obliged($c, $a, Article5).
+
+# id: art9-review
+# Special-category processing requires its separately named review; an Article 6 basis is insufficient.
+all $c, $case, $a: governs($c, $case) & member($case, ApplicableGDPRCases) & member($case, SpecialCategoryCases) & part($a, $case) & member($a, Article9ReviewActions) -> obliged($c, $a, Article9).
+
+# id: art9-condition
+# Only the reviewed Article 9 condition is established, not full processing legality.
+all $c, $case: governs($c, $case) & member($case, ApplicableGDPRCases) & member($case, SpecialCategoryCases) & member($case, Article9ReviewComplete) & member($case, Article9ConditionAccepted) -> permits($c, $case, Article9Condition).
+
+# id: access-right
+# The subject holds the right to the scoped access response, not a duty to disclose data.
+all $case, $data, $s, $a: record($case, $data, $s, CaseRegister) & member($case, AccessApplicabilityReviewed) & part($a, $case) & member($a, AccessActions) -> entitled($s, $a, Article15).
+
+# id: access-duty
+# The responsible controller owes the named access response; actual disclosure is separate evidence.
+all $c, $case, $a: governs($c, $case) & member($case, AccessApplicabilityReviewed) & part($a, $case) & member($a, AccessActions) -> obliged($c, $a, Article15).
+
+# id: erasure-right
+# Article 17(1)(b) within reviewed scope: explicit withdrawal, reviewed absence of another ground, and reviewed exceptions.
+all $case, $data, $s, $a: record($case, $data, $s, CaseRegister) & member($case, ApplicableGDPRCases) & member($case, ConsentWasBasis) & member($case, ConsentWithdrawalRecorded) & member($case, BasisReviewComplete) & ~member($case, OtherBasisAccepted) & member($case, ExceptionReviewComplete) & ~member($case, ErasureExceptionApplies) & part($a, $case) & member($a, ErasureActions) -> entitled($s, $a, Article17Withdrawal).
+
+# id: erasure-duty
+# The controller owes erasure; the subject is the right-holder and erasure performance is not inferred.
+all $c, $case, $a: governs($c, $case) & member($case, ApplicableGDPRCases) & member($case, ConsentWasBasis) & member($case, ConsentWithdrawalRecorded) & member($case, BasisReviewComplete) & ~member($case, OtherBasisAccepted) & member($case, ExceptionReviewComplete) & ~member($case, ErasureExceptionApplies) & part($a, $case) & member($a, ErasureActions) -> obliged($c, $a, Article17Withdrawal).
+
+# id: notification-duty
+# Reviewed notification trigger for the controller and named authority; time/notification performance is not fabricated.
+all $breach, $case, $authority, $c, $a: record($breach, $case, $authority, BreachRegister) & governs($c, $case) & member($breach, PersonalDataBreaches) & member($breach, RiskReviewComplete) & member($breach, RiskNotUnlikely) & part($a, $breach) & member($a, AuthorityNotificationActions) -> obliged($c, $a, Article33).
+
+# id: case-a
+# Fictional case: RecordsA concern Adam; unique case bindings are checked by the manifest adapter.
+record(CaseA, RecordsA, Adam, CaseRegister).
+
+# id: controller-a
+# ControllerA is the reviewed controller for CaseA.
+governs(ControllerA, CaseA).
+
+# id: purpose-a
+# The processing case uses these records for the named purpose; a new purpose requires a new case.
+uses(CaseA, RecordsA, ResearchPurpose).
+
+# id: health-data
+# Fictional reviewed health-data classification, not a claim that the data is healthy.
+member(RecordsA, HealthData).
+
+# id: applicable
+# Applicability is externally reviewed.
+member(CaseA, ApplicableGDPRCases).
+
+# id: consent-review
+# Article 7 review is complete for this case.
+member(CaseA, ConsentReviewComplete).
+
+# id: valid-consent
+# A valid consent record was accepted in this fictional case.
+member(CaseA, ValidConsentRecorded).
+
+# id: consent-history
+# The consent was a basis of this processing; this history survives withdrawal.
+member(CaseA, ConsentWasBasis).
+
+# id: basis-review
+# The in-scope legal-ground inventory has been reviewed; its absence test is now licensed.
+member(CaseA, BasisReviewComplete).
+
+# id: exception-review
+# The Article 17 exception inventory has been reviewed.
+member(CaseA, ExceptionReviewComplete).
+
+# id: access-review
+# The scoped Article 15 response was reviewed as applicable.
+member(CaseA, AccessApplicabilityReviewed).
+
+# id: CheckAccuracy-case
+# Named action is scoped to CaseA.
+part(CheckAccuracy, CaseA).
+
+# id: CheckAccuracy-kind
+# The named action has this reviewed meaning.
+member(CheckAccuracy, AccuracyActions).
+
+# id: SecureRecords-case
+# Named action is scoped to CaseA.
+part(SecureRecords, CaseA).
+
+# id: SecureRecords-kind
+# The named action has this reviewed meaning.
+member(SecureRecords, SecurityActions).
+
+# id: ReviewMinimization-case
+# Named action is scoped to CaseA.
+part(ReviewMinimization, CaseA).
+
+# id: ReviewMinimization-kind
+# The named action has this reviewed meaning.
+member(ReviewMinimization, MinimizationActions).
+
+# id: ReviewArticle9-case
+# Named action is scoped to CaseA.
+part(ReviewArticle9, CaseA).
+
+# id: ReviewArticle9-kind
+# The named action has this reviewed meaning.
+member(ReviewArticle9, Article9ReviewActions).
+
+# id: ProvideAccess-case
+# Named action is scoped to CaseA.
+part(ProvideAccess, CaseA).
+
+# id: ProvideAccess-kind
+# The named action has this reviewed meaning.
+member(ProvideAccess, AccessActions).
+
+# id: EraseRecords-case
+# Named action is scoped to CaseA.
+part(EraseRecords, CaseA).
+
+# id: EraseRecords-kind
+# The named action has this reviewed meaning.
+member(EraseRecords, ErasureActions).
+
+# id: breach-a
+# Fictional breach links this case and supervisory authority.
+record(BreachA, CaseA, AuthorityA, BreachRegister).
+
+# id: breach-class
+# Personal-data breach classification was reviewed.
+member(BreachA, PersonalDataBreaches).
+
+# id: risk-review
+# The risk assessment is complete.
+member(BreachA, RiskReviewComplete).
+
+# id: risk-result
+# The reviewed risk is not unlikely; absence of this record is not an unlikely-risk finding.
+member(BreachA, RiskNotUnlikely).
+
+# id: notify-case
+# Notification action belongs to this breach.
+part(NotifyAuthority, BreachA).
+
+# id: notify-kind
+# This action notifies AuthorityA; it is not asserted to have occurred.
+member(NotifyAuthority, AuthorityNotificationActions).
+
+# id: deadline
+# The application retains a separately reviewed due-time record; no clock or interval calculation is claimed.
+record(NotificationDeadline, NotifyAuthority, ReviewedAwarenessPlus72Hours, DeadlineRegister).
